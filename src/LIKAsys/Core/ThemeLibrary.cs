@@ -63,6 +63,12 @@ namespace LIKAsys.Core
         /// <summary>Set only by presets that are designed for one specific spot on the screen.</summary>
         public WidgetPosition? Pos = null;
 
+        /// <summary>
+        /// The card behaves like an iPhone Dynamic Island: a small pill that rolls through
+        /// the readings by itself and opens when the pointer arrives. One preset uses this.
+        /// </summary>
+        public bool Island = false;
+
         /// <summary>Short Albanian line shown on the theme card. Goes through Lang.T.</summary>
         public string Note = null;
     }
@@ -294,6 +300,19 @@ namespace LIKAsys.Core
                 Icons=IconStyle.Solid, IconOff=3, BarStyle=BarStyle.Segmented, BarH=4, Upper=true,
                 ValueOff=2.5, LabelOff=-2.5, RowSpace=3, PadH=12, PadV=9,
                 ValueWeight="Bold", LabelWeight="Bold" },
+
+            new ThemePreset { Name="Dynamic Island", Group=GIt, Island=true,
+                Note="pilulë e zezë që rrotullon matjet dhe hapet kur i afrohesh",
+                Accent="#30D158", Accent2="#0A84FF",
+                BgTop="#060607", BgBottom="#000000", Border="#00000000", Opacity=1, Radius=26,
+                BorderThickness=0, Text="#FFFFFF", Label="#98989D", Detail="#636366",
+                Track="#1F1F22", Warn="#FF9F0A", Danger="#FF453A",
+                Glow=false, Gradient=false, Shadow=true, ShadowAmt=0.8,
+                Font="Segoe UI Variable Display, Segoe UI",
+                Icons=IconStyle.Hairline, IconOff=1, BarStyle=BarStyle.Rounded, BarH=3,
+                Upper=false, ValueOff=1.5, LabelOff=-2, RowSpace=5, PadH=17, PadV=11,
+                ValueWeight="SemiBold", LabelWeight="Medium",
+                Pos=WidgetPosition.TopCenter, BrandDot=true },
 
             new ThemePreset { Name="Night Shift", Group=GIt, Note="vjollcë e butë, për natën vonë",
                 Accent="#818CF8", Accent2="#38BDF8",
@@ -630,6 +649,8 @@ namespace LIKAsys.Core
                 if (t.Colorize.HasValue) s.ColorizeByLoad = t.Colorize.Value;
                 if (t.BrandDot.HasValue) s.ShowBrandDot = t.BrandDot.Value;
                 if (t.ShadowAmt >= 0) s.ShadowStrength = t.ShadowAmt;
+
+                s.Island = t.Island;
 
                 if (t.Pos.HasValue) s.Position = t.Pos.Value;
             }

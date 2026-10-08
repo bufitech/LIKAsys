@@ -15,6 +15,9 @@ Three checks, any of which fails the build:
      sides, because the entrance animation starts the rows at zero opacity.
   3. THE FAILSAFE. StaggerIn must still contain the guard timer that forces the
      rows back to full opacity. Without it an animation bug means a blank card.
+  4. THE ISLAND LET-GO. The Dynamic Island clamps the height of the rows to zero
+     while it is a pill. Leaving that theme has to lift the clamp, and a failed
+     measurement has to skip it, or the card opens to nothing.
 
 Run from the repo root:  python3 scripts/check-ui.py
 """
@@ -66,6 +69,20 @@ def main():
 
     if "if (!busy) _motion.Stop();" not in code:
         errors.append("the motion timer no longer stops itself, the widget would spin forever")
+
+    off = code[code.find("private void IslandMode"):]
+    off = off[:off.find("private void IslandMeasure")] if "private void IslandMeasure" in off else off
+    if "RowsHost.MaxHeight = double.PositiveInfinity" not in off:
+        errors.append("leaving the island theme no longer lifts the height clamp")
+    if "_isleRowsH < 0" not in code:
+        errors.append("the island no longer has its 'could not measure, open anyway' escape")
+    if xaml.count("IslandSwap") != 1:
+        errors.append("the markup has %d IslandSwap blocks, it needs exactly one"
+                      % xaml.count("IslandSwap"))
+
+    lib = read(os.path.join(SRC, "Core", "ThemeLibrary.cs"))
+    if 'Name="Dynamic Island"' not in lib or "Island=true" not in lib:
+        errors.append("the Dynamic Island preset is gone or no longer sets Island=true")
 
     if errors:
         print("pamja e widget-it ka probleme:")

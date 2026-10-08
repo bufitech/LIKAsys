@@ -1,3 +1,22 @@
+## 2.2
+
+**Dynamic Island.** Një temë e re te profili IT, e kopjuar nga pilula e zezë e iPhone-it.
+
+Zgjidhe te **Cilësimet > Temat > IT**, ose me klikim të djathtë mbi ikonën afër orës te **Tema e IT-së**. Widget-i bëhet një pilulë e vogël e zezë lart në mes të ekranit.
+
+- **Rrotullon vetë.** Çdo 2.7 sekonda ndërron matjen. E vjetra ngrihet dhe zbehet, e reja vjen nga poshtë në të njëjtin vend.
+- **Hapet kur i afrohesh.** Çoje kursorin mbi të dhe brenda një çerek sekonde bëhet kartelë e plotë me CPU, GPU, RAM, disk, rrjet dhe ping. Në fund ka një kërcim të vogël, ashtu si te iPhone-i. Largohu dhe mbyllet.
+- **Pamje Apple.** Sfond i zi, numra të bardhë, etiketa gri, theks jeshil, ikona me vija të holla dhe fonti Segoe UI Variable Display.
+- **Minimizo e mban pilulë.** Nëse e minimizon, nuk hapet as kur i afrohesh. Hape prapë dhe kthehet si ishte.
+
+Hapja e ndryshon vërtet madhësinë e dritares, gjë që zakonisht duhet shmangur. Këtu lejohet sepse zgjat katërmbëdhjetë korniza dhe pastaj ndalet, dhe sepse dritarja ripozicionohet në secilën prej tyre, që pilula të rritet nga qendra e vet e të mos rrëshqasë anash.
+
+Nëse matja e lartësisë dështon për çfarëdo arsye, pilula hapet pa animacion në vend që të mbetet bosh.
+
+**Gjithsej 62 tema.** Grupi IT tani ka 9.
+
+**Faqja** ka një seksion të ri me pilulën e vërtetë. Rrotullohet vetë dhe hapet kur çon kursorin mbi të.
+
 ## 2.1
 
 **Menyja e ikonës afër orës u bë nga e para.** Ajo e vjetra ishte menyja standarde e Windows-it, me ngjyra gri dhe një kuti check-u të zhytur. Tani vizatohet nga vetë programi:

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -37,8 +37,8 @@ namespace LIKAsys.Ui
 
             RowsHost.ItemsSource = _rows;
 
-            MouseEnter += (s, e) => HoverLift(true);
-            MouseLeave += (s, e) => HoverLift(false);
+            MouseEnter += (s, e) => { HoverLift(true); IslandSet(true); };
+            MouseLeave += (s, e) => { HoverLift(false); IslandSet(false); };
             MouseLeftButtonDown += OnDragStart;
             MouseLeftButtonUp += OnDragEnd;
             MouseRightButtonUp += (s, e) => MenuRequested?.Invoke(this, PointToScreen(e.GetPosition(this)));
@@ -63,6 +63,16 @@ namespace LIKAsys.Ui
             try
             {
                 _settings.Minimized = on;
+
+                if (_isleOn)
+                {
+                    _isleLocked = on;
+                    if (on) IslandSet(false);
+                    MinIcon.Data = (Geometry)Application.Current.TryFindResource(on ? "IconRestore" : "IconMinimize");
+                    MinBtn.ToolTip = Lang.T(on ? "Hape te plote" : "Minimizo");
+                    HeaderButtons.Opacity = 1.0;
+                    return;
+                }
 
                 bool wasMin = RowsHost.Visibility != Visibility.Visible;
                 RowsHost.Visibility = on ? Visibility.Collapsed : Visibility.Visible;
@@ -113,6 +123,13 @@ namespace LIKAsys.Ui
         /// transform, so nothing clips and the final position stays exactly where the
         /// placement logic wants it.
         /// </summary>
+        protected override void OnClosed(EventArgs e)
+        {
+            try { IslandRollStop(); } catch { }
+            try { if (_motion != null) _motion.Stop(); } catch { }
+            base.OnClosed(e);
+        }
+
         public void Reveal()
         {
             try
@@ -311,6 +328,8 @@ namespace LIKAsys.Ui
                 bool busy = false;
                 double k = Chase;
 
+                if (IslandStep()) busy = true;
+
                 if (_staggerFrame >= 0)
                 {
                     double shift = EntryShift;
@@ -387,6 +406,290 @@ namespace LIKAsys.Ui
                     EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut }
                 };
                 BrandDot.BeginAnimation(OpacityProperty, a);
+            }
+            catch { }
+        }
+
+        // ================================================================ dynamic island
+
+        // The pill. It is one theme, not a mode the user has to find: "Dynamic Island" in
+        // the IT group turns it on. Closed, the card is a small black pill that rolls
+        // through the readings by itself. The pointer comes near and it opens.
+        //
+        // Opening really does change the size of the window, which normally is the one
+        // thing to avoid. It is allowed here because it lasts fourteen frames and then
+        // stops, and because the window is re-placed on every one of those frames so the
+        // pill grows from its own centre instead of sliding off to the right.
+
+        private bool _isleOn;            // the island theme is the one in use
+        private bool _isleOpen;          // opened up, showing every row
+        private bool _isleLocked;        // minimised: stay a pill even on hover
+        private double _isleT;           // 0 pill .. 1 open
+        private int _isleDir;            // -1 closing, 0 resting, +1 opening
+        private double _isleRowsH = -1, _isleFootH = -1, _isleWidth = -1;
+        private int _isleIndex;
+        private bool _isleFlip;
+        private System.Windows.Threading.DispatcherTimer _isleRoll;
+
+        private const int IsleFrames = 14;
+
+        private bool Island => _settings != null && _settings.Island;
+
+        /// <summary>Ease out with a little overshoot. That snap is most of the effect.</summary>
+        private static double IsleEase(double t)
+        {
+            if (t <= 0) return 0;
+            if (t >= 1) return 1;
+            const double c = 0.94;
+            double u = t - 1;
+            return 1 + (c + 1) * u * u * u + c * u * u;
+        }
+
+        /// <summary>Turns the pill behaviour on, or puts every borrowed property back.</summary>
+        private void IslandMode(bool on)
+        {
+            try
+            {
+                if (on == _isleOn && on == false) return;
+                _isleOn = on;
+
+                if (!on)
+                {
+                    IslandRollStop();
+                    RowsHost.MaxHeight = double.PositiveInfinity;
+                    FooterRow.MaxHeight = double.PositiveInfinity;
+                    RowsHost.Opacity = 1;
+                    FooterRow.Opacity = 1;
+                    BrandText.Opacity = 1;
+                    IslandSwap.Visibility = Visibility.Collapsed;
+                    Card.ClipToBounds = false;
+                    Card.MinWidth = 150;
+                    _isleRowsH = _isleFootH = _isleWidth = -1;
+                    _isleOpen = false; _isleT = 0; _isleDir = 0;
+                    return;
+                }
+
+                Card.ClipToBounds = true;
+                IslandSwap.Visibility = Visibility.Visible;
+                MiniLine.Visibility = Visibility.Collapsed;
+                RowsHost.Visibility = Visibility.Visible;
+                FooterRow.Visibility = Visibility.Visible;
+                _isleOpen = false;
+                _isleT = 0;
+                _isleDir = 0;
+
+                // the natural size has to be read while nothing is clamped
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    IslandMeasure();
+                    IslandDraw(0);
+                    IslandRollStart();
+                }), System.Windows.Threading.DispatcherPriority.Loaded);
+            }
+            catch (Exception ex)
+            {
+                AppInfo.Log("IslandMode: " + ex.Message);
+                try { IslandMode(false); } catch { }
+            }
+        }
+
+        /// <summary>
+        /// Reads how tall the rows and the footer want to be, and how wide the open card
+        /// is. The width then becomes the pill width too, so opening only moves one way.
+        /// </summary>
+        private void IslandMeasure()
+        {
+            try
+            {
+                Card.MinWidth = 150;                 // let it shrink back before reading it
+                RowsHost.MaxHeight = double.PositiveInfinity;
+                FooterRow.MaxHeight = double.PositiveInfinity;
+                RowsHost.Opacity = 1;
+                FooterRow.Opacity = 1;
+                HeaderRow.Margin = new Thickness(0, 0, 0, 8);
+                UpdateLayout();
+
+                _isleRowsH = RowsHost.ActualHeight;
+                _isleFootH = FooterRow.ActualHeight;
+                _isleWidth = Card.ActualWidth;
+
+                if (_isleRowsH > 1 && _isleWidth > 40) Card.MinWidth = _isleWidth;
+                else { _isleRowsH = _isleFootH = -1; }     // measuring failed, never clamp
+            }
+            catch { _isleRowsH = _isleFootH = -1; }
+        }
+
+        /// <summary>Puts the card at a point between pill and open. t is 0..1.</summary>
+        private void IslandDraw(double t)
+        {
+            if (!_isleOn) return;
+            try
+            {
+                if (_isleRowsH < 0) { RowsHost.Opacity = 1; FooterRow.Opacity = 1; return; }
+
+                double e = IsleEase(t);
+                double o = e < 0 ? 0 : (e > 1 ? 1 : e);
+
+                RowsHost.MaxHeight = Math.Max(0, _isleRowsH * e);
+                FooterRow.MaxHeight = Math.Max(0, _isleFootH * e);
+                RowsHost.Opacity = o;
+                FooterRow.Opacity = o;
+                HeaderRow.Margin = new Thickness(0, 0, 0, 8 * o);
+
+                BrandText.Opacity = o;
+                IslandSwap.Opacity = 1 - o;
+
+                UpdateLayout();
+                WidgetPlacement.Apply(this, _settings);
+            }
+            catch { }
+        }
+
+        /// <summary>Opens the pill, or lets it fall back shut.</summary>
+        private void IslandSet(bool open)
+        {
+            if (!_isleOn) return;
+            if (open && _isleLocked) return;
+            if (open == _isleOpen && _isleDir == 0) return;
+
+            _isleOpen = open;
+
+            if (!Motion || _isleRowsH < 0)
+            {
+                _isleT = open ? 1 : 0;
+                _isleDir = 0;
+                IslandDraw(_isleT);
+                if (open) { foreach (var r in _rows) { r.RowOpacity = 1; r.RowShift = 0; } }
+                return;
+            }
+
+            _isleDir = open ? 1 : -1;
+            if (open) StaggerIn();
+            Kick();
+        }
+
+        /// <summary>One frame of the open or close morph. Returns true while it is moving.</summary>
+        private bool IslandStep()
+        {
+            if (_isleDir == 0) return false;
+            _isleT += _isleDir / (double)IsleFrames;
+            if (_isleT >= 1) { _isleT = 1; _isleDir = 0; }
+            else if (_isleT <= 0) { _isleT = 0; _isleDir = 0; }
+            IslandDraw(_isleT);
+            return _isleDir != 0;
+        }
+
+        // ---- the roll: a different reading every few seconds, while the pill is shut
+
+        private void IslandRollStart()
+        {
+            IslandRollStop();
+            if (!_isleOn) return;
+            _isleRoll = new System.Windows.Threading.DispatcherTimer
+            { Interval = TimeSpan.FromMilliseconds(2700) };
+            _isleRoll.Tick += (s, e) => IslandRollOnce();
+            _isleRoll.Start();
+            IslandShow(IslandText(), false);
+        }
+
+        private void IslandRollStop()
+        {
+            try { if (_isleRoll != null) { _isleRoll.Stop(); _isleRoll = null; } } catch { }
+        }
+
+        /// <summary>The next reading in the queue, written the short way.</summary>
+        private string IslandText()
+        {
+            try
+            {
+                if (_rows.Count == 0) return "LIKAsys";
+                for (int i = 0; i < _rows.Count; i++)
+                {
+                    _isleIndex = (_isleIndex + 1) % _rows.Count;
+                    var r = _rows[_isleIndex];
+                    if (string.IsNullOrEmpty(r.Value) || r.Value == "--") continue;
+                    return r.Label + "  " + r.Value + (string.IsNullOrEmpty(r.Unit) ? "" : r.Unit);
+                }
+            }
+            catch { }
+            return "LIKAsys";
+        }
+
+        /// <summary>
+        /// Rewrites the label that is on screen, leaving the pair alone.
+        ///
+        /// This is the one that runs every second. It must not touch opacity: once a
+        /// property has been handed to an animation, a plain assignment to it is ignored,
+        /// so only the text is allowed to change here.
+        /// </summary>
+        private void IslandRefresh()
+        {
+            try { (_isleFlip ? IsleB : IsleA).Text = IslandCurrent(); } catch { }
+        }
+
+        /// <summary>The reading the pill is on right now, refreshed, without moving along.</summary>
+        private string IslandCurrent()
+        {
+            try
+            {
+                if (_isleIndex >= 0 && _isleIndex < _rows.Count)
+                {
+                    var r = _rows[_isleIndex];
+                    if (!string.IsNullOrEmpty(r.Value) && r.Value != "--")
+                        return r.Label + "  " + r.Value + (string.IsNullOrEmpty(r.Unit) ? "" : r.Unit);
+                }
+            }
+            catch { }
+            return "LIKAsys";
+        }
+
+        private void IslandRollOnce()
+        {
+            if (!_isleOn || _isleOpen || _isleDir != 0) return;
+            if (!IsVisible) return;
+            IslandShow(IslandText(), Motion);
+        }
+
+        /// <summary>
+        /// Swaps the text. The one leaving rises and fades, the one arriving comes up from
+        /// below into the same spot. Two labels take turns so neither ever has to wait.
+        /// </summary>
+        private void IslandShow(string text, bool animate)
+        {
+            try
+            {
+                var front = _isleFlip ? IsleB : IsleA;
+                var back = _isleFlip ? IsleA : IsleB;
+                var backT = _isleFlip ? IsleAT : IsleBT;
+                var frontT = _isleFlip ? IsleBT : IsleAT;
+
+                back.Text = text;
+
+                if (!animate)
+                {
+                    back.BeginAnimation(OpacityProperty, null);
+                    front.BeginAnimation(OpacityProperty, null);
+                    backT.BeginAnimation(TranslateTransform.YProperty, null);
+                    frontT.BeginAnimation(TranslateTransform.YProperty, null);
+                    back.Opacity = 1; backT.Y = 0;
+                    front.Opacity = 0; frontT.Y = 0;
+                    _isleFlip = !_isleFlip;
+                    return;
+                }
+
+                var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+                var up = TimeSpan.FromMilliseconds(340);
+                var fade = TimeSpan.FromMilliseconds(240);
+
+                backT.BeginAnimation(TranslateTransform.YProperty,
+                    new DoubleAnimation(15, 0, new Duration(up)) { EasingFunction = ease });
+                back.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, new Duration(fade)));
+
+                frontT.BeginAnimation(TranslateTransform.YProperty,
+                    new DoubleAnimation(0, -15, new Duration(up)) { EasingFunction = ease });
+                front.BeginAnimation(OpacityProperty, new DoubleAnimation(1, 0, new Duration(fade)));
+
+                _isleFlip = !_isleFlip;
             }
             catch { }
         }
@@ -652,6 +955,7 @@ namespace LIKAsys.Ui
                 UpdateBlurAndRegion();
                 if (_ready) WidgetPlacement.Apply(this, _settings);
 
+                IslandMode(_settings.Island);
                 ApplyDotPulse();
                 if (!Motion) Settle(); else Kick();
             }
@@ -1140,6 +1444,7 @@ namespace LIKAsys.Ui
                 }
 
                 UpdateMiniLine();
+                if (_isleOn && !_isleOpen && _isleDir == 0) IslandRefresh();
                 if (IsVisible) Kick(); else Settle();
             }
             catch (Exception ex) { AppInfo.Log("OnMetrics: " + ex.Message); }

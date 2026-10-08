@@ -65,6 +65,7 @@ namespace LIKAsys.Core
         private bool _showBrandDot = true;
         private bool _glowEffect = true;
         private bool _animations = true;
+        private bool _island;
         private bool _textShadow = false;
         private IconStyle _iconStyle = IconStyle.ThreeD;
         private double _iconSizeOffset = 6;
@@ -181,6 +182,13 @@ namespace LIKAsys.Core
         /// it runs on the render thread and never re-measures the window. Off means instant.
         /// </summary>
         public bool Animations { get => _animations; set => Set(ref _animations, value); }
+
+        /// <summary>
+        /// Dynamic Island behaviour: the card sits as a small black pill that cycles through
+        /// the readings on its own, and opens up when the pointer comes near. Set by the
+        /// theme, not by a checkbox, because only one theme is drawn for it.
+        /// </summary>
+        public bool Island { get => _island; set => Set(ref _island, value); }
 
         /// <summary>Soft black shadow behind every glyph - makes a background-less widget readable on any wallpaper.</summary>
         public bool TextShadow { get => _textShadow; set => Set(ref _textShadow, value); }

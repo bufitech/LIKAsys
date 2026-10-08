@@ -436,6 +436,8 @@ namespace LIKAsys.Core
             { "Kontrollo për update", "Check for updates" },
             { "Hap regjistrin", "Open the log file" },
             { "Rreth LIKAsys", "About LIKAsys" },
+            { "pilulë e zezë që rrotullon matjet dhe hapet kur i afrohesh",
+              "a black pill that rolls through the readings and opens when you come near" },
             { "Dil", "Exit" },
 
             // ---------------------------------------------------- update window

@@ -105,6 +105,26 @@
                         <TextBlock x:Name="MiniLine" FontSize="11" Margin="10,0,6,0" Visibility="Collapsed"
                                    Foreground="#FFBFD0E6" VerticalAlignment="Center"
                                    Typography.NumeralAlignment="Tabular" />
+
+                        <!-- the pill content: two labels that trade places, so a reading
+                             can slide away upward while the next one rises into its spot -->
+                        <Grid x:Name="IslandSwap" Visibility="Collapsed" Margin="9,0,4,0" Height="17"
+                              VerticalAlignment="Center" ClipToBounds="True" MinWidth="104">
+                            <TextBlock x:Name="IsleA" FontSize="12" FontWeight="Medium" TextWrapping="NoWrap"
+                                       Foreground="#FFFFFFFF" VerticalAlignment="Center"
+                                       Typography.NumeralAlignment="Tabular">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform x:Name="IsleAT" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                            <TextBlock x:Name="IsleB" FontSize="12" FontWeight="Medium" TextWrapping="NoWrap"
+                                       Foreground="#FFFFFFFF" VerticalAlignment="Center" Opacity="0"
+                                       Typography.NumeralAlignment="Tabular">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform x:Name="IsleBT" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                        </Grid>
                     </StackPanel>
 
                     <StackPanel x:Name="HeaderButtons" Grid.Column="2" Orientation="Horizontal">
