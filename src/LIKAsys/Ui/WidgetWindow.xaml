@@ -106,26 +106,37 @@
                                    Foreground="#FFBFD0E6" VerticalAlignment="Center"
                                    Typography.NumeralAlignment="Tabular" />
 
-                        <!-- the pill content: two labels that trade places, so a reading
-                             can slide away upward while the next one rises into its spot -->
-                        <Grid x:Name="IslandSwap" Visibility="Collapsed" Margin="9,0,4,0" Height="17"
-                              VerticalAlignment="Center" ClipToBounds="True" MinWidth="104">
-                            <TextBlock x:Name="IsleA" FontSize="12" FontWeight="Medium" TextWrapping="NoWrap"
-                                       Foreground="#FFFFFFFF" VerticalAlignment="Center"
-                                       Typography.NumeralAlignment="Tabular">
-                                <TextBlock.RenderTransform>
-                                    <TranslateTransform x:Name="IsleAT" />
-                                </TextBlock.RenderTransform>
-                            </TextBlock>
-                            <TextBlock x:Name="IsleB" FontSize="12" FontWeight="Medium" TextWrapping="NoWrap"
-                                       Foreground="#FFFFFFFF" VerticalAlignment="Center" Opacity="0"
-                                       Typography.NumeralAlignment="Tabular">
-                                <TextBlock.RenderTransform>
-                                    <TranslateTransform x:Name="IsleBT" />
-                                </TextBlock.RenderTransform>
-                            </TextBlock>
-                        </Grid>
                     </StackPanel>
+
+                    <!-- The pill content. The name sits on the left and the number on the
+                         right, with the gap between them, the way the iPhone puts things
+                         either side of the camera. Two layers take turns so one reading can
+                         rise away while the next one comes up into the same spot. -->
+                    <Grid x:Name="IslandSwap" Grid.Column="1" Visibility="Collapsed" Height="17"
+                          VerticalAlignment="Center" Margin="8,0,2,0" ClipToBounds="True">
+                        <Grid x:Name="IsleA">
+                            <Grid.RenderTransform>
+                                <TranslateTransform x:Name="IsleAT" />
+                            </Grid.RenderTransform>
+                            <TextBlock x:Name="IsleAL" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                       FontSize="11.5" FontWeight="SemiBold" TextWrapping="NoWrap"
+                                       Foreground="#FF9A9AA0" />
+                            <TextBlock x:Name="IsleAR" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       FontSize="12.5" FontWeight="SemiBold" TextWrapping="NoWrap"
+                                       Foreground="#FFFFFFFF" Typography.NumeralAlignment="Tabular" />
+                        </Grid>
+                        <Grid x:Name="IsleB" Opacity="0">
+                            <Grid.RenderTransform>
+                                <TranslateTransform x:Name="IsleBT" />
+                            </Grid.RenderTransform>
+                            <TextBlock x:Name="IsleBL" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                       FontSize="11.5" FontWeight="SemiBold" TextWrapping="NoWrap"
+                                       Foreground="#FF9A9AA0" />
+                            <TextBlock x:Name="IsleBR" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       FontSize="12.5" FontWeight="SemiBold" TextWrapping="NoWrap"
+                                       Foreground="#FFFFFFFF" Typography.NumeralAlignment="Tabular" />
+                        </Grid>
+                    </Grid>
 
                     <StackPanel x:Name="HeaderButtons" Grid.Column="2" Orientation="Horizontal">
                         <StackPanel.Style>

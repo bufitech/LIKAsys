@@ -1,3 +1,13 @@
+## 2.3
+
+**Dynamic Island, e rishkruar.** Versioni i parë dilte si kartelë e zezë me qoshe të rrumbullakta. Tani është kapsulë e vërtetë.
+
+- E mbyllur, widget-i është një pilulë e ngushtë me qoshe gjysmërrethore. Emri majtas, numri djathtas, me një hapësirë në mes.
+- Rritet në të dyja anët njëkohësisht, në gjerësi dhe në lartësi, me një kërcim të vogël në fund.
+- Rrezja e qosheve llogaritet në çdo kornizë si gjysma e lartësisë, prandaj mbetet kapsulë derisa kartela të bëhet e lartë.
+- Tema i çon margjinat në zero dhe e vendos widget-in lart në mes, kështu kapsula prek buzën e sipërme të ekranit.
+- Faqja ka demo të re, me buzën e ekranit, që të duket ku rri vërtet.
+
 ## 2.2
 
 **Dynamic Island.** Një temë e re te profili IT, e kopjuar nga pilula e zezë e iPhone-it.

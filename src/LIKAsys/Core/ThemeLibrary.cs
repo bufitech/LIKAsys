@@ -652,6 +652,10 @@ namespace LIKAsys.Core
 
                 s.Island = t.Island;
 
+                // the capsule belongs against the top edge of the screen, the way the
+                // iPhone one sits in the bezel, so it takes the margins down with it
+                if (t.Island) { s.MarginX = 0; s.MarginY = 0; }
+
                 if (t.Pos.HasValue) s.Position = t.Pos.Value;
             }
             finally { s.EndBatch(); }

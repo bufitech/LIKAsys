@@ -412,26 +412,32 @@ namespace LIKAsys.Ui
 
         // ================================================================ dynamic island
 
-        // The pill. It is one theme, not a mode the user has to find: "Dynamic Island" in
-        // the IT group turns it on. Closed, the card is a small black pill that rolls
-        // through the readings by itself. The pointer comes near and it opens.
+        // A copy of the pill Apple put at the top of the iPhone.
         //
-        // Opening really does change the size of the window, which normally is the one
-        // thing to avoid. It is allowed here because it lasts fourteen frames and then
-        // stops, and because the window is re-placed on every one of those frames so the
-        // pill grows from its own centre instead of sliding off to the right.
+        // Shut, it is a small black capsule: the corners are a half circle, the name of a
+        // reading sits on the left, the number on the right, and the gap in the middle is
+        // where the camera would be. It changes reading on its own every few seconds.
+        // The pointer arrives and it grows, sideways and downward at once, into a full
+        // card. The corners stay a half circle until the card is tall enough to need less.
+        //
+        // Growing really does resize the window, which is normally the one thing to avoid.
+        // It is allowed here because it lasts fourteen frames and then stops, and because
+        // the window is re-placed on every one of those frames, so the capsule grows out
+        // of its own middle instead of sliding off to one side.
 
         private bool _isleOn;            // the island theme is the one in use
-        private bool _isleOpen;          // opened up, showing every row
-        private bool _isleLocked;        // minimised: stay a pill even on hover
-        private double _isleT;           // 0 pill .. 1 open
-        private int _isleDir;            // -1 closing, 0 resting, +1 opening
-        private double _isleRowsH = -1, _isleFootH = -1, _isleWidth = -1;
+        private bool _isleOpen;          // grown into the full card
+        private bool _isleLocked;        // minimised: stay a capsule even on hover
+        private double _isleT;           // 0 capsule .. 1 card
+        private int _isleDir;            // -1 shrinking, 0 resting, +1 growing
+        private double _isleRowsH = -1, _isleFootH = -1;
+        private double _islePillW = 176, _isleOpenW = 260;
         private int _isleIndex;
         private bool _isleFlip;
         private System.Windows.Threading.DispatcherTimer _isleRoll;
 
         private const int IsleFrames = 14;
+        private const double IsleMaxRadius = 28;
 
         private bool Island => _settings != null && _settings.Island;
 
@@ -445,7 +451,7 @@ namespace LIKAsys.Ui
             return 1 + (c + 1) * u * u * u + c * u * u;
         }
 
-        /// <summary>Turns the pill behaviour on, or puts every borrowed property back.</summary>
+        /// <summary>Turns the capsule on, or puts every borrowed property back.</summary>
         private void IslandMode(bool on)
         {
             try
@@ -461,15 +467,19 @@ namespace LIKAsys.Ui
                     RowsHost.Opacity = 1;
                     FooterRow.Opacity = 1;
                     BrandText.Opacity = 1;
+                    BrandText.Visibility = Visibility.Visible;
                     IslandSwap.Visibility = Visibility.Collapsed;
                     Card.ClipToBounds = false;
+                    Card.ClearValue(WidthProperty);
                     Card.MinWidth = 150;
-                    _isleRowsH = _isleFootH = _isleWidth = -1;
+                    Card.CornerRadius = new CornerRadius(_settings.CornerRadius);
+                    _isleRowsH = _isleFootH = -1;
                     _isleOpen = false; _isleT = 0; _isleDir = 0;
                     return;
                 }
 
                 Card.ClipToBounds = true;
+                Card.MinWidth = 0;
                 IslandSwap.Visibility = Visibility.Visible;
                 MiniLine.Visibility = Visibility.Collapsed;
                 RowsHost.Visibility = Visibility.Visible;
@@ -478,7 +488,7 @@ namespace LIKAsys.Ui
                 _isleT = 0;
                 _isleDir = 0;
 
-                // the natural size has to be read while nothing is clamped
+                // the natural sizes have to be read while nothing is clamped
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     IslandMeasure();
@@ -494,38 +504,60 @@ namespace LIKAsys.Ui
         }
 
         /// <summary>
-        /// Reads how tall the rows and the footer want to be, and how wide the open card
-        /// is. The width then becomes the pill width too, so opening only moves one way.
+        /// Reads two sizes: how big the card wants to be with everything showing, and how
+        /// small the capsule is with only the dot and one reading on it. The morph runs
+        /// between exactly those two numbers.
         /// </summary>
         private void IslandMeasure()
         {
             try
             {
-                Card.MinWidth = 150;                 // let it shrink back before reading it
+                Card.ClearValue(WidthProperty);
+                Card.MinWidth = 0;
+
+                // --- open
                 RowsHost.MaxHeight = double.PositiveInfinity;
                 FooterRow.MaxHeight = double.PositiveInfinity;
                 RowsHost.Opacity = 1;
                 FooterRow.Opacity = 1;
+                BrandText.Visibility = Visibility.Visible;
                 HeaderRow.Margin = new Thickness(0, 0, 0, 8);
                 UpdateLayout();
 
                 _isleRowsH = RowsHost.ActualHeight;
                 _isleFootH = FooterRow.ActualHeight;
-                _isleWidth = Card.ActualWidth;
+                _isleOpenW = Card.ActualWidth;
 
-                if (_isleRowsH > 1 && _isleWidth > 40) Card.MinWidth = _isleWidth;
-                else { _isleRowsH = _isleFootH = -1; }     // measuring failed, never clamp
+                // --- capsule
+                RowsHost.MaxHeight = 0;
+                FooterRow.MaxHeight = 0;
+                RowsHost.Opacity = 0;
+                FooterRow.Opacity = 0;
+                BrandText.Visibility = Visibility.Collapsed;
+                HeaderRow.Margin = new Thickness(0);
+                UpdateLayout();
+
+                _islePillW = Math.Max(150, Card.ActualWidth);
+                if (_isleOpenW < _islePillW + 10) _isleOpenW = _islePillW + 10;
+
+                if (_isleRowsH <= 1) { _isleRowsH = _isleFootH = -1; }   // failed, never clamp
             }
             catch { _isleRowsH = _isleFootH = -1; }
         }
 
-        /// <summary>Puts the card at a point between pill and open. t is 0..1.</summary>
+        /// <summary>Puts the card at a point between capsule and card. t is 0..1.</summary>
         private void IslandDraw(double t)
         {
             if (!_isleOn) return;
             try
             {
-                if (_isleRowsH < 0) { RowsHost.Opacity = 1; FooterRow.Opacity = 1; return; }
+                if (_isleRowsH < 0)
+                {
+                    RowsHost.Opacity = 1; FooterRow.Opacity = 1;
+                    RowsHost.MaxHeight = double.PositiveInfinity;
+                    FooterRow.MaxHeight = double.PositiveInfinity;
+                    return;
+                }
 
                 double e = IsleEase(t);
                 double o = e < 0 ? 0 : (e > 1 ? 1 : e);
@@ -536,16 +568,26 @@ namespace LIKAsys.Ui
                 FooterRow.Opacity = o;
                 HeaderRow.Margin = new Thickness(0, 0, 0, 8 * o);
 
+                BrandText.Visibility = o > 0.02 ? Visibility.Visible : Visibility.Collapsed;
                 BrandText.Opacity = o;
                 IslandSwap.Opacity = 1 - o;
 
+                if (t >= 1) Card.ClearValue(WidthProperty);
+                else Card.Width = _islePillW + (_isleOpenW - _islePillW) * e;
+
                 UpdateLayout();
+
+                // a half circle while it is short, easing down to a soft corner once tall.
+                // This is what keeps it reading as a pill the whole way through.
+                double r = Math.Min(IsleMaxRadius, Card.ActualHeight / 2);
+                Card.CornerRadius = new CornerRadius(r);
+
                 WidgetPlacement.Apply(this, _settings);
             }
             catch { }
         }
 
-        /// <summary>Opens the pill, or lets it fall back shut.</summary>
+        /// <summary>Grows the capsule, or lets it fall back shut.</summary>
         private void IslandSet(bool open)
         {
             if (!_isleOn) return;
@@ -568,7 +610,7 @@ namespace LIKAsys.Ui
             Kick();
         }
 
-        /// <summary>One frame of the open or close morph. Returns true while it is moving.</summary>
+        /// <summary>One frame of the morph. Returns true while it is still moving.</summary>
         private bool IslandStep()
         {
             if (_isleDir == 0) return false;
@@ -579,7 +621,7 @@ namespace LIKAsys.Ui
             return _isleDir != 0;
         }
 
-        // ---- the roll: a different reading every few seconds, while the pill is shut
+        // ---- the roll: a different reading every few seconds, while it is a capsule
 
         private void IslandRollStart()
         {
@@ -589,7 +631,9 @@ namespace LIKAsys.Ui
             { Interval = TimeSpan.FromMilliseconds(2700) };
             _isleRoll.Tick += (s, e) => IslandRollOnce();
             _isleRoll.Start();
-            IslandShow(IslandText(), false);
+            string l, v;
+            IslandNext(out l, out v);
+            IslandShow(l, v, false);
         }
 
         private void IslandRollStop()
@@ -597,26 +641,57 @@ namespace LIKAsys.Ui
             try { if (_isleRoll != null) { _isleRoll.Stop(); _isleRoll = null; } } catch { }
         }
 
-        /// <summary>The next reading in the queue, written the short way.</summary>
-        private string IslandText()
+        /// <summary>Short names, because a capsule has no room for "NETWORK".</summary>
+        private static string IslandShort(string label)
         {
+            switch ((label ?? "").ToUpperInvariant())
+            {
+                case "NETWORK": return "NET";
+                case "UPTIME": return "UP";
+                case "FRAME": return "FRAME";
+                case "1% LOW": return "1% LOW";
+                default: return (label ?? "").ToUpperInvariant();
+            }
+        }
+
+        /// <summary>Moves to the next reading worth showing and hands back its two halves.</summary>
+        private void IslandNext(out string left, out string right)
+        {
+            left = "LIKAsys"; right = "";
             try
             {
-                if (_rows.Count == 0) return "LIKAsys";
                 for (int i = 0; i < _rows.Count; i++)
                 {
                     _isleIndex = (_isleIndex + 1) % _rows.Count;
-                    var r = _rows[_isleIndex];
-                    if (string.IsNullOrEmpty(r.Value) || r.Value == "--") continue;
-                    return r.Label + "  " + r.Value + (string.IsNullOrEmpty(r.Unit) ? "" : r.Unit);
+                    if (IslandAt(_isleIndex, out left, out right)) return;
                 }
             }
             catch { }
-            return "LIKAsys";
+        }
+
+        /// <summary>The two halves of one row, or false when it has nothing to say yet.</summary>
+        private bool IslandAt(int index, out string left, out string right)
+        {
+            left = "LIKAsys"; right = "";
+            if (index < 0 || index >= _rows.Count) return false;
+            var r = _rows[index];
+            if (string.IsNullOrEmpty(r.Value) || r.Value == "--") return false;
+            left = IslandShort(r.Label);
+            right = r.Value + (string.IsNullOrEmpty(r.Unit) ? "" : r.Unit);
+            return true;
+        }
+
+        private void IslandRollOnce()
+        {
+            if (!_isleOn || _isleOpen || _isleDir != 0) return;
+            if (!IsVisible) return;
+            string l, v;
+            IslandNext(out l, out v);
+            IslandShow(l, v, Motion);
         }
 
         /// <summary>
-        /// Rewrites the label that is on screen, leaving the pair alone.
+        /// Rewrites the reading that is on screen without swapping the layers.
         ///
         /// This is the one that runs every second. It must not touch opacity: once a
         /// property has been handed to an animation, a plain assignment to it is ignored,
@@ -624,37 +699,21 @@ namespace LIKAsys.Ui
         /// </summary>
         private void IslandRefresh()
         {
-            try { (_isleFlip ? IsleB : IsleA).Text = IslandCurrent(); } catch { }
-        }
-
-        /// <summary>The reading the pill is on right now, refreshed, without moving along.</summary>
-        private string IslandCurrent()
-        {
             try
             {
-                if (_isleIndex >= 0 && _isleIndex < _rows.Count)
-                {
-                    var r = _rows[_isleIndex];
-                    if (!string.IsNullOrEmpty(r.Value) && r.Value != "--")
-                        return r.Label + "  " + r.Value + (string.IsNullOrEmpty(r.Unit) ? "" : r.Unit);
-                }
+                string l, v;
+                if (!IslandAt(_isleIndex, out l, out v)) return;
+                if (_isleFlip) { IsleBL.Text = l; IsleBR.Text = v; }
+                else { IsleAL.Text = l; IsleAR.Text = v; }
             }
             catch { }
-            return "LIKAsys";
-        }
-
-        private void IslandRollOnce()
-        {
-            if (!_isleOn || _isleOpen || _isleDir != 0) return;
-            if (!IsVisible) return;
-            IslandShow(IslandText(), Motion);
         }
 
         /// <summary>
-        /// Swaps the text. The one leaving rises and fades, the one arriving comes up from
-        /// below into the same spot. Two labels take turns so neither ever has to wait.
+        /// Swaps the reading. The one leaving rises and fades, the one arriving comes up
+        /// from below into the same spot. Two layers take turns so neither has to wait.
         /// </summary>
-        private void IslandShow(string text, bool animate)
+        private void IslandShow(string left, string right, bool animate)
         {
             try
             {
@@ -663,7 +722,8 @@ namespace LIKAsys.Ui
                 var backT = _isleFlip ? IsleAT : IsleBT;
                 var frontT = _isleFlip ? IsleBT : IsleAT;
 
-                back.Text = text;
+                if (_isleFlip) { IsleAL.Text = left; IsleAR.Text = right; }
+                else { IsleBL.Text = left; IsleBR.Text = right; }
 
                 if (!animate)
                 {
