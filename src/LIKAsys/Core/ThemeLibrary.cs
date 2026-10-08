@@ -73,6 +73,7 @@ namespace LIKAsys.Core
 
         // group keys, in the order the filter chips appear
         public const string GLoja = "Lojëra";
+        public const string GIt = "IT";
         public const string GGaming = "Gaming";
         public const string GClassic = "Classic";
         public const string GGlass = "Qelq";
@@ -83,7 +84,7 @@ namespace LIKAsys.Core
         public const string GBare = "Pa sfond";
 
         public static readonly string[] GroupOrder =
-        { GLoja, GBare, GGaming, GClassic, GGlass, GMinimal, GDev, GKosova, GLight };
+        { GLoja, GIt, GBare, GGaming, GClassic, GGlass, GMinimal, GDev, GKosova, GLight };
 
         public static readonly ThemePreset[] All =
         {
@@ -211,6 +212,98 @@ namespace LIKAsys.Core
                 Font="Sitka Banner, Sitka Display, Georgia, Segoe UI",
                 Icons=IconStyle.Hairline, IconOff=3, BarStyle=BarStyle.Rounded, BarH=3, Upper=false,
                 ValueOff=2.5, LabelOff=-2, RowSpace=5, PadH=15, PadV=12,
+                ValueWeight="SemiBold", LabelWeight="Normal" },
+
+
+            // ==========================================================================
+            //  IT - the other half of the split. Eight work looks, and none of them
+            //  is another palette on the same card: the type, the icons, the bars and
+            //  the corners all move.
+            // ==========================================================================
+            new ThemePreset { Name="Server Room", Group=GIt, Note="LED-at e rackut mbi çelik të ftohtë",
+                Accent="#F5A524", Accent2="#38BDF8",
+                BgTop="#121820", BgBottom="#080B0F", Border="#55F5A524", Opacity=0.94, Radius=2,
+                BorderThickness=1.2, Text="#DCE6F0", Label="#8296AC", Detail="#5A6E82", Track="#1C2530",
+                Warn="#F5A524", Danger="#F43F5E", Glow=false, Gradient=false, ShadowAmt=0.6,
+                Font="Consolas, Lucida Console, Courier New",
+                Icons=IconStyle.Outline, IconOff=2, BarStyle=BarStyle.Segmented, BarH=5, Upper=true,
+                ValueOff=2, LabelOff=-2.5, RowSpace=3, PadH=12, PadV=9,
+                ValueWeight="Bold", LabelWeight="SemiBold" },
+
+            new ThemePreset { Name="Blueprint", Group=GIt, Note="vizatim teknik, vetëm vija të holla",
+                Accent="#7DD3FC", Accent2="#BAE6FD",
+                BgTop="#0B2545", BgBottom="#061A33", Border="#667DD3FC", Opacity=0.93, Radius=0,
+                BorderThickness=1.2, Text="#E8F4FF", Label="#8FB6D9", Detail="#5F87AC", Track="#143158",
+                Warn="#FBBF24", Danger="#FB7185", Glow=false, Gradient=false,
+                Font="Corbel, Candara, Segoe UI",
+                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Square, BarH=2, Upper=true,
+                ValueOff=2, LabelOff=-2.5, RowSpace=4, PadH=14, PadV=11,
+                ValueWeight="SemiBold", LabelWeight="Normal" },
+
+            new ThemePreset { Name="Ledger", Group=GIt, Note="fletë e bardhë zyre, jeshile tabele",
+                Accent="#217346", Accent2="#2B579A",
+                BgTop="#FFFFFF", BgBottom="#F3F4F6", Border="#1A000000", Opacity=0.96, Radius=3,
+                BorderThickness=1, Glow=false, Gradient=false, Shadow=true, ShadowAmt=0.3,
+                Text="#1F2328", Label="#5B6470", Detail="#8A929D", Track="#1A000000",
+                Warn="#B45309", Danger="#B91C1C", Colorize=false, BrandDot=false,
+                Font="Calibri, Carlito, Segoe UI",
+                Icons=IconStyle.Outline, IconOff=2, BarStyle=BarStyle.Square, BarH=3, Upper=false,
+                ValueOff=1.5, LabelOff=-2, RowSpace=5, PadH=14, PadV=11,
+                ValueWeight="Bold", LabelWeight="Normal" },
+
+            new ThemePreset { Name="Helpdesk", Group=GIt, Note="e lehtë dhe e qetë, për tavolinë pune",
+                Accent="#2563EB", Accent2="#06B6D4",
+                BgTop="#F8FAFC", BgBottom="#E9EFF7", Border="#14000000", Opacity=0.95, Radius=14,
+                BorderThickness=0, Blur=true, Glow=false, Gradient=true, Shadow=true, ShadowAmt=0.3,
+                Text="#0F172A", Label="#64748B", Detail="#94A3B8", Track="#16000000",
+                Warn="#D97706", Danger="#DC2626", Colorize=false,
+                Font="Trebuchet MS, Tahoma, Segoe UI",
+                Icons=IconStyle.ThreeD, IconOff=5, BarStyle=BarStyle.Rounded, BarH=4, Upper=false,
+                ValueOff=2, LabelOff=-2, RowSpace=6, PadH=15, PadV=12,
+                ValueWeight="Bold", LabelWeight="Medium" },
+
+            new ThemePreset { Name="Memo", Group=GIt, Note="letër e shtypur, bojë e zezë, vijë e kuqe",
+                Accent="#B91C1C", Accent2="#78716C",
+                BgTop="#FAF7F0", BgBottom="#F0EBE0", Border="#22000000", Opacity=0.96, Radius=1,
+                BorderThickness=1, Glow=false, Gradient=false, Shadow=true, ShadowAmt=0.28,
+                Text="#1A1A1A", Label="#57534E", Detail="#8C837A", Track="#1F000000",
+                Warn="#A16207", Danger="#B91C1C", Colorize=false, BrandDot=false,
+                Font="Georgia, Constantia, Cambria",
+                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Square, BarH=2, Upper=false,
+                ValueOff=1.5, LabelOff=-2, RowSpace=5, PadH=15, PadV=12,
+                ValueWeight="SemiBold", LabelWeight="Normal" },
+
+            new ThemePreset { Name="E-Ink", Group=GIt, Note="vetëm bardhë e zi, si lexuesi i librave",
+                Accent="#111111", Accent2="#57534E",
+                BgTop="#F5F5F4", BgBottom="#E7E5E4", Border="#33000000", Opacity=1, Radius=0,
+                BorderThickness=1.6, Glow=false, Gradient=false, Shadow=false,
+                Text="#111111", Label="#44403C", Detail="#78716C", Track="#26000000",
+                Warn="#44403C", Danger="#111111", Colorize=false, BrandDot=false,
+                Font="Verdana, Tahoma, Segoe UI",
+                Icons=IconStyle.Outline, IconOff=2, BarStyle=BarStyle.Square, BarH=3, Upper=false,
+                ValueOff=1, LabelOff=-2, RowSpace=5, PadH=13, PadV=10,
+                ValueWeight="Bold", LabelWeight="Normal" },
+
+            new ThemePreset { Name="Phosphor", Group=GIt, Note="ekran i vjetër me fosfor qelibar",
+                Accent="#FFB000", Accent2="#FF7A00",
+                BgTop="#0C0A06", BgBottom="#040302", Border="#55FFB000", Opacity=0.95, Radius=0,
+                BorderThickness=1.2, Glow=true, Gradient=false, TextShadow=true,
+                Text="#FFCC66", Label="#C79036", Detail="#8A6424", Track="#241A08",
+                Warn="#FFB000", Danger="#FF4D2D",
+                Font="Lucida Console, Consolas, Courier New",
+                Icons=IconStyle.Solid, IconOff=3, BarStyle=BarStyle.Segmented, BarH=4, Upper=true,
+                ValueOff=2.5, LabelOff=-2.5, RowSpace=3, PadH=12, PadV=9,
+                ValueWeight="Bold", LabelWeight="Bold" },
+
+            new ThemePreset { Name="Night Shift", Group=GIt, Note="vjollcë e butë, për natën vonë",
+                Accent="#818CF8", Accent2="#38BDF8",
+                BgTop="#1E1B33", BgBottom="#120F22", Border="#40818CF8", Opacity=0.9, Radius=10,
+                BorderThickness=1, Glow=false, Gradient=true, Shadow=true, ShadowAmt=0.5,
+                Text="#E9E7FB", Label="#9A96C4", Detail="#6D6894", Track="#2A2648",
+                Warn="#FBBF24", Danger="#FB7185",
+                Font="Candara, Calibri, Segoe UI",
+                Icons=IconStyle.ThreeD, IconOff=5, BarStyle=BarStyle.Rounded, BarH=3, Upper=false,
+                ValueOff=2, LabelOff=-2, RowSpace=5, PadH=14, PadV=11,
                 ValueWeight="SemiBold", LabelWeight="Normal" },
 
             // ==========================================================================

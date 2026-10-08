@@ -98,6 +98,11 @@ namespace LIKAsys.Ui
                 AddTheme(games, t.Name);
             if (games.DropDownItems.Count > 0) _menu.Items.Add(games);
 
+            var work = new ToolStripMenuItem(Lang.T("Tema e IT-se"));
+            foreach (var t in ThemeLibrary.All.Where(x => x.Group == ThemeLibrary.GIt))
+                AddTheme(work, t.Name);
+            if (work.DropDownItems.Count > 0) _menu.Items.Add(work);
+
             _menu.Items.Add(new ToolStripSeparator());
 
             _miPos = new ToolStripMenuItem(Lang.T("Pozicioni"));

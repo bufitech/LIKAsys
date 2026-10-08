@@ -1,3 +1,24 @@
+## 1.9
+
+**Temat u ndanë në dy: Lojëra dhe IT.** Te Cilësimet > Temat, dy grupet e para tani janë **Lojëra** dhe **IT**. Njëri për kur luan, tjetri për kur punon.
+
+**Tetë tema të reja IT.** Si te lojërat, nuk janë ngjyra të tjera mbi të njëjtën kartelë. Secila ndërron shkronjat, ikonat, shiritat dhe qoshet:
+
+- **Server Room** - LED-at e rackut mbi çelik të ftohtë. Consolas, shirita të segmentuar, qoshe 2px.
+- **Blueprint** - vizatim teknik mbi blu të thellë. Vija të holla, ikona me vijë floku, qoshe të prera.
+- **Ledger** - fletë e bardhë zyre me jeshile tabele. Calibri, shirita katrorë.
+- **Helpdesk** - e lehtë dhe e qetë. Trebuchet MS, ikona 3D, qoshe të buta 14px.
+- **Memo** - letër e shtypur, bojë e zezë, një vijë e kuqe. Georgia me serif.
+- **E-Ink** - vetëm bardhë e zi, si lexuesi i librave. Verdana, pa asnjë efekt.
+- **Phosphor** - ekran i vjetër qelibar që ende ndriçon. Lucida Console, shkëlqim dhe hije teksti.
+- **Night Shift** - vjollcë e butë për punë natën vonë. Candara, shirita të rrumbullakët.
+
+Katër prej tyre janë të ndritshme, për tavolinë me dritë. Katër të errëta.
+
+- **Ndërrim i shpejtë nga ikona afër orës:** klik i djathtë > **Tema e lojës** ose **Tema e IT-së** > zgjidh. Pa hapur cilësimet.
+- Gjithsej **61 tema** në 10 grupe.
+- Rregullim në faqen Likaapps: ngjyrat e aplikacionit shkruhen `#AARRGGBB`, kurse shfletuesi i lexon `#RRGGBBAA`, prandaj disa korniza dhe shirita dilnin me ngjyrë të gabuar në galeri.
+
 ## 1.8
 
 **Tetë tema të reja, të gjitha për lojëra.** Grupi i ri **Lojëra** te Cilësimet > Temat. Nuk janë vetëm ngjyra të tjera: secila ndërron edhe shkronjat, ikonat, shiritat dhe qoshet.
