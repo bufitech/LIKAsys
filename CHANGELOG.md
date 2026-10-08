@@ -1,3 +1,20 @@
+## 1.8
+
+**Tetë tema të reja, të gjitha për lojëra.** Grupi i ri **Lojëra** te Cilësimet > Temat. Nuk janë vetëm ngjyra të tjera: secila ndërron edhe shkronjat, ikonat, shiritat dhe qoshet.
+
+- **Night City** - verdhë neoni mbi të zezë, qoshe të prera, ikona të mbushura, shirita të segmentuar.
+- **Corpo** - e kuqe korporate, pa shkëlqim fare, shkronja të ngushta, shirita katrorë.
+- **Los Santos** - jeshile dhe perëndim dielli, ikona 3D, qoshe të buta 9px.
+- **Vice** - rozë synthwave mbi vjollcë, shkëlqim i butë, qoshe 12px.
+- **Dust** - rërë dhe blu, rreshta të ngjeshur, ikona me vijë floku. Për ata që duan vetëm numrat.
+- **Raid** - ushtarake, shkronja makine shkrimi, pa asnjë efekt.
+- **Overworld** - blloqe dhe ngjyra pikseli, shirita si kuba.
+- **Ashen** - ar i vjetër dhe shkronja me serif, pa shkronja të mëdha. E qetë, por jo e zbehtë.
+
+- **Ndërrim i shpejtë nga ikona afër orës:** klik i djathtë > **Tema e lojës** > zgjidh. Pa hapur cilësimet, pa dalë nga loja.
+- Kartela e temës tani tregon një rresht se çka bën ajo temë, jo vetëm emrin.
+- Mbrojtje e re në ndërtim: `scripts/check-themes.py` kontrollon çdo ngjyrë, çdo emër dhe çdo grup para se të dalë versioni. Një gabim shkronje te një temë nuk arrin më te ti.
+
 ## 1.7
 
 - **RREGULLIM KRITIK: aplikacioni nuk hapej fare.** Tabela e përkthimeve kishte dy çelësa të përsëritur; kjo hidhte një gabim brenda konstruktorit statik dhe LIKAsys vdiste para se të vizatonte asgjë - pa dritare, pa mesazh. Tani përsëritjet janë të padëmshme, `build.sh` e ndal ndërtimin nëse shfaqet ndonjëra, dhe çdo gabim fatal tregohet me mesazh në vend që të zhduket në heshtje.

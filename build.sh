@@ -22,6 +22,8 @@ echo "=============================================="
 # app before it draws anything. That shipped once; this stops it shipping twice.
 echo "[0/4] kontrolli i gjuhes"
 python3 "$(dirname "$0")/scripts/check-lang.py" || exit 1
+echo "[0/4] kontrolli i temave"
+python3 "$(dirname "$0")/scripts/check-themes.py" || exit 1
 
 # 1. branding assets -------------------------------------------------------
 

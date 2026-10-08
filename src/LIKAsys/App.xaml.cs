@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -107,6 +107,21 @@ namespace LIKAsys
                             _tray?.Notify("LIKAsys", Lang.T("Profili u ndryshua ne ") + Profiles.Name(p));
                         }
                         catch (Exception ex) { AppInfo.Log("ProfilePicked: " + ex.Message); }
+                    }), System.Windows.Threading.DispatcherPriority.Background);
+                };
+                _tray.ThemePicked += (s, name) =>
+                {
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        try
+                        {
+                            ThemeLibrary.Apply(ThemeLibrary.Find(name), _settings);
+                            _tray?.Rebuild();
+                            if (_settings.WidgetVisible) _widget?.Reveal();
+                            SettingsStore.Save(_settings);
+                            _tray?.Notify("LIKAsys", Lang.T("Tema u ndryshua ne ") + name);
+                        }
+                        catch (Exception ex) { AppInfo.Log("ThemePicked: " + ex.Message); }
                     }), System.Windows.Threading.DispatcherPriority.Background);
                 };
                 _tray.ToggleMinimize += (s, a) =>

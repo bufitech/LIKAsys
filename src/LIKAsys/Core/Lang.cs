@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -165,6 +165,17 @@ namespace LIKAsys.Core
             { "Vertikale", "Vertical" },
             { "Horizontale", "Horizontal" },
             { "Kompakte", "Compact" },
+            { "Lojëra", "Games" },
+            { "Tema e lojes", "Game theme" },
+            { "Tema u ndryshua ne ", "Theme changed to " },
+            { "verdhë neoni, qoshe të prera", "neon yellow, sharp corners" },
+            { "e kuqe korporate, pa shkëlqim", "corporate red, no glow" },
+            { "jeshile dhe perëndim dielli", "green and sunset orange" },
+            { "rozë synthwave, shkëlqim i butë", "synthwave pink, soft glow" },
+            { "rërë dhe blu, rreshta të ngjeshur", "sand and blue, tight rows" },
+            { "ushtarake, shkronja makine shkrimi", "military, typewriter type" },
+            { "blloqe dhe ngjyra pikseli", "blocks and pixel colours" },
+            { "ar i vjetër, shkronja me serif", "old gold, serif type" },
             { "Gaming", "Gaming" },
             { "Classic", "Classic" },
             { "Qelq", "Glass" },

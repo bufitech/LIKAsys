@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 
 namespace LIKAsys.Core
@@ -62,6 +62,9 @@ namespace LIKAsys.Core
 
         /// <summary>Set only by presets that are designed for one specific spot on the screen.</summary>
         public WidgetPosition? Pos = null;
+
+        /// <summary>Short Albanian line shown on the theme card. Goes through Lang.T.</summary>
+        public string Note = null;
     }
 
     public static class ThemeLibrary
@@ -69,6 +72,7 @@ namespace LIKAsys.Core
         public const string Default = "Midnight Glass";
 
         // group keys, in the order the filter chips appear
+        public const string GLoja = "Lojëra";
         public const string GGaming = "Gaming";
         public const string GClassic = "Classic";
         public const string GGlass = "Qelq";
@@ -79,7 +83,7 @@ namespace LIKAsys.Core
         public const string GBare = "Pa sfond";
 
         public static readonly string[] GroupOrder =
-        { GBare, GGaming, GClassic, GGlass, GMinimal, GDev, GKosova, GLight };
+        { GLoja, GBare, GGaming, GClassic, GGlass, GMinimal, GDev, GKosova, GLight };
 
         public static readonly ThemePreset[] All =
         {
@@ -123,6 +127,91 @@ namespace LIKAsys.Core
                 Icons=IconStyle.None, Bars=false, BarStyle=BarStyle.None,
                 PadH=3, PadV=2, RowSpace=0, ValueOff=2, LabelOff=-2,
                 ValueWeight="Bold", LabelWeight="Medium", Pos=WidgetPosition.TopLeft },
+
+
+            // ==========================================================================
+            //  LOJËRA - each one borrows the type, the icons and the palette of a world
+            //  people already know. They are meant to look nothing like each other.
+            // ==========================================================================
+            new ThemePreset { Name="Night City", Group=GLoja, Note="verdhë neoni, qoshe të prera",
+                Accent="#FCEE0A", Accent2="#00F0FF",
+                BgTop="#101214", BgBottom="#030405", Border="#A0FCEE0A", Opacity=0.9, Radius=0,
+                BorderThickness=1.8, Text="#FBFFE0", Label="#8FA3A8", Detail="#5D6E72", Track="#1D2124",
+                Warn="#FF9F1C", Danger="#FF003C", Glow=true, TextShadow=true, Gradient=true,
+                Font="Bahnschrift, DIN, Segoe UI", Icons=IconStyle.Solid, IconOff=7,
+                BarStyle=BarStyle.Segmented, BarH=6, Upper=true,
+                ValueOff=5, LabelOff=-3, RowSpace=4, PadH=15, PadV=11,
+                ValueWeight="Black", LabelWeight="Bold" },
+
+            new ThemePreset { Name="Corpo", Group=GLoja, Note="e kuqe korporate, pa shkëlqim",
+                Accent="#FF2B4E", Accent2="#7A0E20",
+                BgTop="#0C0C0E", BgBottom="#000000", Border="#8CFF2B4E", Opacity=0.93, Radius=0,
+                BorderThickness=2, Text="#F2F3F5", Label="#8E9298", Detail="#5C6066", Track="#1A1B1E",
+                Warn="#FF7A1A", Danger="#FF2B4E", Glow=false, Gradient=false, ShadowAmt=0.75,
+                Font="Bahnschrift SemiBold Condensed, Bahnschrift Condensed, Bahnschrift, Segoe UI",
+                Icons=IconStyle.Outline, IconOff=4, BarStyle=BarStyle.Square, BarH=4, Upper=true,
+                ValueOff=4, LabelOff=-3, RowSpace=3.5, PadH=14, PadV=10,
+                ValueWeight="Bold", LabelWeight="SemiBold" },
+
+            new ThemePreset { Name="Los Santos", Group=GLoja, Note="jeshile dhe perëndim dielli",
+                Accent="#59B847", Accent2="#F2A33C",
+                BgTop="#121719", BgBottom="#06090A", Border="#5559B847", Opacity=0.88, Radius=9,
+                BorderThickness=1.2, Text="#F4F7F2", Label="#9BB09A", Detail="#6A7F6A", Track="#1A2320",
+                Warn="#F2A33C", Danger="#E0466E", Glow=false, Gradient=true, ShadowAmt=0.7,
+                Font="Franklin Gothic Medium, Franklin Gothic, Segoe UI",
+                Icons=IconStyle.ThreeD, IconOff=6, BarStyle=BarStyle.Rounded, BarH=4, Upper=true,
+                ValueOff=4, LabelOff=-3, RowSpace=4, PadH=14, PadV=11,
+                ValueWeight="Bold", LabelWeight="SemiBold" },
+
+            new ThemePreset { Name="Vice", Group=GLoja, Note="rozë synthwave, shkëlqim i butë",
+                Accent="#FF2E9A", Accent2="#00E0FF",
+                BgTop="#231046", BgBottom="#0B0418", Border="#90FF2E9A", Opacity=0.87, Radius=12,
+                BorderThickness=1.4, Text="#FFEAF7", Label="#B49AD6", Detail="#7E6AA0", Track="#2E1555",
+                Warn="#FFC247", Danger="#FF3B5C", Glow=true, TextShadow=true, Gradient=true,
+                Font="Bahnschrift Light, Bahnschrift, Segoe UI",
+                Icons=IconStyle.Outline, IconOff=5, BarStyle=BarStyle.Rounded, BarH=5, Upper=true,
+                ValueOff=4.5, LabelOff=-3, RowSpace=4.5, PadH=15, PadV=12,
+                ValueWeight="Black", LabelWeight="Medium" },
+
+            new ThemePreset { Name="Dust", Group=GLoja, Note="rërë dhe blu, rreshta të ngjeshur",
+                Accent="#E8A33C", Accent2="#4B9CD3",
+                BgTop="#1A1C20", BgBottom="#0D0F12", Border="#66E8A33C", Opacity=0.94, Radius=2,
+                BorderThickness=1.2, Text="#EDE7DB", Label="#A49C8E", Detail="#726B5F", Track="#262A30",
+                Warn="#E0B050", Danger="#D4452F", Glow=false, Gradient=false, ShadowAmt=0.55,
+                Font="Bahnschrift SemiCondensed, Bahnschrift, Segoe UI",
+                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Square, BarH=3, Upper=true,
+                ValueOff=2.5, LabelOff=-2.5, RowSpace=2.5, PadH=12, PadV=9,
+                ValueWeight="Bold", LabelWeight="SemiBold" },
+
+            new ThemePreset { Name="Raid", Group=GLoja, Note="ushtarake, shkronja makine shkrimi",
+                Accent="#C8A85A", Accent2="#6E7A4F",
+                BgTop="#1B1D17", BgBottom="#0C0D09", Border="#45C8A85A", Opacity=0.95, Radius=1,
+                BorderThickness=1.2, Text="#DED9C5", Label="#8E8A74", Detail="#62604E", Track="#2A2C20",
+                Warn="#D8A531", Danger="#C0392B", Glow=false, Gradient=false, ShadowAmt=0.6,
+                Font="Consolas, Lucida Console, Courier New",
+                Icons=IconStyle.Outline, IconOff=1, BarStyle=BarStyle.Square, BarH=3, Upper=true,
+                ValueOff=1.5, LabelOff=-2.5, RowSpace=2, PadH=11, PadV=8,
+                ValueWeight="SemiBold", LabelWeight="Medium" },
+
+            new ThemePreset { Name="Overworld", Group=GLoja, Note="blloqe dhe ngjyra pikseli",
+                Accent="#5FBF4A", Accent2="#8C6239",
+                BgTop="#303030", BgBottom="#1B1B1B", Border="#705FBF4A", Opacity=0.92, Radius=0,
+                BorderThickness=2, Text="#ECECEC", Label="#A8A8A8", Detail="#7A7A7A", Track="#3E3E3E",
+                Warn="#E0B33A", Danger="#C7452F", Glow=false, Gradient=false, TextShadow=true,
+                Font="Lucida Console, Consolas, Courier New",
+                Icons=IconStyle.Solid, IconOff=4, BarStyle=BarStyle.Segmented, BarH=6, Upper=true,
+                ValueOff=3, LabelOff=-3, RowSpace=3.5, PadH=13, PadV=10,
+                ValueWeight="Bold", LabelWeight="Bold" },
+
+            new ThemePreset { Name="Ashen", Group=GLoja, Note="ar i vjetër, shkronja me serif",
+                Accent="#C9A227", Accent2="#8A6F1E",
+                BgTop="#17140F", BgBottom="#0A0908", Border="#55C9A227", Opacity=0.91, Radius=4,
+                BorderThickness=1.2, Text="#EFE6CF", Label="#A3977A", Detail="#726A55", Track="#241F17",
+                Warn="#D9A441", Danger="#A8321F", Glow=true, Gradient=false, ShadowAmt=0.8,
+                Font="Sitka Banner, Sitka Display, Georgia, Segoe UI",
+                Icons=IconStyle.Hairline, IconOff=3, BarStyle=BarStyle.Rounded, BarH=3, Upper=false,
+                ValueOff=2.5, LabelOff=-2, RowSpace=5, PadH=15, PadV=12,
+                ValueWeight="SemiBold", LabelWeight="Normal" },
 
             // ==========================================================================
             //  GAMING - loud, segmented bars, uppercase labels, oversized numbers
@@ -384,6 +473,7 @@ namespace LIKAsys.Core
         public static string Describe(ThemePreset t)
         {
             if (t == null) return "";
+            if (!string.IsNullOrWhiteSpace(t.Note)) return Lang.T(t.Note);
             if (t.Opacity <= 0.001 && t.BorderThickness <= 0)
                 return Lang.IsEnglish ? "no background at all" : "fare pa sfond";
             if (t.Icons == IconStyle.None && !t.Bars)

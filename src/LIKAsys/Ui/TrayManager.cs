@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
@@ -31,6 +32,7 @@ namespace LIKAsys.Ui
         public event EventHandler ToggleWidget;
         public event EventHandler ToggleMinimize;
         public event EventHandler<UiProfile> ProfilePicked;
+        public event EventHandler<string> ThemePicked;
         public event EventHandler OpenSettings;
         public event EventHandler CheckUpdates;
         public event EventHandler OpenLog;
@@ -88,6 +90,14 @@ namespace LIKAsys.Ui
             AddProfile(prof, "Gaming", UiProfile.Gaming);
             AddProfile(prof, "IT", UiProfile.It);
             _menu.Items.Add(prof);
+
+            // the game looks are one right-click away - no settings window in the middle
+            // of a match, which is the only time anyone actually wants to change them.
+            var games = new ToolStripMenuItem(Lang.T("Tema e lojes"));
+            foreach (var t in ThemeLibrary.All.Where(x => x.Group == ThemeLibrary.GLoja))
+                AddTheme(games, t.Name);
+            if (games.DropDownItems.Count > 0) _menu.Items.Add(games);
+
             _menu.Items.Add(new ToolStripSeparator());
 
             _miPos = new ToolStripMenuItem(Lang.T("Pozicioni"));
@@ -153,6 +163,13 @@ namespace LIKAsys.Ui
         {
             var mi = new ToolStripMenuItem(text, null, (s, e) => ProfilePicked?.Invoke(this, p))
             { Checked = _settings.Profile == p };
+            parent.DropDownItems.Add(mi);
+        }
+
+        private void AddTheme(ToolStripMenuItem parent, string name)
+        {
+            var mi = new ToolStripMenuItem(name, null, (s, e) => ThemePicked?.Invoke(this, name))
+            { Checked = string.Equals(_settings.ThemeName, name, StringComparison.OrdinalIgnoreCase) };
             parent.DropDownItems.Add(mi);
         }
 
