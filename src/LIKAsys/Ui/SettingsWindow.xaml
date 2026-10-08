@@ -1,0 +1,486 @@
+<Window x:Class="LIKAsys.Ui.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="LIKAsys - Cilesimet" Width="892" Height="668"
+        WindowStyle="None" AllowsTransparency="True" Background="{x:Null}"
+        ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="True"
+        TextOptions.TextFormattingMode="Display" FontFamily="Segoe UI" UseLayoutRounding="True">
+
+    <Grid Margin="14">
+        <Border CornerRadius="16" Background="#FF0A0D14" BorderBrush="#26FFFFFF" BorderThickness="1">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="28" ShadowDepth="6" Direction="270" Opacity="0.7" Color="Black" />
+            </Border.Effect>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="58" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- ===== title bar ===== -->
+                <Grid Grid.Row="0" Background="Transparent" MouseLeftButtonDown="Title_Drag">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center">
+                        <Image Source="{StaticResource LogoImage}" Width="24" Height="24" Margin="0,0,11,0"
+                               RenderOptions.BitmapScalingMode="HighQuality" />
+                        <TextBlock Text="LIKAsys" Style="{StaticResource H1}" VerticalAlignment="Center" />
+                        <TextBlock Text="Cilesimet" FontSize="13" Foreground="#FF5D6E85" Margin="10,0,0,0" VerticalAlignment="Center" />
+                        <Border Background="#FF131A26" CornerRadius="6" Padding="8,3" Margin="14,0,0,0" VerticalAlignment="Center">
+                            <TextBlock x:Name="ThemeBadge" Text="Midnight Glass" FontSize="11" Foreground="{DynamicResource Accent}" />
+                        </Border>
+                    </StackPanel>
+
+                    <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="34" Height="34"
+                            Margin="0,0,14,0" Click="Close_Click" ToolTip="Mbyll">
+                        <Path Data="{StaticResource IconClose}" Stroke="#FF93A6BE" StrokeThickness="1.7"
+                              Width="15" Height="15" Stretch="Uniform" />
+                    </Button>
+                </Grid>
+
+                <!-- ===== body ===== -->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="196" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Margin="14,0,8,14">
+                        <RadioButton x:Name="TabThemes" Style="{StaticResource SideTab}" Content="Temat" IsChecked="True"
+                                     Tag="PanelThemes" Checked="Tab_Checked" GroupName="tabs" />
+                        <RadioButton Style="{StaticResource SideTab}" Content="Ngjyrat" Tag="PanelColors" Checked="Tab_Checked" GroupName="tabs" />
+                        <RadioButton Style="{StaticResource SideTab}" Content="Pamja e kartelës" Tag="PanelLook" Checked="Tab_Checked" GroupName="tabs" />
+                        <RadioButton Style="{StaticResource SideTab}" Content="Fonti dhe teksti" Tag="PanelFont" Checked="Tab_Checked" GroupName="tabs" />
+                        <RadioButton Style="{StaticResource SideTab}" Content="Pozicioni" Tag="PanelPos" Checked="Tab_Checked" GroupName="tabs" />
+                        <RadioButton Style="{StaticResource SideTab}" Content="Metrikat" Tag="PanelMetrics" Checked="Tab_Checked" GroupName="tabs" />
+                        <RadioButton Style="{StaticResource SideTab}" Content="Sistemi dhe update" Tag="PanelSystem" Checked="Tab_Checked" GroupName="tabs" />
+                        <RadioButton Style="{StaticResource SideTab}" Content="Gjuha" Tag="PanelLang" Checked="Tab_Checked" GroupName="tabs" />
+                        <RadioButton Style="{StaticResource SideTab}" Content="Rreth" Tag="PanelAbout" Checked="Tab_Checked" GroupName="tabs" />
+
+                        <Border Height="1" Background="#14FFFFFF" Margin="10,14,10,12" />
+                        <Button Style="{StaticResource GhostButton}" Content="Rikthe cilesimet" Click="Reset_Click" Margin="10,0" />
+                        <TextBlock Style="{StaticResource Caption}" Margin="12,12,10,0" TextWrapping="Wrap"
+                                   Text="Çdo ndryshim ruhet vetvetiu dhe shfaqet menjëherë në widget." />
+                    </StackPanel>
+
+                    <Border Grid.Column="1" Background="#FF0E131D" CornerRadius="12" Margin="0,0,14,14"
+                            BorderBrush="#14FFFFFF" BorderThickness="1">
+                        <ScrollViewer x:Name="Scroller" VerticalScrollBarVisibility="Auto" Padding="22,18,16,18">
+                            <Grid>
+
+                                <!-- ======================= TEMAT ======================= -->
+                                <StackPanel x:Name="PanelThemes">
+                                    <TextBlock Style="{StaticResource H2}" Text="ZGJIDH NJË TEMË" />
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,0,0,12"
+                                               Text="Secili grup ka vetë karakterin e vet: Gaming është agresiv me shirita të segmentuar, Classic është vetëm shkrim dhe numra. Klikimi e ndryshon widget-in menjëherë." />
+                                    <WrapPanel x:Name="GroupFilter" Margin="0,0,0,10" />
+                                    <StackPanel x:Name="LayoutQuick" Orientation="Horizontal" Margin="0,0,0,14">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Renditja e widget-it"
+                                                   VerticalAlignment="Center" Margin="0,0,12,0" />
+                                    </StackPanel>
+                                    <WrapPanel x:Name="ThemeHost" />
+                                </StackPanel>
+
+                                <!-- ======================= NGJYRAT ======================= -->
+                                <StackPanel x:Name="PanelColors" Visibility="Collapsed">
+                                    <TextBlock Style="{StaticResource H2}" Text="NGJYRAT E WIDGET-IT" />
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,0,0,12"
+                                               Text="Shkruaj kodin HEX ose kliko katrorin për paletën e plotë të Windows-it." />
+                                    <StackPanel x:Name="ColorHost" />
+
+                                    <TextBlock Style="{StaticResource H2}" Text="SJELLJA E NGJYRAVE" Margin="0,18,0,8" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Ngjyros sipas ngarkesës (portokalli mbi 75%, kuqe mbi 90%)"
+                                              IsChecked="{Binding ColorizeByLoad, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Gradient midis dy ngjyrave kryesore (ikona dhe korniza)"
+                                              IsChecked="{Binding AccentGradient, Mode=TwoWay}" />
+                                </StackPanel>
+
+                                <!-- ======================= PAMJA ======================= -->
+                                <StackPanel x:Name="PanelLook" Visibility="Collapsed">
+                                    <TextBlock Style="{StaticResource H2}" Text="QELQ DHE SFOND" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Blur në sfond (akrilik - sfondi pas widget-it turbullohet)"
+                                              IsChecked="{Binding Blur, Mode=TwoWay}" />
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Tejdukshmëria" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="0.05" Maximum="1.0" TickFrequency="0.01"
+                                                IsSnapToTickEnabled="True" Value="{Binding BackgroundOpacity, Mode=TwoWay, Delay=60}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding BackgroundOpacity, StringFormat={}{0:P0}}" />
+                                    </Grid>
+                                    <CheckBox Style="{StaticResource Switch}" Content="Hije poshtë kartelës" IsChecked="{Binding ShadowEnabled, Mode=TwoWay}" />
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Forca e hijes" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="0" Maximum="1" TickFrequency="0.05"
+                                                IsSnapToTickEnabled="True" Value="{Binding ShadowStrength, Mode=TwoWay, Delay=60}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding ShadowStrength, StringFormat={}{0:P0}}" />
+                                    </Grid>
+
+                                    <TextBlock Style="{StaticResource H2}" Text="FORMA" Margin="0,16,0,8" />
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Rrumbullakimi i cepave" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="0" Maximum="30" TickFrequency="1"
+                                                IsSnapToTickEnabled="True" Value="{Binding CornerRadius, Mode=TwoWay, Delay=60}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding CornerRadius, StringFormat={}{0:0} px}" />
+                                    </Grid>
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Trashësia e kornizës" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="0" Maximum="4" TickFrequency="0.5"
+                                                IsSnapToTickEnabled="True" Value="{Binding BorderThickness, Mode=TwoWay, Delay=60}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding BorderThickness, StringFormat={}{0:0.#} px}" />
+                                    </Grid>
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Përmasa" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="0.6" Maximum="2.5" TickFrequency="0.05"
+                                                IsSnapToTickEnabled="True" Value="{Binding Scale, Mode=TwoWay, Delay=60}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding Scale, StringFormat={}{0:0.00}x}" />
+                                    </Grid>
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Hapësira anash" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="2" Maximum="40" TickFrequency="1"
+                                                IsSnapToTickEnabled="True" Value="{Binding PaddingH, Mode=TwoWay, Delay=60}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding PaddingH, StringFormat={}{0:0} px}" />
+                                    </Grid>
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Hapësira lart/poshtë" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="2" Maximum="40" TickFrequency="1"
+                                                IsSnapToTickEnabled="True" Value="{Binding PaddingV, Mode=TwoWay, Delay=60}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding PaddingV, StringFormat={}{0:0} px}" />
+                                    </Grid>
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Largësia mes rreshtave" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="0" Maximum="16" TickFrequency="0.5"
+                                                IsSnapToTickEnabled="True" Value="{Binding RowSpacing, Mode=TwoWay, Delay=60}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding RowSpacing, StringFormat={}{0:0.#} px}" />
+                                    </Grid>
+
+                                    <TextBlock Style="{StaticResource H2}" Text="IKONAT" Margin="0,16,0,8" />
+                                    <Grid Margin="0,2,0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Stili i ikonave" />
+                                        <ComboBox x:Name="IconCombo" Grid.Column="1" Style="{StaticResource Combo}"
+                                                  SelectionChanged="IconCombo_Changed" Width="320" HorizontalAlignment="Left" />
+                                    </Grid>
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Madhësia e ikonave" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="-2" Maximum="22" TickFrequency="1"
+                                                IsSnapToTickEnabled="True" Value="{Binding IconSizeOffset, Mode=TwoWay, Delay=60}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding IconSizeOffset, StringFormat={}{0:+0;-0;0}}" />
+                                    </Grid>
+                                    <CheckBox Style="{StaticResource Switch}" Content="Efekt ndriçimi (glow)" IsChecked="{Binding GlowEffect, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Hije pas shkrimit (lexohet mbi çdo sfond)" IsChecked="{Binding TextShadow, Mode=TwoWay}" />
+
+                                    <TextBlock Style="{StaticResource H2}" Text="SHIRITAT DHE RENDITJA" Margin="0,16,0,8" />
+                                    <Grid Margin="0,2,0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Stili i shiritave" />
+                                        <ComboBox x:Name="BarCombo" Grid.Column="1" Style="{StaticResource Combo}"
+                                                  SelectionChanged="BarCombo_Changed" Width="320" HorizontalAlignment="Left" />
+                                    </Grid>
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Trashësia e shiritit" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="1" Maximum="14" TickFrequency="0.5"
+                                                IsSnapToTickEnabled="True" Value="{Binding BarHeight, Mode=TwoWay, Delay=60}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding BarHeight, StringFormat={}{0:0.#} px}" />
+                                    </Grid>
+                                    <Grid Margin="0,2,0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Renditja" />
+                                        <ComboBox x:Name="LayoutCombo" Grid.Column="1" Style="{StaticResource Combo}"
+                                                  SelectionChanged="LayoutCombo_Changed" Width="320" HorizontalAlignment="Left" />
+                                    </Grid>
+                                    <CheckBox Style="{StaticResource Switch}" Content="Shfaq shiritat e ngarkesës" IsChecked="{Binding ShowBars, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource SwitchLocked}" Content="Shfaq kreun me emrin LIKAsys" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Shfaq pikën ndriçuese te kreu" IsChecked="{Binding ShowBrandDot, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource SwitchLocked}" Content="Shfaq fundin 'Made in Kosovo'" />
+                                    <Border Background="#14FFFFFF" CornerRadius="8" Padding="12,9" Margin="0,8,0,0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="{StaticResource IconHeart}" Fill="#FFFF4D6A" Width="12" Height="12"
+                                                  Stretch="Uniform" Margin="0,0,9,0" VerticalAlignment="Center" />
+                                            <TextBlock Style="{StaticResource Caption}" VerticalAlignment="Center" TextWrapping="Wrap"
+                                                       Text="Emri LIKAsys dhe 'Made in Kosovo' rrinë gjithmonë të ndezura — janë pjesë e identitetit, jo cilësim." />
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- ======================= FONTI ======================= -->
+                                <StackPanel x:Name="PanelFont" Visibility="Collapsed">
+                                    <TextBlock Style="{StaticResource H2}" Text="FONTI" />
+                                    <Grid Margin="0,2,0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Lloji i fontit" />
+                                        <ComboBox x:Name="FontCombo" Grid.Column="1" Style="{StaticResource Combo}"
+                                                  SelectionChanged="FontCombo_Changed" Width="320" HorizontalAlignment="Left" />
+                                    </Grid>
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Madhësia bazë" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="8" Maximum="34" TickFrequency="0.5"
+                                                IsSnapToTickEnabled="True" Value="{Binding FontSize, Mode=TwoWay, Delay=60}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding FontSize, StringFormat={}{0:0.#} px}" />
+                                    </Grid>
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Vlerat më të mëdha" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="-4" Maximum="12" TickFrequency="0.5"
+                                                IsSnapToTickEnabled="True" Value="{Binding ValueSizeOffset, Mode=TwoWay, Delay=60}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding ValueSizeOffset, StringFormat={}{0:+0.#;-0.#;0}}" />
+                                    </Grid>
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Etiketat më të vogla" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="-6" Maximum="4" TickFrequency="0.5"
+                                                IsSnapToTickEnabled="True" Value="{Binding LabelSizeOffset, Mode=TwoWay, Delay=60}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding LabelSizeOffset, StringFormat={}{0:+0.#;-0.#;0}}" />
+                                    </Grid>
+
+                                    <TextBlock Style="{StaticResource H2}" Text="TRASHËSIA" Margin="0,16,0,8" />
+                                    <Grid Margin="0,2,0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Vlerat (numrat)" />
+                                        <ComboBox x:Name="ValueWeightCombo" Grid.Column="1" Style="{StaticResource Combo}"
+                                                  SelectionChanged="ValueWeight_Changed" Width="320" HorizontalAlignment="Left" />
+                                    </Grid>
+                                    <Grid Margin="0,2,0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Etiketat (CPU, GPU...)" />
+                                        <ComboBox x:Name="LabelWeightCombo" Grid.Column="1" Style="{StaticResource Combo}"
+                                                  SelectionChanged="LabelWeight_Changed" Width="320" HorizontalAlignment="Left" />
+                                    </Grid>
+
+                                    <TextBlock Style="{StaticResource H2}" Text="FORMATI" Margin="0,16,0,8" />
+                                    <Grid Margin="0,2,0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Shifra pas presjes" />
+                                        <ComboBox x:Name="DecimalsCombo" Grid.Column="1" Style="{StaticResource Combo}"
+                                                  SelectionChanged="Decimals_Changed" Width="320" HorizontalAlignment="Left" />
+                                    </Grid>
+                                    <CheckBox Style="{StaticResource Switch}" Content="Etiketat me shkronja të mëdha (CPU / cpu)" IsChecked="{Binding UpperCaseLabels, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Shfaq njësitë (%, GB, FPS)" IsChecked="{Binding ShowUnits, Mode=TwoWay}" />
+                                </StackPanel>
+
+                                <!-- ======================= POZICIONI ======================= -->
+                                <StackPanel x:Name="PanelPos" Visibility="Collapsed">
+                                    <TextBlock Style="{StaticResource H2}" Text="VENDI NË EKRAN" />
+                                    <UniformGrid x:Name="PosGrid" Rows="3" Columns="3" HorizontalAlignment="Left" Margin="0,4,0,14">
+                                        <RadioButton Style="{StaticResource PosButton}" GroupName="pos" Tag="TopLeft" HorizontalContentAlignment="Left" VerticalContentAlignment="Top" Checked="Pos_Checked" />
+                                        <RadioButton Style="{StaticResource PosButton}" GroupName="pos" Tag="TopCenter" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Checked="Pos_Checked" />
+                                        <RadioButton Style="{StaticResource PosButton}" GroupName="pos" Tag="TopRight" HorizontalContentAlignment="Right" VerticalContentAlignment="Top" Checked="Pos_Checked" />
+                                        <RadioButton Style="{StaticResource PosButton}" GroupName="pos" Tag="MiddleLeft" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Checked="Pos_Checked" />
+                                        <RadioButton Style="{StaticResource PosButton}" GroupName="pos" Tag="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Checked="Pos_Checked" />
+                                        <RadioButton Style="{StaticResource PosButton}" GroupName="pos" Tag="MiddleRight" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Checked="Pos_Checked" />
+                                        <RadioButton Style="{StaticResource PosButton}" GroupName="pos" Tag="BottomLeft" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" Checked="Pos_Checked" />
+                                        <RadioButton Style="{StaticResource PosButton}" GroupName="pos" Tag="BottomCenter" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" Checked="Pos_Checked" />
+                                        <RadioButton Style="{StaticResource PosButton}" GroupName="pos" Tag="BottomRight" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Checked="Pos_Checked" />
+                                    </UniformGrid>
+
+                                    <Grid Margin="0,2,0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Monitori" />
+                                        <ComboBox x:Name="MonitorCombo" Grid.Column="1" Style="{StaticResource Combo}"
+                                                  SelectionChanged="MonitorCombo_Changed" Width="320" HorizontalAlignment="Left" />
+                                    </Grid>
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Largësia horizontale" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="0" Maximum="300" TickFrequency="1"
+                                                IsSnapToTickEnabled="True" Value="{Binding MarginX, Mode=TwoWay, Delay=60}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding MarginX, StringFormat={}{0} px}" />
+                                    </Grid>
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Largësia vertikale" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="0" Maximum="300" TickFrequency="1"
+                                                IsSnapToTickEnabled="True" Value="{Binding MarginY, Mode=TwoWay, Delay=60}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding MarginY, StringFormat={}{0} px}" />
+                                    </Grid>
+
+                                    <TextBlock Style="{StaticResource H2}" Text="SJELLJA" Margin="0,16,0,8" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Gjithmonë sipër të gjitha dritareve" IsChecked="{Binding AlwaysOnTop, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Kap qoshet automatikisht kur e tërheq" IsChecked="{Binding SnapToCorners, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Blloko pozicionin (nuk lëvizet me mouse)" IsChecked="{Binding Locked, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Kalo klikimet përtej (click-through)" IsChecked="{Binding ClickThrough, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Shfaqe vetëm gjatë lojës (fshihet në desktop)" IsChecked="{Binding ShowOnlyInGame, Mode=TwoWay}" />
+                                </StackPanel>
+
+                                <!-- ======================= METRIKAT ======================= -->
+                                <StackPanel x:Name="PanelMetrics" Visibility="Collapsed">
+                                    <TextBlock Style="{StaticResource H2}" Text="ÇFARË TË SHFAQET" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="CPU - përqindja e përdorimit" IsChecked="{Binding ShowCpu, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="CPU - temperatura" IsChecked="{Binding ShowCpuTemp, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="CPU - shpejtësia (GHz)" IsChecked="{Binding ShowCpuClock, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="GPU - përqindja e përdorimit" IsChecked="{Binding ShowGpu, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="GPU - temperatura" IsChecked="{Binding ShowGpuTemp, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="VRAM - memoria e kartës grafike" IsChecked="{Binding ShowVram, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="RAM - memoria e sistemit" IsChecked="{Binding ShowRam, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="FPS - kuadro në sekondë" IsChecked="{Binding ShowFps, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="FPS - shfaq emrin e lojës" IsChecked="{Binding ShowFpsApp, Mode=TwoWay}" />
+
+                                    <CheckBox Style="{StaticResource Switch}" Content="1% LOW - ngecjet (kërkon lojë aktive)" IsChecked="{Binding ShowFpsLow, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="FRAME - koha e një kuadri në ms" IsChecked="{Binding ShowFrameTime, Mode=TwoWay}" />
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0" TextWrapping="Wrap"
+                                               Text="1% LOW tregon sa bien kuadrot në momentet më të këqija. Sa më afër FPS-së mesatare, aq më e qetë loja." />
+
+                                    <TextBlock Style="{StaticResource H2}" Text="RRJETI" Margin="0,16,0,8" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="NET - shpejtësia e shkarkimit dhe ngarkimit" IsChecked="{Binding ShowNet, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="PING - koha e përgjigjes së rrjetit" IsChecked="{Binding ShowPing, Mode=TwoWay}" />
+                                    <Grid Margin="0,6,0,2">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Hosti për ping" />
+                                        <TextBox Grid.Column="1" Style="{StaticResource HexBox}" Width="180" HorizontalAlignment="Left"
+                                                 Text="{Binding PingHost, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                                    </Grid>
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0" TextWrapping="Wrap"
+                                               Text="Matet çdo 5 sekonda, në sfond. Shkruaj 1.1.1.1, 8.8.8.8 ose adresën e serverit tënd." />
+
+                                    <TextBlock Style="{StaticResource H2}" Text="NJËSITË DHE MATJA" Margin="0,16,0,8" />
+                                    <Grid Margin="0,2,0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Temperatura" />
+                                        <ComboBox x:Name="TempCombo" Grid.Column="1" Style="{StaticResource Combo}"
+                                                  SelectionChanged="Temp_Changed" Width="320" HorizontalAlignment="Left" />
+                                    </Grid>
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="76" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Rifreskimi" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="250" Maximum="3000" TickFrequency="50"
+                                                IsSnapToTickEnabled="True" Value="{Binding RefreshMs, Mode=TwoWay, Delay=120}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding RefreshMs, StringFormat={}{0} ms}" />
+                                    </Grid>
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="76" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Shiriti i FPS deri në" />
+                                        <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="0" Maximum="500" TickFrequency="10"
+                                                IsSnapToTickEnabled="True" Value="{Binding FpsBarMax, Mode=TwoWay, Delay=120}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
+                                                   Text="{Binding FpsBarMax, StringFormat={}{0} fps}" />
+                                    </Grid>
+                                    <TextBlock Style="{StaticResource Caption}" Text="0 = automatik (përshtatet me FPS-në më të lartë të parë)." Margin="0,0,0,8" />
+
+                                    <CheckBox Style="{StaticResource Switch}" Content="Sensorët e avancuar (temperatura, GHz)" IsChecked="{Binding AdvancedSensors, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Matja e FPS-së në lojëra" IsChecked="{Binding FpsEnabled, Mode=TwoWay}" />
+
+                                    <Border Background="#FF131A26" CornerRadius="10" Padding="14,12" Margin="0,14,0,0"
+                                            BorderBrush="#14FFFFFF" BorderThickness="1">
+                                        <StackPanel>
+                                            <TextBlock x:Name="FpsStatus" Style="{StaticResource Caption}" />
+                                            <TextBlock x:Name="SensorStatus" Style="{StaticResource Caption}" Margin="0,6,0,0" />
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- ======================= SISTEMI ======================= -->
+                                <StackPanel x:Name="PanelSystem" Visibility="Collapsed">
+                                    <TextBlock Style="{StaticResource H2}" Text="NISJA" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Nis bashkë me Windows (pa dritare UAC)"
+                                              IsChecked="{Binding StartWithWindows, Mode=TwoWay}" />
+
+                                    <TextBlock Style="{StaticResource H2}" Text="IKONA NË TRAY" Margin="0,18,0,8" />
+                                    <Grid Margin="0,2,0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Çfarë vizaton ikona" />
+                                        <ComboBox x:Name="TrayIconCombo" Grid.Column="1" Style="{StaticResource Combo}"
+                                                  SelectionChanged="TrayIcon_Changed" Width="320" HorizontalAlignment="Left" />
+                                    </Grid>
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0" TextWrapping="Wrap"
+                                               Text="Numri vizatohet direkt mbi ikonën afër orës - lexohet edhe me widget-in e fshehur, pa zënë asnjë piksel." />
+
+                                    <TextBlock Style="{StaticResource H2}" Text="PËRDITËSIMET" Margin="0,18,0,8" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Kontrollo automatikisht për versione të reja"
+                                              IsChecked="{Binding AutoCheckUpdates, Mode=TwoWay}" />
+
+                                    <Border Background="#FF131A26" CornerRadius="10" Padding="16,14" Margin="0,12,0,0"
+                                            BorderBrush="#14FFFFFF" BorderThickness="1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                <TextBlock x:Name="VersionLine" Style="{StaticResource H2}" Margin="0" Text="LIKAsys v1.0.0" />
+                                                <TextBlock x:Name="UpdateStatus" Style="{StaticResource Caption}" Margin="0,4,0,0"
+                                                           Text="Përditësimet merren direkt nga serveri i LIKAsys." />
+                                            </StackPanel>
+                                            <Button x:Name="CheckBtn" Grid.Column="1" Style="{StaticResource AccentButton}"
+                                                    Content="Kontrollo tani" Click="Check_Click" VerticalAlignment="Center" />
+                                        </Grid>
+                                    </Border>
+
+                                    <TextBlock Style="{StaticResource H2}" Text="MIRËMBAJTJE" Margin="0,18,0,8" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Style="{StaticResource GhostButton}" Content="Hap dosjen e cilësimeve" Click="OpenData_Click" Margin="0,0,10,0" />
+                                        <Button Style="{StaticResource GhostButton}" Content="Rikthe cilësimet fillestare" Click="Reset_Click" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <!-- ======================= GJUHA ======================= -->
+                                <StackPanel x:Name="PanelLang" Visibility="Collapsed">
+                                    <TextBlock Style="{StaticResource H2}" Text="GJUHA E PROGRAMIT" />
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,0,0,14" TextWrapping="Wrap"
+                                               Text="Ndryshimi zbatohet menjëherë - nuk duhet rinisur programi. CPU, GPU, RAM dhe FPS mbeten njësoj në të dyja gjuhët." />
+                                    <StackPanel x:Name="LangHost" />
+                                </StackPanel>
+
+                                <!-- ======================= RRETH ======================= -->
+                                <StackPanel x:Name="PanelAbout" Visibility="Collapsed">
+                                    <StackPanel Orientation="Horizontal" Margin="0,8,0,16">
+                                        <Image Source="{StaticResource LogoImage}" Width="84" Height="84" Margin="0,0,18,0"
+                                               RenderOptions.BitmapScalingMode="HighQuality" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="LIKAsys" FontSize="28" FontWeight="Bold" Foreground="#FFEAF2FF" />
+                                            <TextBlock x:Name="AboutVersion" Style="{StaticResource Caption}" Text="v1.0.0" Margin="0,2,0,0" />
+                                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                                <TextBlock Text="Made in Kosovo with" Style="{StaticResource Caption}" VerticalAlignment="Center" />
+                                                <Path Data="{StaticResource IconHeart}" Fill="#FFFF4D6A" Width="13" Height="13"
+                                                      Stretch="Uniform" Margin="6,0,0,0" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <TextBlock Style="{StaticResource Caption}" TextWrapping="Wrap"
+                                               Text="LIKAsys është monitor i lehtë i sistemit për gamer-a: CPU, GPU, VRAM, RAM dhe FPS në një kartelë të vogël në qoshe të ekranit. Falas përgjithmonë, pa reklama, pa pagesa." />
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
+                                        <Button Style="{StaticResource AccentButton}" Content="Likaapps.com" Click="Site_Click" Margin="0,0,10,0" />
+                                    </StackPanel>
+
+                                    <Border Height="1" Background="#14FFFFFF" Margin="0,22,0,14" />
+                                    <TextBlock Style="{StaticResource Caption}" TextWrapping="Wrap"
+                                               Text="Sensorët e temperaturës mundësohen nga LibreHardwareMonitor (MPL-2.0). Matja e FPS-së bazohet në ngjarjet ETW të Windows-it, e njëjta teknikë që përdor PresentMon." />
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,10,0,0" Text="(c) 2026 LIKAsys - Prishtinë, Kosovë" />
+                                </StackPanel>
+
+                            </Grid>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

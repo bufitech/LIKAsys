@@ -1,0 +1,109 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ===== metric icons (24 x 24 design grid) ===== -->
+
+    <GeometryGroup x:Key="IconCpu" FillRule="EvenOdd">
+        <RectangleGeometry Rect="6,6 12,12" RadiusX="2.5" RadiusY="2.5" />
+        <RectangleGeometry Rect="9.5,9.5 5,5" RadiusX="1" RadiusY="1" />
+        <LineGeometry StartPoint="9,6" EndPoint="9,3" />
+        <LineGeometry StartPoint="12,6" EndPoint="12,3" />
+        <LineGeometry StartPoint="15,6" EndPoint="15,3" />
+        <LineGeometry StartPoint="9,18" EndPoint="9,21" />
+        <LineGeometry StartPoint="12,18" EndPoint="12,21" />
+        <LineGeometry StartPoint="15,18" EndPoint="15,21" />
+        <LineGeometry StartPoint="6,9" EndPoint="3,9" />
+        <LineGeometry StartPoint="6,12" EndPoint="3,12" />
+        <LineGeometry StartPoint="6,15" EndPoint="3,15" />
+        <LineGeometry StartPoint="18,9" EndPoint="21,9" />
+        <LineGeometry StartPoint="18,12" EndPoint="21,12" />
+        <LineGeometry StartPoint="18,15" EndPoint="21,15" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconGpu" FillRule="EvenOdd">
+        <RectangleGeometry Rect="2,6.5 19.5,10.5" RadiusX="2" RadiusY="2" />
+        <EllipseGeometry Center="8,11.75" RadiusX="2.7" RadiusY="2.7" />
+        <EllipseGeometry Center="15.6,11.75" RadiusX="2.7" RadiusY="2.7" />
+        <LineGeometry StartPoint="5,17" EndPoint="5,20" />
+        <LineGeometry StartPoint="18.5,17" EndPoint="18.5,20" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconRam" FillRule="EvenOdd">
+        <RectangleGeometry Rect="2.5,7 19,9.5" RadiusX="1.8" RadiusY="1.8" />
+        <RectangleGeometry Rect="5.6,10 2.6,3.6" RadiusX="0.6" RadiusY="0.6" />
+        <RectangleGeometry Rect="10.7,10 2.6,3.6" RadiusX="0.6" RadiusY="0.6" />
+        <RectangleGeometry Rect="15.8,10 2.6,3.6" RadiusX="0.6" RadiusY="0.6" />
+        <LineGeometry StartPoint="6,16.5" EndPoint="6,19.5" />
+        <LineGeometry StartPoint="18,16.5" EndPoint="18,19.5" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconFps" FillRule="EvenOdd">
+        <PathGeometry Figures="M3.2,17.4 A9.4,9.4 0 0 1 20.8,17.4" />
+        <PathGeometry Figures="M12,16.2 L16.8,9.6" />
+        <EllipseGeometry Center="12,17" RadiusX="1.5" RadiusY="1.5" />
+        <LineGeometry StartPoint="4.6,12.6" EndPoint="6.2,13.2" />
+        <LineGeometry StartPoint="19.4,12.6" EndPoint="17.8,13.2" />
+    </GeometryGroup>
+
+    <!-- 1% low: a frame-time graph with one deep dip -->
+    <GeometryGroup x:Key="IconLow" FillRule="EvenOdd">
+        <PathGeometry Figures="M3,8.4 L6.6,8.4 L8.4,18.6 L10.2,8.4 L13.8,8.4 L15.6,14.4 L17.4,8.4 L21,8.4" />
+        <PathGeometry Figures="M3,21 L21,21" />
+    </GeometryGroup>
+
+    <!-- frame time: a frame with a timing tick -->
+    <GeometryGroup x:Key="IconFrame" FillRule="EvenOdd">
+        <RectangleGeometry Rect="3,5 18,14" RadiusX="2.4" RadiusY="2.4" />
+        <PathGeometry Figures="M12,8.6 L12,12 L14.6,13.6" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconNet" FillRule="EvenOdd">
+        <PathGeometry Figures="M7.2,3.6 L7.2,16.4" />
+        <PathGeometry Figures="M3.4,12.8 L7.2,16.8 L11,12.8" />
+        <PathGeometry Figures="M16.8,20.4 L16.8,7.6" />
+        <PathGeometry Figures="M13,11.2 L16.8,7.2 L20.6,11.2" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconPing" FillRule="EvenOdd">
+        <PathGeometry Figures="M3.6,11.4 A11.2,11.2 0 0 1 20.4,11.4" />
+        <PathGeometry Figures="M7.4,14.8 A6.4,6.4 0 0 1 16.6,14.8" />
+        <EllipseGeometry Center="12,19" RadiusX="1.5" RadiusY="1.5" />
+    </GeometryGroup>
+
+    <!-- ===== ui glyphs ===== -->
+
+    <GeometryGroup x:Key="IconSettings" FillRule="EvenOdd">
+        <LineGeometry StartPoint="4,7" EndPoint="20,7" />
+        <LineGeometry StartPoint="4,12" EndPoint="20,12" />
+        <LineGeometry StartPoint="4,17" EndPoint="20,17" />
+        <EllipseGeometry Center="9,7" RadiusX="2.1" RadiusY="2.1" />
+        <EllipseGeometry Center="15.5,12" RadiusX="2.1" RadiusY="2.1" />
+        <EllipseGeometry Center="7.5,17" RadiusX="2.1" RadiusY="2.1" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconClose">
+        <LineGeometry StartPoint="7,7" EndPoint="17,17" />
+        <LineGeometry StartPoint="17,7" EndPoint="7,17" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconGrip">
+        <EllipseGeometry Center="9,8" RadiusX="1.1" RadiusY="1.1" />
+        <EllipseGeometry Center="15,8" RadiusX="1.1" RadiusY="1.1" />
+        <EllipseGeometry Center="9,12" RadiusX="1.1" RadiusY="1.1" />
+        <EllipseGeometry Center="15,12" RadiusX="1.1" RadiusY="1.1" />
+        <EllipseGeometry Center="9,16" RadiusX="1.1" RadiusY="1.1" />
+        <EllipseGeometry Center="15,16" RadiusX="1.1" RadiusY="1.1" />
+    </GeometryGroup>
+
+    <PathGeometry x:Key="IconHeart"
+                  Figures="M12,20.4 C12,20.4 3.4,15.3 3.4,9.4 C3.4,6.5 5.7,4.3 8.5,4.3 C10.2,4.3 11.4,5.2 12,6.3 C12.6,5.2 13.8,4.3 15.5,4.3 C18.3,4.3 20.6,6.5 20.6,9.4 C20.6,15.3 12,20.4 12,20.4 Z" />
+
+    <GeometryGroup x:Key="IconDownload">
+        <LineGeometry StartPoint="12,4" EndPoint="12,14.6" />
+        <PathGeometry Figures="M7.8,10.6 L12,15 L16.2,10.6" />
+        <LineGeometry StartPoint="5,19" EndPoint="19,19" />
+    </GeometryGroup>
+
+    <PathGeometry x:Key="IconCheck" Figures="M5,12.6 L10,17.6 L19,6.8" />
+
+</ResourceDictionary>

@@ -1,0 +1,365 @@
+using System;
+using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+
+namespace LIKAsys.Core
+{
+    /// <summary>
+    /// Tiny runtime localiser. The source language of every string in the XAML is Albanian;
+    /// <see cref="T"/> maps it to English when the user switches. Nothing is compiled per
+    /// language and no satellite assembly is produced, so the app stays a single exe.
+    /// </summary>
+    public static class Lang
+    {
+        public const string Sq = "sq";
+        public const string En = "en";
+
+        public static string Code { get; private set; } = Sq;
+        public static bool IsEnglish => Code == En;
+
+        public static event EventHandler Changed;
+
+        public static void Set(string code)
+        {
+            var c = string.Equals(code, En, StringComparison.OrdinalIgnoreCase) ? En : Sq;
+            if (c == Code) return;
+            Code = c;
+            Changed?.Invoke(null, EventArgs.Empty);
+        }
+
+        /// <summary>Albanian in, current language out.</summary>
+        public static string T(string sq)
+        {
+            if (!IsEnglish || string.IsNullOrEmpty(sq)) return sq;
+            return Map.TryGetValue(sq, out var v) ? v : sq;
+        }
+
+        // ================================================================= tree walker
+
+        /// <summary>
+        /// Elements whose text the code rewrites at runtime (version numbers, sensor status,
+        /// the active theme name...). The walker must never restore a stale value over them.
+        /// </summary>
+        private static readonly HashSet<string> Skip = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "ThemeBadge", "VersionLine", "AboutVersion", "UpdateStatus",
+            "FpsStatus", "SensorStatus", "HeadLine", "SubLine", "NotesText", "ProgressText"
+        };
+
+        private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<DependencyObject, Dictionary<string, string>>
+            Originals = new System.Runtime.CompilerServices.ConditionalWeakTable<DependencyObject, Dictionary<string, string>>();
+
+        /// <summary>
+        /// Re-renders every literal string under <paramref name="root"/> in the current language.
+        /// The first Albanian value seen is remembered per element, so switching back and forth
+        /// is loss-free. Data-bound and runtime-generated text is never touched.
+        /// </summary>
+        public static void Localize(DependencyObject root)
+        {
+            if (root == null) return;
+            try { Translate(root); } catch { }
+
+            foreach (var child in LogicalTreeHelper.GetChildren(root))
+                if (child is DependencyObject d) Localize(d);
+        }
+
+        private static void Translate(DependencyObject o)
+        {
+            if (o is FrameworkElement named && !string.IsNullOrEmpty(named.Name) && Skip.Contains(named.Name))
+                return;
+
+            if (o is Window w && !IsBound(w, Window.TitleProperty))
+                Swap(o, "Title", w.Title, v => w.Title = v);
+
+            if (o is TextBlock tb && !IsBound(tb, TextBlock.TextProperty))
+                Swap(o, "Text", tb.Text, v => tb.Text = v);
+
+            if (o is ContentControl cc && cc.Content is string cs && !IsBound(cc, ContentControl.ContentProperty))
+                Swap(o, "Content", cs, v => cc.Content = v);
+
+            if (o is HeaderedContentControl hc && hc.Header is string hs &&
+                !IsBound(hc, HeaderedContentControl.HeaderProperty))
+                Swap(o, "Header", hs, v => hc.Header = v);
+
+            if (o is FrameworkElement fe && fe.ToolTip is string ts &&
+                !IsBound(fe, FrameworkElement.ToolTipProperty))
+                Swap(o, "ToolTip", ts, v => fe.ToolTip = v);
+        }
+
+        private static void Swap(DependencyObject o, string key, string current, Action<string> set)
+        {
+            if (string.IsNullOrEmpty(current)) return;
+
+            var map = Originals.GetOrCreateValue(o);
+            if (!map.TryGetValue(key, out var original))
+            {
+                // Only strings that actually live in the dictionary are ever captured. Anything
+                // the code produced at runtime is left exactly as it is.
+                if (!Map.ContainsKey(current)) return;
+                original = current;
+                map[key] = original;
+            }
+
+            var want = T(original);
+            if (!string.Equals(want, current, StringComparison.Ordinal)) set(want);
+        }
+
+        private static bool IsBound(DependencyObject o, DependencyProperty p)
+        {
+            try { return BindingOperations.GetBindingExpressionBase(o, p) != null; }
+            catch { return false; }
+        }
+
+        // ================================================================= dictionary
+
+        private static readonly Dictionary<string, string> Map =
+            new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            // ---------------------------------------------------- window chrome / tabs
+            { "LIKAsys - Cilesimet", "LIKAsys - Settings" },
+            { "Cilesimet", "Settings" },
+            { "Cilesimet...", "Settings..." },
+            { "Mbyll", "Close" },
+            { "Temat", "Themes" },
+            { "Ngjyrat", "Colours" },
+            { "Pamja e kartelës", "Card look" },
+            { "Fonti dhe teksti", "Font and text" },
+            { "Pozicioni", "Position" },
+            { "Metrikat", "Metrics" },
+            { "Sistemi dhe update", "System and updates" },
+            { "Gjuha", "Language" },
+            { "Rreth", "About" },
+            { "Rikthe cilesimet", "Reset settings" },
+            { "Çdo ndryshim ruhet vetvetiu dhe shfaqet menjëherë në widget.",
+              "Every change is saved automatically and shows up in the widget right away." },
+
+            // ---------------------------------------------------- language panel
+            { "GJUHA E PROGRAMIT", "APPLICATION LANGUAGE" },
+            { "Zgjidh gjuhën", "Choose language" },
+            { "Ndryshimi zbatohet menjëherë - nuk duhet rinisur programi. CPU, GPU, RAM dhe FPS mbeten njësoj në të dyja gjuhët.",
+              "The change applies instantly - no restart needed. CPU, GPU, RAM and FPS stay the same in both languages." },
+            { "Shqip", "Shqip" },
+            { "English", "English" },
+
+            // ---------------------------------------------------- themes
+            { "ZGJIDH NJË TEMË", "PICK A THEME" },
+            { "Secili grup ka vetë karakterin e vet: Gaming është agresiv me shirita të segmentuar, Classic është vetëm shkrim dhe numra. Klikimi e ndryshon widget-in menjëherë.",
+              "Each group has its own character: Gaming is aggressive with segmented bars, Classic is text and numbers only. One click changes the widget instantly." },
+            { "Të gjitha", "All" },
+            { "Renditja e widget-it", "Widget layout" },
+            { "Vertikale", "Vertical" },
+            { "Horizontale", "Horizontal" },
+            { "Kompakte", "Compact" },
+            { "Gaming", "Gaming" },
+            { "Classic", "Classic" },
+            { "Qelq", "Glass" },
+            { "Minimal", "Minimal" },
+            { "Dev", "Dev" },
+            { "Dritë", "Light" },
+            { "Pa sfond", "No background" },
+            { "Kosova", "Kosova" },
+
+            // ---------------------------------------------------- colours
+            { "NGJYRAT E WIDGET-IT", "WIDGET COLOURS" },
+            { "Shkruaj kodin HEX ose kliko katrorin për paletën e plotë të Windows-it.",
+              "Type a HEX code or click the square for the full Windows palette." },
+            { "SJELLJA E NGJYRAVE", "COLOUR BEHAVIOUR" },
+            { "Ngjyros sipas ngarkesës (portokalli mbi 75%, kuqe mbi 90%)",
+              "Colour by load (orange above 75%, red above 90%)" },
+            { "Gradient midis dy ngjyrave kryesore (ikona dhe korniza)",
+              "Gradient between the two main colours (icons and border)" },
+            { "Hap paletën e ngjyrave", "Open the colour palette" },
+            { "Ngjyra kryesore", "Main colour" },
+            { "Ngjyra dytësore", "Secondary colour" },
+            { "Sfondi (lart)", "Background (top)" },
+            { "Sfondi (poshtë)", "Background (bottom)" },
+            { "Korniza", "Border" },
+            { "Vlerat / teksti", "Values / text" },
+            { "Etiketat", "Labels" },
+            { "Detajet e vogla", "Small details" },
+            { "Shiriti bosh", "Empty bar" },
+            { "Paralajmërim (mbi 75%)", "Warning (above 75%)" },
+            { "Rrezik (mbi 90%)", "Danger (above 90%)" },
+
+            // ---------------------------------------------------- card look
+            { "QELQ DHE SFOND", "GLASS AND BACKGROUND" },
+            { "Blur në sfond (akrilik - sfondi pas widget-it turbullohet)",
+              "Background blur (acrylic - whatever is behind the widget goes soft)" },
+            { "Tejdukshmëria", "Opacity" },
+            { "Hije poshtë kartelës", "Shadow under the card" },
+            { "Forca e hijes", "Shadow strength" },
+            { "FORMA", "SHAPE" },
+            { "Rrumbullakimi i cepave", "Corner rounding" },
+            { "Trashësia e kornizës", "Border thickness" },
+            { "Përmasa", "Size" },
+            { "Hapësira anash", "Side padding" },
+            { "Hapësira lart/poshtë", "Top/bottom padding" },
+            { "Largësia mes rreshtave", "Space between rows" },
+            { "IKONAT", "ICONS" },
+            { "Stili i ikonave", "Icon style" },
+            { "Madhësia e ikonave", "Icon size" },
+            { "Efekt ndriçimi (glow)", "Glow effect" },
+            { "Hije pas shkrimit (lexohet mbi çdo sfond)", "Shadow behind the text (readable on any background)" },
+            { "SHIRITAT DHE RENDITJA", "BARS AND LAYOUT" },
+            { "Stili i shiritave", "Bar style" },
+            { "Trashësia e shiritit", "Bar thickness" },
+            { "Renditja", "Layout" },
+            { "Shfaq shiritat e ngarkesës", "Show load bars" },
+            { "Shfaq kreun me emrin LIKAsys", "Show the header with the LIKAsys name" },
+            { "Shfaq pikën ndriçuese te kreu", "Show the glowing dot in the header" },
+            { "Shfaq fundin 'Made in Kosovo'", "Show the 'Made in Kosovo' footer" },
+            { "Emri LIKAsys dhe 'Made in Kosovo' rrinë gjithmonë të ndezura — janë pjesë e identitetit, jo cilësim.",
+              "The LIKAsys name and 'Made in Kosovo' stay on for good - they are part of the identity, not a preference." },
+
+            // ---------------------------------------------------- combos
+            { "3D (me thellësi)", "3D (with depth)" },
+            { "Outline (vija të holla)", "Outline (thin lines)" },
+            { "Solid (të mbushura)", "Solid (filled)" },
+            { "Pa ikona", "No icons" },
+            { "Të rrumbullakosur", "Rounded" },
+            { "Katrorë", "Square" },
+            { "Të segmentuar", "Segmented" },
+            { "Pa shirita", "No bars" },
+            { "Vertikale (njëra mbi tjetrën)", "Vertical (stacked)" },
+            { "Horizontale (në një shirit)", "Horizontal (one strip)" },
+            { "Kompakte (pa shirita)", "Compact (no bars)" },
+            { "0  -  p.sh. 75%", "0  -  e.g. 75%" },
+            { "1  -  p.sh. 75.4%", "1  -  e.g. 75.4%" },
+            { "2  -  p.sh. 75.42%", "2  -  e.g. 75.42%" },
+            { "Celsius (°C)", "Celsius (°C)" },
+            { "Fahrenheit (°F)", "Fahrenheit (°F)" },
+            { "E hollë", "Light" },
+            { "Normale", "Normal" },
+            { "Mesatare", "Medium" },
+            { "Gjysmë e trashë", "Semi bold" },
+            { "E trashë", "Bold" },
+            { "Shumë e trashë", "Black" },
+            { "(kryesor)", "(primary)" },
+
+            // ---------------------------------------------------- font
+            { "FONTI", "FONT" },
+            { "Lloji i fontit", "Font family" },
+            { "Madhësia bazë", "Base size" },
+            { "Vlerat më të mëdha", "Bigger values" },
+            { "Etiketat më të vogla", "Smaller labels" },
+            { "TRASHËSIA", "WEIGHT" },
+            { "Vlerat (numrat)", "Values (numbers)" },
+            { "Etiketat (CPU, GPU...)", "Labels (CPU, GPU...)" },
+            { "FORMATI", "FORMAT" },
+            { "Shifra pas presjes", "Decimal places" },
+            { "Etiketat me shkronja të mëdha (CPU / cpu)", "Uppercase labels (CPU / cpu)" },
+            { "Shfaq njësitë (%, GB, FPS)", "Show units (%, GB, FPS)" },
+
+            // ---------------------------------------------------- position
+            { "VENDI NË EKRAN", "PLACE ON SCREEN" },
+            { "Monitori", "Monitor" },
+            { "Largësia horizontale", "Horizontal margin" },
+            { "Largësia vertikale", "Vertical margin" },
+            { "SJELLJA", "BEHAVIOUR" },
+            { "Gjithmonë sipër të gjitha dritareve", "Always on top of every window" },
+            { "Kap qoshet automatikisht kur e tërheq", "Snap to corners while dragging" },
+            { "Blloko pozicionin (nuk lëvizet me mouse)", "Lock position (cannot be dragged)" },
+            { "Kalo klikimet përtej (click-through)", "Click-through (mouse passes behind)" },
+            { "Shfaqe vetëm gjatë lojës (fshihet në desktop)", "Show only in game (hidden on the desktop)" },
+
+            // ---------------------------------------------------- metrics
+            { "ÇFARË TË SHFAQET", "WHAT TO SHOW" },
+            { "CPU - përqindja e përdorimit", "CPU - usage percentage" },
+            { "CPU - temperatura", "CPU - temperature" },
+            { "CPU - shpejtësia (GHz)", "CPU - clock speed (GHz)" },
+            { "GPU - përqindja e përdorimit", "GPU - usage percentage" },
+            { "GPU - temperatura", "GPU - temperature" },
+            { "VRAM - memoria e kartës grafike", "VRAM - graphics card memory" },
+            { "RAM - memoria e sistemit", "RAM - system memory" },
+            { "FPS - kuadro në sekondë", "FPS - frames per second" },
+            { "FPS - shfaq emrin e lojës", "FPS - show the game name" },
+            { "1% LOW - ngecjet (kërkon lojë aktive)", "1% LOW - stutter (needs a running game)" },
+            { "FRAME - koha e një kuadri në ms", "FRAME - time of one frame in ms" },
+            { "1% LOW tregon sa bien kuadrot në momentet më të këqija. Sa më afër FPS-së mesatare, aq më e qetë loja.",
+              "1% LOW shows how far the frame rate drops at its worst. The closer to the average FPS, the smoother the game." },
+            { "duke mbledhur", "collecting" },
+            { "pa loje", "no game" },
+            { "kerkon admin", "needs admin" },
+            { "RRJETI", "NETWORK" },
+            { "NET - shpejtësia e shkarkimit dhe ngarkimit", "NET - download and upload speed" },
+            { "PING - koha e përgjigjes së rrjetit", "PING - network response time" },
+            { "Hosti për ping", "Ping host" },
+            { "Matet çdo 5 sekonda, në sfond. Shkruaj 1.1.1.1, 8.8.8.8 ose adresën e serverit tënd.",
+              "Measured every 5 seconds, in the background. Enter 1.1.1.1, 8.8.8.8 or your own server address." },
+            { "NJËSITË DHE MATJA", "UNITS AND MEASUREMENT" },
+            { "Temperatura", "Temperature" },
+            { "Rifreskimi", "Refresh rate" },
+            { "Shiriti i FPS deri në", "FPS bar maximum" },
+            { "0 = automatik (përshtatet me FPS-në më të lartë të parë).",
+              "0 = automatic (follows the highest FPS seen so far)." },
+            { "Sensorët e avancuar (temperatura, GHz)", "Advanced sensors (temperature, GHz)" },
+            { "Matja e FPS-së në lojëra", "FPS measurement in games" },
+
+            // ---------------------------------------------------- system
+            { "NISJA", "STARTUP" },
+            { "IKONA NË TRAY", "TRAY ICON" },
+            { "Çfarë vizaton ikona", "What the icon draws" },
+            { "Numri vizatohet direkt mbi ikonën afër orës - lexohet edhe me widget-in e fshehur, pa zënë asnjë piksel.",
+              "The number is drawn straight onto the icon next to the clock - readable even with the widget hidden, using no screen space at all." },
+            { "Logoja e LIKAsys", "The LIKAsys logo" },
+            { "CPU - ngarkesa %", "CPU - load %" },
+            { "GPU - ngarkesa %", "GPU - load %" },
+            { "RAM - ngarkesa %", "RAM - load %" },
+            { "Nis bashkë me Windows (pa dritare UAC)", "Start with Windows (no UAC prompt)" },
+            { "PËRDITËSIMET", "UPDATES" },
+            { "Kontrollo automatikisht për versione të reja", "Check for new versions automatically" },
+            { "Përditësimet merren direkt nga serveri i LIKAsys.", "Updates come straight from the LIKAsys server." },
+            { "Kontrollo tani", "Check now" },
+            { "MIRËMBAJTJE", "MAINTENANCE" },
+            { "Hap dosjen e cilësimeve", "Open the settings folder" },
+            { "Rikthe cilësimet fillestare", "Restore default settings" },
+            { "Duke kontrolluar...", "Checking..." },
+            { "Je në versionin më të ri.", "You are on the latest version." },
+            { "Version i ri:", "New version:" },
+            { "Nuk u lidh dot me serverin e perditesimeve.", "Could not reach the update server." },
+
+            // ---------------------------------------------------- about
+            { "LIKAsys është monitor i lehtë i sistemit për gamer-a: CPU, GPU, VRAM, RAM dhe FPS në një kartelë të vogël në qoshe të ekranit. Falas përgjithmonë, pa reklama, pa pagesa.",
+              "LIKAsys is a lightweight system monitor for gamers: CPU, GPU, VRAM, RAM and FPS on a small card in the corner of your screen. Free forever, no ads, no payments." },
+            { "Sensorët e temperaturës mundësohen nga LibreHardwareMonitor (MPL-2.0). Matja e FPS-së bazohet në ngjarjet ETW të Windows-it, e njëjta teknikë që përdor PresentMon.",
+              "Temperature sensors are powered by LibreHardwareMonitor (MPL-2.0). FPS measurement is based on Windows ETW events, the same technique PresentMon uses." },
+            { "(c) 2026 LIKAsys - Prishtinë, Kosovë", "(c) 2026 LIKAsys - Prishtina, Kosovo" },
+            { "Made in Kosovo with", "Made in Kosovo with" },
+
+            // ---------------------------------------------------- widget + tray
+            { "Fshih (mbetet ne tray)", "Hide (stays in the tray)" },
+            { "Hap Likaapps.com", "Open Likaapps.com" },
+            { "Shfaq widget-in", "Show the widget" },
+            { "Gjithmone siper (always on top)", "Always on top" },
+            { "Kalo klikimet pertej (click-through)", "Click-through" },
+            { "Blloko pozicionin", "Lock position" },
+            { "Lart majtas", "Top left" },
+            { "Lart ne mes", "Top centre" },
+            { "Lart djathtas", "Top right" },
+            { "Mes majtas", "Middle left" },
+            { "Qendra", "Centre" },
+            { "Mes djathtas", "Middle right" },
+            { "Poshte majtas", "Bottom left" },
+            { "Poshte ne mes", "Bottom centre" },
+            { "Poshte djathtas", "Bottom right" },
+            { "Rikthe widget-in ne ekran", "Bring the widget back on screen" },
+            { "Kontrollo per update...", "Check for updates..." },
+            { "Hap regjistrin (log)", "Open the log file" },
+            { "Dil", "Exit" },
+
+            // ---------------------------------------------------- update window
+            { "LIKAsys - Perditesim", "LIKAsys - Update" },
+            { "Version i ri i disponueshem", "A new version is available" },
+            { "ÇFARE KA TE RE", "WHAT'S NEW" },
+            { "Duke shkarkuar...", "Downloading..." },
+            { "Me vone", "Later" },
+            { "Instalo tani", "Install now" },
+            { "Duke instaluar... LIKAsys mbyllet dhe rihapet vetvetiu.",
+              "Installing... LIKAsys will close and reopen by itself." },
+            { "Shkarkimi deshtoi. Provo perseri ose merre nga Likaapps.com.",
+              "The download failed. Try again or get it from Likaapps.com." },
+        };
+    }
+}

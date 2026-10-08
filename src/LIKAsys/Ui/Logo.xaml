@@ -1,0 +1,137 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        ============================================================================
+        LIKAsys logo, pure vector.
+
+        The .ico can only ever hand WPF one bitmap frame, and WPF picks a small one,
+        so every place that showed the icon larger than 32 px looked chewed up.
+        This is the identical artwork rebuilt as geometry in a 512x512 space: it is
+        resolution independent, stays razor sharp at 24 px, at 76 px, on a 4K
+        monitor at 200% scaling, and it costs no memory for bitmap frames.
+        ============================================================================
+    -->
+
+    <DrawingImage x:Key="LogoImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+
+                <!-- everything inside the rounded body, nothing bleeds out -->
+                <DrawingGroup>
+                    <DrawingGroup.ClipGeometry>
+                        <RectangleGeometry Rect="0,0,512,512" RadiusX="113" RadiusY="113" />
+                    </DrawingGroup.ClipGeometry>
+
+                    <!-- body: deep glass gradient -->
+                    <GeometryDrawing>
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,0,512,512" RadiusX="113" RadiusY="113" />
+                        </GeometryDrawing.Geometry>
+                        <GeometryDrawing.Brush>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#FF151C2C" Offset="0" />
+                                <GradientStop Color="#FF0C111C" Offset="0.55" />
+                                <GradientStop Color="#FF070A11" Offset="1" />
+                            </LinearGradientBrush>
+                        </GeometryDrawing.Brush>
+                    </GeometryDrawing>
+
+                    <!-- cyan glow sitting behind the monogram -->
+                    <GeometryDrawing>
+                        <GeometryDrawing.Geometry>
+                            <EllipseGeometry Center="248,268" RadiusX="215" RadiusY="205" />
+                        </GeometryDrawing.Geometry>
+                        <GeometryDrawing.Brush>
+                            <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                                <GradientStop Color="#3A00E5FF" Offset="0" />
+                                <GradientStop Color="#2200E5FF" Offset="0.45" />
+                                <GradientStop Color="#0000E5FF" Offset="1" />
+                            </RadialGradientBrush>
+                        </GeometryDrawing.Brush>
+                    </GeometryDrawing>
+
+                    <!-- glass highlight across the top -->
+                    <GeometryDrawing>
+                        <GeometryDrawing.Geometry>
+                            <EllipseGeometry Center="256,-85" RadiusX="435" RadiusY="300" />
+                        </GeometryDrawing.Geometry>
+                        <GeometryDrawing.Brush>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#00FFFFFF" Offset="0.58" />
+                                <GradientStop Color="#1BFFFFFF" Offset="0.76" />
+                                <GradientStop Color="#00FFFFFF" Offset="1" />
+                            </LinearGradientBrush>
+                        </GeometryDrawing.Brush>
+                    </GeometryDrawing>
+
+                    <!-- "L" monogram -->
+                    <GeometryDrawing>
+                        <GeometryDrawing.Geometry>
+                            <GeometryGroup FillRule="Nonzero">
+                                <RectangleGeometry Rect="146,120,57,218" RadiusX="19.5" RadiusY="19.5" />
+                                <RectangleGeometry Rect="146,281,212,57" RadiusX="19.5" RadiusY="19.5" />
+                            </GeometryGroup>
+                        </GeometryDrawing.Geometry>
+                        <GeometryDrawing.Brush>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0.85">
+                                <GradientStop Color="#FFDFFFFF" Offset="0" />
+                                <GradientStop Color="#FF7FF2FF" Offset="0.45" />
+                                <GradientStop Color="#FF00E5FF" Offset="1" />
+                            </LinearGradientBrush>
+                        </GeometryDrawing.Brush>
+                    </GeometryDrawing>
+
+                    <!-- pulse line: soft halo first, crisp stroke on top -->
+                    <GeometryDrawing Geometry="M102.4,402 L174,402 L210,374 L256,426 L297,360 L338,402 L409.6,402">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="31" LineJoin="Round" StartLineCap="Round" EndLineCap="Round">
+                                <Pen.Brush>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0.6">
+                                        <GradientStop Color="#3300E5FF" Offset="0" />
+                                        <GradientStop Color="#337C4DFF" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Pen.Brush>
+                            </Pen>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+
+                    <GeometryDrawing Geometry="M102.4,402 L174,402 L210,374 L256,426 L297,360 L338,402 L409.6,402">
+                        <GeometryDrawing.Pen>
+                            <Pen Thickness="18.4" LineJoin="Round" StartLineCap="Round" EndLineCap="Round">
+                                <Pen.Brush>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0.6">
+                                        <GradientStop Color="#FF2BE9FF" Offset="0" />
+                                        <GradientStop Color="#FF5B9BFF" Offset="0.55" />
+                                        <GradientStop Color="#FF7C4DFF" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Pen.Brush>
+                            </Pen>
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                </DrawingGroup>
+
+                <!-- the 3D outline ring, drawn last so it stays perfectly clean -->
+                <GeometryDrawing>
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="26,26,460,460" RadiusX="95" RadiusY="95" />
+                    </GeometryDrawing.Geometry>
+                    <GeometryDrawing.Pen>
+                        <Pen Thickness="15.4">
+                            <Pen.Brush>
+                                <LinearGradientBrush StartPoint="0.05,0" EndPoint="0.95,1">
+                                    <GradientStop Color="#FF4FEBFF" Offset="0" />
+                                    <GradientStop Color="#FF00D5FF" Offset="0.28" />
+                                    <GradientStop Color="#FF4F8BFF" Offset="0.62" />
+                                    <GradientStop Color="#FF7C4DFF" Offset="1" />
+                                </LinearGradientBrush>
+                            </Pen.Brush>
+                        </Pen>
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+</ResourceDictionary>

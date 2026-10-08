@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+
+    <!-- Allows building this Windows app from Linux / CI containers -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PlatformTarget>x64</PlatformTarget>
+
+    <AssemblyName>LIKAsys</AssemblyName>
+    <RootNamespace>LIKAsys</RootNamespace>
+    <ApplicationIcon>assets/LIKAsys.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Company>LIKAsys</Company>
+    <Product>LIKAsys</Product>
+    <Authors>LIKAsys</Authors>
+    <Description>LIKAsys - System monitor widget (CPU, GPU, RAM, FPS). Made in Kosovo.</Description>
+    <Copyright>Copyright (c) 2026 LIKAsys - Made in Kosovo</Copyright>
+
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <!-- NEVER set InvariantGlobalization=true: WPF data binding needs a specific
+         CultureInfo and dies with "Cannot find non-neutral culture related to ..." -->
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <PredefinedCulturesOnly>false</PredefinedCulturesOnly>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CA1416;NU1701;MSB3270;WFAC010</NoWarn>
+    <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.6" />
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.2.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="assets/LIKAsys.ico" />
+  </ItemGroup>
+
+</Project>

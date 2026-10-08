@@ -1,0 +1,149 @@
+<Window x:Class="LIKAsys.Ui.WidgetWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:LIKAsys.Ui"
+        Title="LIKAsys" WindowStyle="None" AllowsTransparency="True" Background="{x:Null}"
+        ShowInTaskbar="False" ResizeMode="NoResize" SizeToContent="WidthAndHeight"
+        Topmost="True" Left="-6000" Top="-6000" ShowActivated="False" Focusable="False"
+        UseLayoutRounding="True" SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <ui:StarConverter x:Key="Star" />
+
+        <DataTemplate x:Key="RowTemplate">
+            <Grid Margin="{Binding RowMargin}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- icon -->
+                <Viewbox Grid.Column="0" Width="{Binding IconBox}" Height="{Binding IconBox}"
+                         Margin="0,0,9,0" VerticalAlignment="Center" Visibility="{Binding IconVisibility}">
+                    <Grid Width="24" Height="24">
+                        <Path Data="{Binding Icon}" Stroke="{Binding IconShadowBrush}"
+                              StrokeThickness="{Binding IconThickness}" Visibility="{Binding ShadowVisibility}"
+                              StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round">
+                            <Path.RenderTransform>
+                                <TranslateTransform X="1.1" Y="1.4" />
+                            </Path.RenderTransform>
+                        </Path>
+                        <Path Data="{Binding Icon}" Stroke="{Binding IconStroke}" Fill="{Binding IconFill}"
+                              StrokeThickness="{Binding IconThickness}" Effect="{Binding IconEffect}"
+                              StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
+                    </Grid>
+                </Viewbox>
+
+                <!-- label + bar -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Label}" FontSize="{Binding LabelSize}"
+                                   Foreground="{Binding LabelBrush}" FontWeight="{Binding LabelWeight}" />
+                        <TextBlock Text="{Binding Detail}" FontSize="{Binding DetailSize}" Margin="7,0,0,0"
+                                   Foreground="{Binding DetailBrush}" Visibility="{Binding DetailVisibility}"
+                                   VerticalAlignment="Center" Width="{Binding DetailWidth}"
+                                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
+                                   Typography.NumeralAlignment="Tabular" />
+                    </StackPanel>
+                    <Grid Height="{Binding BarHeight}" Margin="0,5,0,0" MinWidth="74"
+                          Visibility="{Binding BarVisibility}" OpacityMask="{Binding BarMask}">
+                        <Border CornerRadius="{Binding BarRadius}" Background="{Binding TrackBrush}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{Binding Percent, Converter={StaticResource Star}}" />
+                                <ColumnDefinition Width="{Binding PercentRest, Converter={StaticResource Star}}" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" CornerRadius="{Binding BarRadius}" Background="{Binding BarBrush}" />
+                        </Grid>
+                    </Grid>
+                </StackPanel>
+
+                <!-- value -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
+                    <TextBlock Text="{Binding Value}" FontSize="{Binding ValueSize}" FontWeight="{Binding ValueWeight}"
+                               Foreground="{Binding ValueBrush}" Width="{Binding ValueWidth}"
+                               TextAlignment="Right" VerticalAlignment="Center" TextWrapping="NoWrap"
+                               Typography.NumeralAlignment="Tabular" />
+                    <TextBlock Text="{Binding Unit}" FontSize="{Binding UnitSize}" Foreground="{Binding UnitBrush}"
+                               Visibility="{Binding UnitVisibility}" Margin="3,0,0,1" VerticalAlignment="Bottom" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+        <ItemsPanelTemplate x:Key="VerticalPanel">
+            <StackPanel Orientation="Vertical" />
+        </ItemsPanelTemplate>
+        <ItemsPanelTemplate x:Key="HorizontalPanel">
+            <StackPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
+    </Window.Resources>
+
+    <Grid x:Name="ScaleHost" Margin="14">
+        <Border x:Name="Card" CornerRadius="14" BorderThickness="1" Padding="13,10,13,9" MinWidth="150">
+            <StackPanel x:Name="CardContent">
+                <!-- header -->
+                <Grid x:Name="HeaderRow" Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse x:Name="BrandDot" Width="7" Height="7" Fill="{DynamicResource Accent}" Margin="1,0,7,0">
+                            <Ellipse.Effect>
+                                <DropShadowEffect x:Name="DotGlow" BlurRadius="8" ShadowDepth="0" Opacity="0.9" Color="#FF00E5FF" />
+                            </Ellipse.Effect>
+                        </Ellipse>
+                        <TextBlock x:Name="BrandText" Text="LIKAsys" FontSize="11" FontWeight="Bold"
+                                   Foreground="#FFEAF2FF" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Opacity" Value="0" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                        <Setter Property="Opacity" Value="1" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <Button Style="{StaticResource IconButton}" Width="19" Height="19" Click="Settings_Click" ToolTip="Cilesimet">
+                            <Path x:Name="GearIcon" Data="{StaticResource IconSettings}" Stroke="#FF93A6BE" StrokeThickness="1.7"
+                                  Width="13" Height="13" Stretch="Uniform" />
+                        </Button>
+                        <Button Style="{StaticResource IconButton}" Width="19" Height="19" Click="Hide_Click" ToolTip="Fshih (mbetet ne tray)">
+                            <Path x:Name="CloseIcon" Data="{StaticResource IconClose}" Stroke="#FF93A6BE" StrokeThickness="1.7"
+                                  Width="13" Height="13" Stretch="Uniform" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <!-- metrics -->
+                <ItemsControl x:Name="RowsHost" ItemTemplate="{StaticResource RowTemplate}"
+                              ItemsPanel="{StaticResource VerticalPanel}" />
+
+                <!-- footer -->
+                <StackPanel x:Name="FooterRow">
+                    <Border x:Name="FooterLine" Height="1" Background="#14FFFFFF" Margin="0,9,0,7" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock x:Name="FooterMade" Text="Made in Kosovo with" FontSize="8.5"
+                                   Foreground="#FF5D6E85" VerticalAlignment="Center" />
+                        <Path Data="{StaticResource IconHeart}" Fill="#FFFF4D6A" Width="9" Height="9" Stretch="Uniform"
+                              Margin="4,0,4,0" VerticalAlignment="Center" />
+                        <TextBlock x:Name="FooterSep" Text="|" FontSize="8.5" Foreground="#FF2B3545"
+                                   Margin="0,0,5,0" VerticalAlignment="Center" />
+                        <TextBlock x:Name="SiteLink" Text="Likaapps.com" FontSize="8.5" Cursor="Hand"
+                                   Foreground="{DynamicResource Accent}" VerticalAlignment="Center"
+                                   MouseLeftButtonUp="Site_Click" ToolTip="Hap Likaapps.com" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

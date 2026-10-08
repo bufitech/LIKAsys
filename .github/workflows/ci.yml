@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "preview/**"
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: .NET SDK 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Veglat (NSIS + Pillow)
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq nsis python3-pil
+
+      - name: Ndertimi
+        run: |
+          chmod +x ./build.sh
+          ./build.sh
+
+      - name: Kontrollo installer-in
+        run: |
+          V="$(cat VERSION | tr -d '[:space:]')"
+          test -f "dist/LIKAsys-Setup-$V.exe"
+          ls -lh "dist/LIKAsys-Setup-$V.exe"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LIKAsys-dev-build
+          path: dist/*.exe
+          retention-days: 7
