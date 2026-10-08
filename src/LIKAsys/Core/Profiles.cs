@@ -6,8 +6,7 @@ namespace LIKAsys.Core
     public enum UiProfile
     {
         Gaming = 0,
-        It = 1,
-        Apple = 2
+        It = 1
     }
 
     /// <summary>How the widget arrives on screen.</summary>
@@ -22,26 +21,24 @@ namespace LIKAsys.Core
     }
 
     /// <summary>
-    /// The three personalities of LIKAsys. A profile is not a colour swap - it rewrites the
+    /// The two personalities of LIKAsys. A profile is not a colour swap - it rewrites the
     /// whole look: which rows exist, which icon family draws them, the typeface, the sizes,
     /// the corner radius, the bars, the background and how the card arrives on screen.
     ///
-    ///   Gaming  - eyes on frames. Dark glass, neon cyan, 3D icons, big numbers.
-    ///   IT      - eyes on the machine. Monospace, tight rows, technical icons, green.
-    ///   Apple   - eyes on nothing. Near-white frosted glass, hairline icons, no borders,
-    ///             no glow, nothing shouting. It drops in from the top and gets out of the way.
+    ///   Gaming - eyes on frames. Dark glass, neon cyan, 3D icons, big numbers.
+    ///   IT     - eyes on the machine. Monospace, tight rows, technical icons, green.
+    ///            Its look is then free to change again through the themes: "Apple Clean"
+    ///            turns the very same IT profile into a white, hairline, macOS-quiet card.
     ///
     /// Position, monitor, language and startup choices are deliberately never touched, so
     /// switching profiles can't throw away personal setup.
     /// </summary>
     public static class Profiles
     {
-        public static string Name(UiProfile p) =>
-            p == UiProfile.It ? "IT" : p == UiProfile.Apple ? "IT Apple" : "Gaming";
+        public static string Name(UiProfile p) => p == UiProfile.It ? "IT" : "Gaming";
 
         /// <summary>Suffix appended to an icon resource key to find this profile's variant.</summary>
-        public static string IconSuffix(UiProfile p) =>
-            p == UiProfile.It ? "It" : p == UiProfile.Apple ? "Apple" : "";
+        public static string IconSuffix(UiProfile p) => p == UiProfile.It ? "It" : "";
 
         public static void Apply(AppSettings s, UiProfile p)
         {
@@ -56,7 +53,6 @@ namespace LIKAsys.Core
                 switch (p)
                 {
                     case UiProfile.It: ApplyIt(s); break;
-                    case UiProfile.Apple: ApplyApple(s); break;
                     default: ApplyGaming(s); break;
                 }
             }
@@ -182,66 +178,6 @@ namespace LIKAsys.Core
             s.TrayIconMode = TrayIconMode.Cpu;
         }
 
-        // ====================================================================== apple
-
-        private static void ApplyApple(AppSettings s)
-        {
-            Rows(s, cpu: true, gpu: true, vram: false, ram: true,
-                    disk: true, io: false, uptime: false,
-                    fps: false, low: false, frame: false, net: true, ping: false);
-
-            s.ThemeName = "Apple Clean";
-
-            // light, frosted, almost no colour - the numbers are the only thing with weight
-            s.Accent = "#FF0A84FF";
-            s.Accent2 = "#FF5AC8FA";
-            s.BgTop = "#F2FFFFFF";
-            s.BgBottom = "#F2F2F4F8";
-            s.BorderColor = "#14000000";
-            s.TextColor = "#FF1D1D1F";
-            s.LabelColor = "#FF6E6E73";
-            s.DetailColor = "#FF9A9AA0";
-            s.TrackColor = "#1A000000";
-            s.WarnColor = "#FFFF9F0A";
-            s.DangerColor = "#FFFF3B30";
-            s.AccentGradient = false;
-            s.ColorizeByLoad = false;     // nothing changes colour on its own; it stays calm
-
-            // the closest thing Windows has to San Francisco, with graceful fallbacks
-            s.FontFamily = "Segoe UI Variable Display, Segoe UI Variable, Segoe UI";
-            s.FontSize = 13;
-            s.ValueSizeOffset = 1;
-            s.LabelSizeOffset = -2;
-            s.ValueWeight = "Medium";
-            s.LabelWeight = "Normal";
-            s.UpperCaseLabels = false;
-            s.ShowUnits = true;
-            s.Decimals = 0;
-            s.TextShadow = false;
-
-            s.IconStyle = IconStyle.Outline;
-            s.IconSizeOffset = 2;
-            s.GlowEffect = false;
-            s.ShowBrandDot = false;       // no blinking dot, no branding noise
-
-            s.ShowBars = true;
-            s.BarStyle = BarStyle.Rounded;
-            s.BarHeight = 3;
-
-            s.CornerRadius = 18;          // the big soft radius of a macOS widget
-            s.BorderThickness = 0;
-            s.PaddingH = 16;
-            s.PaddingV = 13;
-            s.RowSpacing = 6;             // air between rows is the whole point
-            s.BackgroundOpacity = 0.95;
-            s.Blur = true;
-            s.ShadowEnabled = true;
-            s.ShadowStrength = 0.35;      // a soft lift, not a drop shadow
-
-            s.Layout = WidgetLayout.Vertical;
-            s.Reveal = RevealAnimation.FromTop;   // it drops in from above
-            s.TrayIconMode = TrayIconMode.Cpu;
-        }
 
         // ===================================================================== helper
 

@@ -15,7 +15,7 @@ namespace LIKAsys.Core
 
     public enum WidgetLayout { Vertical, Horizontal, Compact }
 
-    public enum IconStyle { ThreeD, Outline, Solid, None }
+    public enum IconStyle { ThreeD, Outline, Hairline, Solid, None }
 
     public enum BarStyle { Rounded, Square, Segmented, None }
 

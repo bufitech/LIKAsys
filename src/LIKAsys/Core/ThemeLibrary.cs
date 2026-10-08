@@ -55,6 +55,11 @@ namespace LIKAsys.Core
         public string ValueWeight = "Bold";
         public string LabelWeight = "Medium";
 
+        // ---- optional, null means "do not touch what the user already has"
+        public bool? Colorize = null;           // numbers turning orange/red with load
+        public bool? BrandDot = null;           // the little pulsing dot in the header
+        public double ShadowAmt = -1;           // 0..1, how heavy the drop shadow sits
+
         /// <summary>Set only by presets that are designed for one specific spot on the screen.</summary>
         public WidgetPosition? Pos = null;
     }
@@ -278,6 +283,15 @@ namespace LIKAsys.Core
             // ==========================================================================
             //  DEV - editor palettes
             // ==========================================================================
+            new ThemePreset { Name="Terminal", Group=GDev, Accent="#3DDC97", Accent2="#37B6FF",
+                BgTop="#080C10", BgBottom="#060A0D", Border="#263DDC97", Opacity=0.95, Radius=6,
+                Glow=false, Gradient=false, Text="#DFF5E9", Label="#7E9A8E", Detail="#4F6B60",
+                Track="#16FFFFFF", Warn="#E3B341", Danger="#F85149",
+                Icons=IconStyle.Outline, IconOff=1, BarStyle=BarStyle.Square, BarH=3,
+                PadH=11, PadV=8, RowSpace=2, Font="Cascadia Mono, Consolas, Segoe UI",
+                Upper=true, ValueOff=0, LabelOff=-2, ValueWeight="SemiBold", LabelWeight="Medium",
+                ShadowAmt=0.6 },
+
             new ThemePreset { Name="Nord", Group=GDev, Accent="#88C0D0", Accent2="#81A1C1",
                 BgTop="#3B4252", BgBottom="#2E3440", Border="#4088C0D0", Opacity=0.93,
                 Text="#ECEFF4", Label="#AEB7C8", Detail="#7A869B", Track="#434C5E", Warn="#EBCB8B", Danger="#BF616A" },
@@ -337,6 +351,18 @@ namespace LIKAsys.Core
                 BgTop="#FBF8F1", BgBottom="#EFE9DC", Border="#331C1917", Opacity=0.94, Glow=false,
                 Icons=IconStyle.Outline, Text="#1C1917", Label="#57534E", Detail="#A8A29E",
                 Track="#E3DBCB", Warn="#CA8A04", Danger="#B91C1C" },
+
+            // The quiet one. White frosted glass, no border at all, no glow, hairline icons
+            // and sentence-case labels - an IT widget that behaves like a macOS one.
+            new ThemePreset { Name="Apple Clean", Group=GLight, Accent="#0A84FF", Accent2="#5AC8FA",
+                BgTop="#FFFFFF", BgBottom="#F2F4F8", Border="#14000000", Opacity=0.95, Radius=18,
+                BorderThickness=0, Blur=true, Glow=false, Gradient=false, Shadow=true, ShadowAmt=0.35,
+                Text="#1D1D1F", Label="#6E6E73", Detail="#9A9AA0", Track="#14000000",
+                Warn="#FF9F0A", Danger="#FF3B30", Colorize=false, BrandDot=false,
+                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Rounded, BarH=3,
+                PadH=16, PadV=13, RowSpace=6,
+                Font="Segoe UI Variable Display, Segoe UI Variable, Segoe UI",
+                Upper=false, ValueOff=1, LabelOff=-2, ValueWeight="Medium", LabelWeight="Normal" },
 
             new ThemePreset { Name="Light Glass", Group=GLight, Accent="#2563EB", Accent2="#7C3AED",
                 BgTop="#FFFFFF", BgBottom="#DDE6F2", Border="#330F172A", Blur=true, Opacity=0.55,
@@ -417,6 +443,10 @@ namespace LIKAsys.Core
                 s.LabelSizeOffset = t.LabelOff;
                 s.ValueWeight = t.ValueWeight;
                 s.LabelWeight = t.LabelWeight;
+
+                if (t.Colorize.HasValue) s.ColorizeByLoad = t.Colorize.Value;
+                if (t.BrandDot.HasValue) s.ShowBrandDot = t.BrandDot.Value;
+                if (t.ShadowAmt >= 0) s.ShadowStrength = t.ShadowAmt;
 
                 if (t.Pos.HasValue) s.Position = t.Pos.Value;
             }

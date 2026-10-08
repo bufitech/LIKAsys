@@ -1,3 +1,13 @@
+## 1.7
+
+- **RREGULLIM KRITIK: aplikacioni nuk hapej fare.** Tabela e përkthimeve kishte dy çelësa të përsëritur; kjo hidhte një gabim brenda konstruktorit statik dhe LIKAsys vdiste para se të vizatonte asgjë - pa dritare, pa mesazh. Tani përsëritjet janë të padëmshme, `build.sh` e ndal ndërtimin nëse shfaqet ndonjëra, dhe çdo gabim fatal tregohet me mesazh në vend që të zhduket në heshtje.
+- **Profili "IT Apple Style" u hoq si profil më vete.** Pamja Apple tani është **temë brenda IT-së**: Cilësimet > Temat > Dritë > **Apple Clean**. E bardhë e ngrirë, pa korniza, pa shkëlqim, qoshe 18px, ikona me vijë floku, etiketa pa shkronja të mëdha.
+- Profilet janë prapë vetëm dy: **Gaming** dhe **IT**.
+- Tema e re **Terminal** (Dev) - pamja me të cilën vjen profili IT, tani edhe në listën e temave.
+- Stil i ri ikonash **"Vijë floku (e qetë)"** - përdoret vetë nga Apple Clean, por mund ta zgjedhësh kudo.
+- "Shkronja të mëdha" e fikur tani vërtet ndryshon diçka: `Disk`, `Network`, `Uptime` në vend të `DISK`, `NET`, `UPTIME`.
+- Animacioni i hyrjes mbeti, me një mbrojtje shtesë që widget-i të mos mbetet kurrë i padukshëm.
+
 ## 1.6
 
 - **Profil i ri: IT - Apple Style.** Jashtëzakonisht i pastër - qelq i bardhë i ngrirë, pa korniza, pa shkëlqim, qoshe të buta 18px, ikona me vijë floku dhe etiketa pa shkronja të mëdha.

@@ -564,7 +564,7 @@ namespace LIKAsys.Ui
 
             StartViewCombo.ItemsSource = Tr("Siç e lashë herën e fundit", "Gjithmonë i plotë", "Gjithmonë i minimizuar");
             RevealCombo.ItemsSource = Tr("Pa lëvizje", "Bie nga lart", "Rrëshqet nga e djathta", "Rrëshqet nga e majta", "Ngrihet nga poshtë", "Shfaqet butë");
-            IconCombo.ItemsSource = Tr("3D (me thellësi)", "Outline (vija të holla)", "Solid (të mbushura)", "Pa ikona");
+            IconCombo.ItemsSource = Tr("3D (me thellësi)", "Outline (vija të holla)", "Vijë floku (e qetë)", "Solid (të mbushura)", "Pa ikona");
             BarCombo.ItemsSource = Tr("Të rrumbullakosur", "Katrorë", "Të segmentuar", "Pa shirita");
             LayoutCombo.ItemsSource = Tr("Vertikale (njëra mbi tjetrën)", "Horizontale (në një shirit)", "Kompakte (pa shirita)");
             DecimalsCombo.ItemsSource = Tr("0  -  p.sh. 75%", "1  -  p.sh. 75.4%", "2  -  p.sh. 75.42%");
@@ -776,9 +776,7 @@ namespace LIKAsys.Ui
             AddProfileCard(UiProfile.Gaming, "Gaming",
                 "FPS, 1% low, VRAM dhe temperatura. Numra të mëdhenj, ikona 3D, theks cyan.");
             AddProfileCard(UiProfile.It, "IT",
-                "Disku, I/O, rrjeti, ping dhe uptime. Shkronja monospace, ikona teknike, theks i gjelbër.");
-            AddProfileCard(UiProfile.Apple, "IT - Apple Style",
-                "Jashtëzakonisht i pastër. Qelq i bardhë, pa korniza, pa shkëlqim, ikona me vijë floku. Bie nga lart.");
+                "Disku, I/O, rrjeti, ping dhe uptime. Shkronja monospace, ikona teknike, theks i gjelbër. Për pamje Apple - jashtëzakonisht e pastër, e bardhë, pa korniza - shko te Temat > Dritë > Apple Clean.");
 
             SyncProfileSelection();
         }
@@ -813,8 +811,7 @@ namespace LIKAsys.Ui
                 Child = new System.Windows.Shapes.Path
                 {
                     Data = Application.Current.TryFindResource(
-                        profile == UiProfile.It ? "IconCpuIt" :
-                        profile == UiProfile.Apple ? "IconCpuApple" : "IconFps") as Geometry,
+                        profile == UiProfile.It ? "IconCpuIt" : "IconFps") as Geometry,
                     Stroke = new SolidColorBrush(Color.FromRgb(0xEA, 0xF2, 0xFF)),
                     StrokeThickness = 1.6,
                     Width = 21,

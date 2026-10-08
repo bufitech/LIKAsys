@@ -141,6 +141,25 @@ namespace LIKAsys.Ui
 
                 _animating = true;
                 Opacity = 0;
+
+                // Failsafe: an animation that never completes would leave the widget fully
+                // transparent, which to the user is indistinguishable from "it never opened".
+                var rescue = new System.Windows.Threading.DispatcherTimer
+                { Interval = TimeSpan.FromMilliseconds(1200) };
+                rescue.Tick += (s2, e2) =>
+                {
+                    rescue.Stop();
+                    if (Opacity < 1)
+                    {
+                        BeginAnimation(OpacityProperty, null);
+                        BeginAnimation(TopProperty, null);
+                        BeginAnimation(LeftProperty, null);
+                        Opacity = 1;
+                        _animating = false;
+                        WidgetPlacement.Apply(this, _settings);
+                    }
+                };
+                rescue.Start();
                 var fade = new DoubleAnimation(0, 1, dur) { EasingFunction = ease };
 
                 if (dx != 0 || dy != 0)
@@ -221,21 +240,28 @@ namespace LIKAsys.Ui
         /// the kind of thing on a rack diagram - while Gaming keeps the rounded set.
         /// Anything without an IT variant simply falls through to the shared icon.
         /// </summary>
+        /// <summary>
+        /// Which icon family draws this row. The hairline style carries its own set, so the
+        /// Apple Clean theme looks right on either profile; otherwise the profile decides.
+        /// </summary>
         private string Ico(string baseKey)
         {
-            string suffix = Profiles.IconSuffix(_settings.Profile);
+            string suffix = _settings.IconStyle == IconStyle.Hairline
+                ? "Apple"
+                : Profiles.IconSuffix(_settings.Profile);
             if (suffix.Length == 0) return baseKey;
             try { if (Application.Current.TryFindResource(baseKey + suffix) != null) return baseKey + suffix; } catch { }
             return baseKey;
         }
 
         /// <summary>
-        /// The Apple profile does not shout: real acronyms stay capitals, everything else
-        /// drops to sentence case, the way a macOS widget would write it.
+        /// With uppercase labels switched off the row names stop shouting: real acronyms
+        /// keep their capitals, everything else drops to sentence case. That is what makes
+        /// the quiet themes read like a macOS widget rather than a dashboard.
         /// </summary>
         private string Lbl(string label)
         {
-            if (_settings.Profile != UiProfile.Apple) return label;
+            if (_settings.UpperCaseLabels) return label;
             switch (label)
             {
                 case "DISK": return "Disk";
@@ -255,7 +281,7 @@ namespace LIKAsys.Ui
             return new MetricRowVm
             {
                 Key = key,
-                Label = _settings.UpperCaseLabels ? Lbl(label).ToUpperInvariant() : Lbl(label),
+                Label = _settings.UpperCaseLabels ? label.ToUpperInvariant() : Lbl(label),
                 Icon = geo
             };
         }
@@ -537,6 +563,15 @@ namespace LIKAsys.Ui
                         r.IconStroke = Solid(accent);
                         r.IconFill = null;
                         r.IconThickness = 1.5;
+                        r.IconEffect = null;
+                        break;
+                    case IconStyle.Hairline:
+                        // the quiet set: one thin stroke, no fill, no glow, no shadow
+                        r.IconVisibility = Visibility.Visible;
+                        r.ShadowVisibility = Visibility.Collapsed;
+                        r.IconStroke = Solid(accent);
+                        r.IconFill = null;
+                        r.IconThickness = 1.15;
                         r.IconEffect = null;
                         break;
                     case IconStyle.Solid:

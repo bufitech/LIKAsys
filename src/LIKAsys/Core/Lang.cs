@@ -33,7 +33,8 @@ namespace LIKAsys.Core
         public static string T(string sq)
         {
             if (!IsEnglish || string.IsNullOrEmpty(sq)) return sq;
-            return Map.TryGetValue(sq, out var v) ? v : sq;
+            try { return Map.TryGetValue(sq, out var v) ? v : sq; }
+            catch { return sq; }
         }
 
         // ================================================================= tree walker
@@ -114,8 +115,20 @@ namespace LIKAsys.Core
 
         // ================================================================= dictionary
 
+        /// <summary>
+        /// A dictionary whose Add() overwrites instead of throwing. The map below is written
+        /// by hand and grows with every release; a single repeated Albanian key used to throw
+        /// inside the static constructor, which killed the app before it drew anything.
+        /// Never let a typo in a translation table be fatal.
+        /// </summary>
+        private sealed class SafeMap : Dictionary<string, string>
+        {
+            public SafeMap(IEqualityComparer<string> cmp) : base(cmp) { }
+            public new void Add(string sq, string en) { this[sq] = en; }
+        }
+
         private static readonly Dictionary<string, string> Map =
-            new Dictionary<string, string>(StringComparer.Ordinal)
+            new SafeMap(StringComparer.Ordinal)
         {
             // ---------------------------------------------------- window chrome / tabs
             { "LIKAsys - Cilesimet", "LIKAsys - Settings" },
@@ -283,11 +296,9 @@ namespace LIKAsys.Core
             { "pa loje", "no game" },
             { "kerkon admin", "needs admin" },
                         // ---- v1.6: Apple profile, reveal motion, quick switch
-            { "IT - Apple Style", "IT - Apple Style" },
-            { "Jashtëzakonisht i pastër. Qelq i bardhë, pa korniza, pa shkëlqim, ikona me vijë floku. Bie nga lart.",
-              "Extremely clean. White frosted glass, no borders, no glow, hairline icons. Drops in from the top." },
-            { "Disku, I/O, rrjeti, ping dhe uptime. Shkronja monospace, ikona teknike, theks i gjelbër.",
-              "Storage, I/O, network, ping and uptime. Monospace type, technical icons, green accent." },
+            { "Disku, I/O, rrjeti, ping dhe uptime. Shkronja monospace, ikona teknike, theks i gjelbër. Për pamje Apple - jashtëzakonisht e pastër, e bardhë, pa korniza - shko te Temat > Dritë > Apple Clean.",
+              "Storage, I/O, network, ping and uptime. Monospace type, technical icons, green accent. For the Apple look - extremely clean, white, no borders - go to Themes > Light > Apple Clean." },
+            { "Vijë floku (e qetë)", "Hairline (quiet)" },
             { "Si vjen në ekran", "How it arrives" },
             { "Lëvizja zgjat më pak se gjysmë sekonde dhe shihet sa herë widget-i shfaqet ose kthehet nga i minimizuari.",
               "The motion takes under half a second and plays whenever the widget appears or comes back from minimised." },
@@ -303,7 +314,6 @@ namespace LIKAsys.Core
             { "PROFILI", "PROFILE" },
             { "Zgjidh për çfarë e përdor këtë kompjuter. Profili i ndërron njëherësh rreshtat, ikonat dhe ngjyrat. Pastaj mund të ndryshosh çdo gjë veç e veç më poshtë.",
               "Pick what you use this computer for. The profile switches the rows, the icons and the colours all at once. After that you can still change everything one by one below." },
-            { "Gaming", "Gaming" },
             { "IT", "IT" },
             { "FPS, 1% low, VRAM dhe temperatura. Numra të mëdhenj, ikona 3D, theks cyan.",
               "FPS, 1% low, VRAM and temperatures. Big numbers, 3D icons, cyan accent." },
@@ -411,7 +421,6 @@ namespace LIKAsys.Core
             { "LIKAsys - Perditesim", "LIKAsys - Update" },
             { "Version i ri i disponueshem", "A new version is available" },
             { "ÇFARE KA TE RE", "WHAT'S NEW" },
-            { "Duke shkarkuar...", "Downloading..." },
             { "Me vone", "Later" },
             { "Instalo tani", "Install now" },
             { "Duke instaluar... LIKAsys mbyllet dhe rihapet vetvetiu.",

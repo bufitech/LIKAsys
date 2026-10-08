@@ -87,7 +87,6 @@ namespace LIKAsys.Ui
             var prof = new ToolStripMenuItem(Lang.T("Profili"));
             AddProfile(prof, "Gaming", UiProfile.Gaming);
             AddProfile(prof, "IT", UiProfile.It);
-            AddProfile(prof, "IT Apple", UiProfile.Apple);
             _menu.Items.Add(prof);
             _menu.Items.Add(new ToolStripSeparator());
 

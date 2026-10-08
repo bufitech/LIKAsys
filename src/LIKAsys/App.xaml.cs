@@ -37,7 +37,10 @@ namespace LIKAsys
                 ReportOnce(Lang.T("Gabim gjate punes"), args.Exception);
             };
             AppDomain.CurrentDomain.UnhandledException += (s, args) =>
+            {
                 AppInfo.Log("Fatal: " + args.ExceptionObject);
+                ReportOnce("LIKAsys", args.ExceptionObject as Exception);
+            };
 
             bool admin = false;
             try { admin = Native.IsElevated(); } catch { }
@@ -249,7 +252,11 @@ namespace LIKAsys
             _reported = true;
             try
             {
-                MessageBox.Show(title + ":\n\n" + ex.Message + "\n\n" + Lang.T("Detajet: ") + AppInfo.LogFile,
+                // Deliberately free of Lang, settings and anything else that could be the
+                // very thing that broke: a reporter that throws leaves the user with an app
+                // that simply never opens and no clue why.
+                var msg = ex == null ? "?" : (ex.GetBaseException().Message + "\n\n" + ex.GetType().Name);
+                MessageBox.Show(title + ":\n\n" + msg + "\n\n" + AppInfo.LogFile,
                     "LIKAsys", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             catch { }
@@ -382,7 +389,6 @@ namespace LIKAsys
                         var v = k?.GetValue("SetupProfile") as string;
                         if (string.IsNullOrEmpty(v)) continue;
                         if (string.Equals(v, "it", StringComparison.OrdinalIgnoreCase)) p = UiProfile.It;
-                        else if (string.Equals(v, "apple", StringComparison.OrdinalIgnoreCase)) p = UiProfile.Apple;
                         break;
                     }
                 }

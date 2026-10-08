@@ -17,7 +17,14 @@ echo "=============================================="
 echo " LIKAsys $VERSION - build"
 echo "=============================================="
 
+# 0. language gate ---------------------------------------------------------
+# A repeated key in Lang.cs throws inside a static constructor, which kills the
+# app before it draws anything. That shipped once; this stops it shipping twice.
+echo "[0/4] kontrolli i gjuhes"
+python3 "$(dirname "$0")/scripts/check-lang.py" || exit 1
+
 # 1. branding assets -------------------------------------------------------
+
 if command -v python3 >/dev/null && python3 -c "import PIL" 2>/dev/null; then
   echo "[1/4] ikona + bitmaps"
   python3 "$ROOT/tools/make_branding.py"

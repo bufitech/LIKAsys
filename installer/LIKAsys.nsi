@@ -51,7 +51,6 @@ Var UserProfile
 Var UserProfileDlg
 Var RbGaming
 Var RbIt
-Var RbApple
 
 ; ---------------------------------------------------------------- interface
 !define MUI_ABORTWARNING
@@ -126,11 +125,8 @@ LangString TXT_PROF_INTRO ${LANG_ENGLISH} "Pick a profile. It decides which read
 LangString TXT_PROF_GAMING ${LANG_ALBANIAN} "FPS, 1% low, VRAM dhe temperatura. Numra te medhenj, ikona 3D, theks cyan. Zgjidhe kete nese luan."
 LangString TXT_PROF_GAMING ${LANG_ENGLISH} "FPS, 1% low, VRAM and temperatures. Big numbers, 3D icons, cyan accent. Choose this if you game."
 
-LangString TXT_PROF_IT ${LANG_ALBANIAN} "Disku, lexim/shkrim, rrjeti, ping dhe uptime. Shkronja monospace, ikona teknike, theks i gjelber."
-LangString TXT_PROF_IT ${LANG_ENGLISH} "Storage, read/write, network, ping and uptime. Monospace type, technical icons, green accent."
-
-LangString TXT_PROF_APPLE ${LANG_ALBANIAN} "Njesoj si IT, por jashtezakonisht i paster. Qelq i bardhe, pa korniza, pa shkelqim, ikona me vije floku. Bie butesisht nga lart."
-LangString TXT_PROF_APPLE ${LANG_ENGLISH} "The same as IT, but extremely clean. White frosted glass, no borders, no glow, hairline icons. Drops in gently from the top."
+LangString TXT_PROF_IT ${LANG_ALBANIAN} "Disku, lexim/shkrim, rrjeti, ping dhe uptime. Shkronja monospace, ikona teknike, theks i gjelber. Brenda tij gjen edhe temen 'Apple Clean' - e bardhe, e paster, pa korniza."
+LangString TXT_PROF_IT ${LANG_ENGLISH} "Storage, read/write, network, ping and uptime. Monospace type, technical icons, green accent. It also carries the 'Apple Clean' theme - white, clean, no borders."
 
 
 
@@ -160,24 +156,17 @@ Function ProfilePageShow
   Pop $RbGaming
   ${NSD_CreateRadioButton} 0 62u 100% 12u "IT"
   Pop $RbIt
-  ${NSD_CreateRadioButton} 0 92u 100% 12u "IT - Apple Style"
-  Pop $RbApple
 
   ${NSD_CreateLabel} 14u 44u 95% 18u "$(TXT_PROF_GAMING)"
   Pop $0
-  ${NSD_CreateLabel} 14u 74u 95% 18u "$(TXT_PROF_IT)"
-  Pop $0
-  ${NSD_CreateLabel} 14u 104u 95% 22u "$(TXT_PROF_APPLE)"
+  ${NSD_CreateLabel} 14u 74u 95% 26u "$(TXT_PROF_IT)"
   Pop $0
 
   ${NSD_OnClick} $RbGaming OnPickGaming
   ${NSD_OnClick} $RbIt OnPickIt
-  ${NSD_OnClick} $RbApple OnPickApple
 
   ${If} $UserProfile == "it"
     ${NSD_Check} $RbIt
-  ${ElseIf} $UserProfile == "apple"
-    ${NSD_Check} $RbApple
   ${Else}
     ${NSD_Check} $RbGaming
   ${EndIf}
@@ -188,19 +177,11 @@ FunctionEnd
 Function OnPickGaming
   ${NSD_Check} $RbGaming
   ${NSD_Uncheck} $RbIt
-  ${NSD_Uncheck} $RbApple
 FunctionEnd
 
 Function OnPickIt
   ${NSD_Check} $RbIt
   ${NSD_Uncheck} $RbGaming
-  ${NSD_Uncheck} $RbApple
-FunctionEnd
-
-Function OnPickApple
-  ${NSD_Check} $RbApple
-  ${NSD_Uncheck} $RbGaming
-  ${NSD_Uncheck} $RbIt
 FunctionEnd
 
 Function ProfilePageLeave
@@ -208,10 +189,6 @@ Function ProfilePageLeave
   ${NSD_GetState} $RbIt $0
   ${If} $0 == ${BST_CHECKED}
     StrCpy $UserProfile "it"
-  ${EndIf}
-  ${NSD_GetState} $RbApple $0
-  ${If} $0 == ${BST_CHECKED}
-    StrCpy $UserProfile "apple"
   ${EndIf}
 FunctionEnd
 
