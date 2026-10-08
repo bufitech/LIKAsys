@@ -75,7 +75,7 @@ namespace LIKAsys
             catch (Exception ex)
             {
                 AppInfo.Log("SETTINGS FAILED: " + ex);
-                problems.Add(Lang.T("Cilesimet nuk u lexuan dot - u perdoren ato fillestare."));
+                problems.Add(Lang.T("Cilësimet nuk u lexuan dot - u perdoren ato fillestare."));
             }
             if (_settings == null) _settings = new AppSettings();
 
@@ -104,7 +104,7 @@ namespace LIKAsys
                             _tray?.Rebuild();
                             if (_settings.WidgetVisible) _widget?.Reveal();
                             SettingsStore.Save(_settings);
-                            _tray?.Notify("LIKAsys", Lang.T("Profili u ndryshua ne ") + Profiles.Name(p));
+                            _tray?.Notify("LIKAsys", Lang.T("Profili u ndryshua në ") + Profiles.Name(p));
                         }
                         catch (Exception ex) { AppInfo.Log("ProfilePicked: " + ex.Message); }
                     }), System.Windows.Threading.DispatcherPriority.Background);
@@ -277,7 +277,7 @@ namespace LIKAsys
             catch { }
         }
 
-        /// <summary>Tray -> "Rikthe widget-in ne ekran": back to a known-good state.</summary>
+        /// <summary>Tray -> "Rikthe widget-in në ekran": back to a known-good state.</summary>
         private void RescueWidget()
         {
             try

@@ -1,3 +1,24 @@
+## 2.1
+
+**Menyja e ikonës afër orës u bë nga e para.** Ajo e vjetra ishte menyja standarde e Windows-it, me ngjyra gri dhe një kuti check-u të zhytur. Tani vizatohet nga vetë programi:
+
+- Qoshe të rrumbullakta. Windows 11 i rrumbullakos vetë, me hije. Në Windows 10 i presim ne.
+- Nën kursorin e mausit del një shirit i rrumbullakosur, jo një bllok blu.
+- Shenja e zgjedhjes është një pipë cyan, e vizatuar me dy vija.
+- Nënmenytë kanë një shigjetë të hollë në të djathtë.
+- Rreshta më të lartë dhe hapësirë më të mirë, që menyja të lexohet me një shikim.
+
+**Ndjek dark mode dhe light mode të Windows-it.** Nëse Windows është i errët, menyja është e errët. Nëse është i ndritshëm, menyja bëhet e bardhë me tekst të zi dhe me pipë cyan të errët. E ndërron vetë sa herë ta ndërrosh atë te Settings i Windows-it, pa e rinisur programin.
+
+Shkallëzimi i ekranit merret parasysh. Në 125% ose 150% rriten edhe pipa, edhe shigjeta, edhe hapësirat.
+
+**Menyja u pastrua.**
+
+- Radhë e re: çka bën widget-i lart, katër çelësat në mes, nënmenytë pastaj, dhe në fund update, rreth dhe dalja.
+- **Rreth LIKAsys** është e re. Brenda saj janë versioni, "Made in Kosovo with ❤️", Likaapps.com dhe regjistri. Kështu menyja kryesore mbeti e shkurtër.
+- Emrat u shkruan si duhet, me ë dhe ç: "Gjithmonë sipër", "Cilësimet...", "Tema e lojës", "Tema e IT-së", "Poshtë majtas". Më parë ishin pa shkronja shqipe.
+- "Kalo klikimet përtej" u bë **"Përshkueshme nga klikimi"**.
+
 ## 2.0
 
 **Tani lëviz.** Kartela më parë kërcente nga një numër te tjetri. Tani:

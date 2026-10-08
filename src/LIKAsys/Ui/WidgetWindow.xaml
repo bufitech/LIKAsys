@@ -123,7 +123,7 @@
                             <Path x:Name="MinIcon" Data="{StaticResource IconMinimize}" Stroke="#FF93A6BE" StrokeThickness="1.7"
                                   Width="13" Height="13" Stretch="Uniform" />
                         </Button>
-                        <Button Style="{StaticResource IconButton}" Width="19" Height="19" Click="Settings_Click" ToolTip="Cilesimet">
+                        <Button Style="{StaticResource IconButton}" Width="19" Height="19" Click="Settings_Click" ToolTip="Cilësimet">
                             <Path x:Name="GearIcon" Data="{StaticResource IconSettings}" Stroke="#FF93A6BE" StrokeThickness="1.7"
                                   Width="13" Height="13" Stretch="Uniform" />
                         </Button>
