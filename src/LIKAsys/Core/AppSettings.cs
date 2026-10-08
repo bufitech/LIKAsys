@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
@@ -64,6 +64,7 @@ namespace LIKAsys.Core
         private bool _showBars = true;
         private bool _showBrandDot = true;
         private bool _glowEffect = true;
+        private bool _animations = true;
         private bool _textShadow = false;
         private IconStyle _iconStyle = IconStyle.ThreeD;
         private double _iconSizeOffset = 6;
@@ -173,6 +174,13 @@ namespace LIKAsys.Core
         public bool ShowFooter { get => true; set { /* locked on */ } }
         public bool ShowBrandDot { get => _showBrandDot; set => Set(ref _showBrandDot, value); }
         public bool GlowEffect { get => _glowEffect; set => Set(ref _glowEffect, value); }
+
+        /// <summary>
+        /// Motion: bars that glide to their new value, rows that arrive one after the other,
+        /// a card that lifts under the pointer. Everything is a transform or an opacity, so
+        /// it runs on the render thread and never re-measures the window. Off means instant.
+        /// </summary>
+        public bool Animations { get => _animations; set => Set(ref _animations, value); }
 
         /// <summary>Soft black shadow behind every glyph - makes a background-less widget readable on any wallpaper.</summary>
         public bool TextShadow { get => _textShadow; set => Set(ref _textShadow, value); }

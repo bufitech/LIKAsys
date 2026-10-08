@@ -1,3 +1,27 @@
+## 2.0
+
+**Tani lëviz.** Kartela më parë kërcente nga një numër te tjetri. Tani:
+
+- **Shiritat rrëshqasin.** Matja e re nuk kërcen, shiriti shkon butë deri te vlera e re.
+- **Rreshtat vijnë me radhë.** Kur kartela shfaqet, ose kthehet nga e minimizuara, rreshtat shfaqen njëri pas tjetrit.
+- **Kartela ngrihet.** Çoje kursorin mbi të dhe ngrihet pak. Largohu dhe ulet prapë.
+- **Pika e markës merr frymë.** Ngadalë te Gaming, edhe më ngadalë te IT.
+
+Dy profilet nuk lëvizin njësoj. Gaming rrëshqet shpejt e me kërcim. IT rrëshqet ngadalë e me qetësi.
+
+Çdo gjë është vetëm zhvendosje ose zbehje, prandaj dritarja nuk rimatet asnjëherë. Kur asgjë nuk lëviz, kohëmatësi ndalet vetë dhe widget-i kthehet në zero punë.
+
+**Fike kur të duash.** Cilësimet > Pamja > **Animacione**. E fik dhe çdo ndryshim bëhet i menjëhershëm prapë.
+
+**Dy profilet u ndanë më shumë.**
+
+- **Gaming** tani ka fontin e vet, **Bahnschrift**, të ngushtë dhe këndor. Numrat u bënë edhe më të mëdhenj se etiketat. Kartela hyn nga lart.
+- **IT** tani ka familjen e vet të plotë të ikonave. Disku, I/O, uptime, FPS, 1% low dhe frame kishin mbetur me ikonat e Gaming-ut. U vizatuan të gjitha nga e para, vetëm me katrorë dhe vija, si një diagram racku.
+
+**Më shpejt se më parë.** Ngjyrat tani ruhen një herë e përdoren prapë. Më parë çdo sekondë bëheshin ngjyra të reja për secilin rresh, dhe teksti me shiritat rivizatoheshin edhe kur asgjë nuk kishte ndryshuar. Tani nuk rivizatohet asgjë nëse ngjyra është e njëjta.
+
+**Kontroll i ri para çdo ndërtimi.** `check-ui.py` siguron që çdo lidhje e pamjes ekziston vërtet dhe që rrjeta e sigurisë e animacionit është ende aty. Nëse një animacion dështon, rreshtat kthehen në ekran brenda një sekonde e gjysmë.
+
 ## 1.9
 
 **Temat u ndanë në dy: Lojëra dhe IT.** Te Cilësimet > Temat, dy grupet e para tani janë **Lojëra** dhe **IT**. Njëri për kur luan, tjetri për kur punon.

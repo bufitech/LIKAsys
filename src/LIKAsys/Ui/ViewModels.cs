@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
@@ -28,6 +28,7 @@ namespace LIKAsys.Ui
 
         private string _label = "", _value = "--", _unit = "", _detail = "";
         private double _percent, _percentRest = 100;
+        private double _fill, _rowOpacity = 1, _rowShift;
         private Geometry _icon;
         private Brush _valueBrush = Brushes.White, _barBrush = Brushes.Cyan;
         private Brush _labelBrush = Brushes.Gray, _detailBrush = Brushes.Gray, _unitBrush = Brushes.Gray;
@@ -60,6 +61,19 @@ namespace LIKAsys.Ui
             set { value = Math.Max(0, Math.Min(100, value)); if (Set(ref _percent, value)) { _percentRest = 100 - value; Raise(nameof(PercentRest)); } }
         }
         public double PercentRest => _percentRest;
+
+        /// <summary>
+        /// 0..1, what the bar actually draws right now. It is bound to a ScaleTransform,
+        /// never to a column width, so easing it costs a repaint and not a layout pass.
+        /// The widget's single motion timer walks it towards Percent / 100.
+        /// </summary>
+        public double Fill { get => _fill; set => Set(ref _fill, value); }
+
+        /// <summary>Entrance fade for one row, 0..1.</summary>
+        public double RowOpacity { get => _rowOpacity; set => Set(ref _rowOpacity, value); }
+
+        /// <summary>Entrance offset in px for one row. Render transform, so it never moves layout.</summary>
+        public double RowShift { get => _rowShift; set => Set(ref _rowShift, value); }
 
         public Geometry Icon { get => _icon; set => Set(ref _icon, value); }
         public Brush ValueBrush { get => _valueBrush; set => Set(ref _valueBrush, value); }

@@ -37,6 +37,8 @@ namespace LIKAsys.Ui
 
             RowsHost.ItemsSource = _rows;
 
+            MouseEnter += (s, e) => HoverLift(true);
+            MouseLeave += (s, e) => HoverLift(false);
             MouseLeftButtonDown += OnDragStart;
             MouseLeftButtonUp += OnDragEnd;
             MouseRightButtonUp += (s, e) => MenuRequested?.Invoke(this, PointToScreen(e.GetPosition(this)));
@@ -62,7 +64,9 @@ namespace LIKAsys.Ui
             {
                 _settings.Minimized = on;
 
+                bool wasMin = RowsHost.Visibility != Visibility.Visible;
                 RowsHost.Visibility = on ? Visibility.Collapsed : Visibility.Visible;
+                if (!on && wasMin) StaggerIn();
                 FooterRow.Visibility = on ? Visibility.Collapsed : Visibility.Visible;
                 MiniLine.Visibility = on ? Visibility.Visible : Visibility.Collapsed;
                 HeaderRow.Margin = on ? new Thickness(0) : new Thickness(0, 0, 0, 8);
@@ -113,6 +117,7 @@ namespace LIKAsys.Ui
         {
             try
             {
+                StaggerIn();
                 var mode = _settings.Reveal;
 
                 BeginAnimation(OpacityProperty, null);
@@ -213,6 +218,179 @@ namespace LIKAsys.Ui
             }), System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
+
+        // =================================================================== motion
+        //
+        // One timer for the whole card. It only runs while something is actually
+        // moving and stops itself the moment everything has settled, so an idle
+        // widget costs nothing. Every value it touches is a transform or an
+        // opacity: no width, no margin, no font size. That is the difference
+        // between a card that glides and a card that re-measures itself 60 times
+        // a second inside a SizeToContent window.
+
+        private System.Windows.Threading.DispatcherTimer _motion;
+        private int _staggerFrame = -1;
+        private bool _hoverUp;
+
+        private bool Motion => _settings != null && _settings.Animations;
+
+        /// <summary>How eagerly the bars chase a new reading. Gaming snaps, IT glides.</summary>
+        private double Chase => _settings.Profile == UiProfile.Gaming ? 0.30 : 0.17;
+
+        /// <summary>How far a row travels on its way in.</summary>
+        private double EntryShift => _settings.Profile == UiProfile.Gaming ? 14 : 6;
+
+        private void Kick()
+        {
+            if (!Motion) { Settle(); return; }
+            if (_motion == null)
+            {
+                _motion = new System.Windows.Threading.DispatcherTimer(
+                    System.Windows.Threading.DispatcherPriority.Render)
+                { Interval = TimeSpan.FromMilliseconds(16) };
+                _motion.Tick += MotionTick;
+            }
+            if (!_motion.IsEnabled) _motion.Start();
+        }
+
+        /// <summary>Jump everything to its final state and stop the timer.</summary>
+        private void Settle()
+        {
+            try
+            {
+                _motion?.Stop();
+                _staggerFrame = -1;
+                foreach (var r in _rows)
+                {
+                    r.Fill = r.Percent / 100.0;
+                    r.RowOpacity = 1;
+                    r.RowShift = 0;
+                }
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Rows fade and slide in one after the other. Called when the card appears.
+        ///
+        /// They start at zero opacity, so if the timer ever failed to run they would stay
+        /// invisible. A one shot failsafe puts everything back on screen after a second
+        /// and a half, no matter what happened in between.
+        /// </summary>
+        private void StaggerIn()
+        {
+            if (!Motion) { Settle(); return; }
+            try
+            {
+                double shift = EntryShift;
+                foreach (var r in _rows) { r.RowOpacity = 0; r.RowShift = shift; r.Fill = 0; }
+                _staggerFrame = 0;
+                Kick();
+
+                var guard = new System.Windows.Threading.DispatcherTimer
+                { Interval = TimeSpan.FromMilliseconds(1500) };
+                guard.Tick += (s2, e2) =>
+                {
+                    guard.Stop();
+                    try
+                    {
+                        foreach (var r in _rows)
+                            if (r.RowOpacity < 1) { r.RowOpacity = 1; r.RowShift = 0; }
+                    }
+                    catch { }
+                };
+                guard.Start();
+            }
+            catch { Settle(); }
+        }
+
+        private void MotionTick(object sender, EventArgs e)
+        {
+            try
+            {
+                bool busy = false;
+                double k = Chase;
+
+                if (_staggerFrame >= 0)
+                {
+                    double shift = EntryShift;
+                    bool done = true;
+                    for (int i = 0; i < _rows.Count; i++)
+                    {
+                        double t = (_staggerFrame - i * 2) / 13.0;      // ~32 ms apart, ~210 ms each
+                        if (t <= 0) { done = false; continue; }
+                        if (t >= 1) { _rows[i].RowOpacity = 1; _rows[i].RowShift = 0; continue; }
+                        double o = 1 - Math.Pow(1 - t, 3);              // ease out cubic
+                        _rows[i].RowOpacity = o;
+                        _rows[i].RowShift = shift * (1 - o);
+                        done = false;
+                    }
+                    _staggerFrame++;
+                    if (done) _staggerFrame = -1; else busy = true;
+                }
+
+                foreach (var r in _rows)
+                {
+                    double target = r.Percent / 100.0;
+                    double d = target - r.Fill;
+                    if (Math.Abs(d) > 0.0015) { r.Fill = r.Fill + d * k; busy = true; }
+                    else if (r.Fill != target) r.Fill = target;
+                }
+
+                if (!busy) _motion.Stop();
+            }
+            catch { try { _motion?.Stop(); } catch { } }
+        }
+
+        /// <summary>A small lift under the pointer. Pure render transform, costs nothing.</summary>
+        private void HoverLift(bool up)
+        {
+            if (_hoverUp == up) return;
+            _hoverUp = up;
+            try
+            {
+                if (!Motion)
+                {
+                    if (Card.RenderTransform is ScaleTransform flat) { flat.ScaleX = 1; flat.ScaleY = 1; }
+                    return;
+                }
+                if (!(Card.RenderTransform is ScaleTransform st))
+                {
+                    st = new ScaleTransform(1, 1);
+                    Card.RenderTransformOrigin = new Point(0.5, 0.5);
+                    Card.RenderTransform = st;
+                }
+                double to = up ? 1.018 : 1.0;
+                var dur = new Duration(TimeSpan.FromMilliseconds(up ? 150 : 220));
+                var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+                st.BeginAnimation(ScaleTransform.ScaleXProperty,
+                    new DoubleAnimation(to, dur) { EasingFunction = ease });
+                st.BeginAnimation(ScaleTransform.ScaleYProperty,
+                    new DoubleAnimation(to, dur) { EasingFunction = ease });
+            }
+            catch { }
+        }
+
+        /// <summary>The brand dot breathes. One animation for the whole app.</summary>
+        private void ApplyDotPulse()
+        {
+            try
+            {
+                BrandDot.BeginAnimation(OpacityProperty, null);
+                BrandDot.Opacity = 1;
+                if (!Motion || !_settings.ShowBrandDot) return;
+                var a = new DoubleAnimation(1, 0.42,
+                    new Duration(TimeSpan.FromMilliseconds(_settings.Profile == UiProfile.Gaming ? 1500 : 2600)))
+                {
+                    AutoReverse = true,
+                    RepeatBehavior = RepeatBehavior.Forever,
+                    EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut }
+                };
+                BrandDot.BeginAnimation(OpacityProperty, a);
+            }
+            catch { }
+        }
+
         // ================================================================== rows
 
         public void BuildRows()
@@ -225,14 +403,15 @@ namespace LIKAsys.Ui
             if (_settings.ShowDisk) _rows.Add(NewRow("disk", "DISK", Ico("IconDisk")));
             if (_settings.ShowDiskIo) _rows.Add(NewRow("diskio", "I/O", Ico("IconDiskIo")));
             if (_settings.ShowFps) _rows.Add(NewRow("fps", "FPS", Ico("IconFps")));
-            if (_settings.ShowFpsLow) _rows.Add(NewRow("fpslow", "1% LOW", "IconLow"));
-            if (_settings.ShowFrameTime) _rows.Add(NewRow("frametime", "FRAME", "IconFrame"));
+            if (_settings.ShowFpsLow) _rows.Add(NewRow("fpslow", "1% LOW", Ico("IconLow")));
+            if (_settings.ShowFrameTime) _rows.Add(NewRow("frametime", "FRAME", Ico("IconFrame")));
             if (_settings.ShowNet) _rows.Add(NewRow("net", "NET", Ico("IconNet")));
             if (_settings.ShowPing) _rows.Add(NewRow("ping", "PING", Ico("IconPing")));
             if (_settings.ShowUptime) _rows.Add(NewRow("uptime", "UPTIME", Ico("IconUptime")));
             if (_rows.Count == 0) _rows.Add(NewRow("cpu", "CPU", Ico("IconCpu")));
             StyleRows();
             if (_metrics?.Latest != null) OnMetrics(_metrics.Latest);
+            StaggerIn();
         }
 
         /// <summary>
@@ -303,7 +482,25 @@ namespace LIKAsys.Ui
         private Color WarnC => C(_settings.WarnColor, Color.FromRgb(0xFF, 0xB0, 0x20));
         private Color DangerC => C(_settings.DangerColor, Color.FromRgb(0xFF, 0x4D, 0x5E));
 
-        private static SolidColorBrush Solid(Color c) { var b = new SolidColorBrush(c); b.Freeze(); return b; }
+        // One frozen brush per colour, reused for the life of the app.
+        //
+        // This is not only about the allocations. Two separate brushes of the same colour
+        // are not equal to each other, so handing a fresh one to a row every second made
+        // the binding fire and the text and the bar repaint even when nothing had changed.
+        // Returning the same instance makes that update a no-op, which is most of them.
+        private static readonly Dictionary<uint, SolidColorBrush> _brushCache =
+            new Dictionary<uint, SolidColorBrush>();
+
+        private static SolidColorBrush Solid(Color c)
+        {
+            uint key = ((uint)c.A << 24) | ((uint)c.R << 16) | ((uint)c.G << 8) | c.B;
+            SolidColorBrush b;
+            if (_brushCache.TryGetValue(key, out b)) return b;
+            b = new SolidColorBrush(c);
+            b.Freeze();
+            if (_brushCache.Count < 512) _brushCache[key] = b;
+            return b;
+        }
 
         private static FontWeight Weight(string name)
         {
@@ -454,6 +651,9 @@ namespace LIKAsys.Ui
                 WidgetPlacement.ApplyWindowFlags(this, _settings);
                 UpdateBlurAndRegion();
                 if (_ready) WidgetPlacement.Apply(this, _settings);
+
+                ApplyDotPulse();
+                if (!Motion) Settle(); else Kick();
             }
             catch (Exception ex) { AppInfo.Log("ApplySettings: " + ex.Message); }
         }
@@ -940,6 +1140,7 @@ namespace LIKAsys.Ui
                 }
 
                 UpdateMiniLine();
+                if (IsVisible) Kick(); else Settle();
             }
             catch (Exception ex) { AppInfo.Log("OnMetrics: " + ex.Message); }
         }

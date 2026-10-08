@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace LIKAsys.Core
 {
@@ -25,8 +25,10 @@ namespace LIKAsys.Core
     /// whole look: which rows exist, which icon family draws them, the typeface, the sizes,
     /// the corner radius, the bars, the background and how the card arrives on screen.
     ///
-    ///   Gaming - eyes on frames. Dark glass, neon cyan, 3D icons, big numbers.
-    ///   IT     - eyes on the machine. Monospace, tight rows, technical icons, green.
+    ///   Gaming - dark glass, neon cyan, 3D icons, Bahnschrift, big numbers, bars that
+    ///            snap to the new reading and rows that drop in from above.
+    ///   IT     - monospace, tight rows, a flat rack-diagram icon family drawn only from
+    ///            rectangles and lines, green, and motion that glides instead of snapping.
     ///            Its look is then free to change again through the themes: "Apple Clean"
     ///            turns the very same IT profile into a white, hairline, macOS-quiet card.
     ///
@@ -83,9 +85,11 @@ namespace LIKAsys.Core
             s.AccentGradient = true;
             s.ColorizeByLoad = true;
 
-            s.FontFamily = "Segoe UI";
+            // Bahnschrift is the condensed technical face Windows ships with. Next to the
+            // monospace of the IT profile the two cards stop looking like the same program.
+            s.FontFamily = "Bahnschrift, Segoe UI";
             s.FontSize = 13;
-            s.ValueSizeOffset = 2;
+            s.ValueSizeOffset = 3;
             s.LabelSizeOffset = -1;
             s.ValueWeight = "Bold";
             s.LabelWeight = "SemiBold";
@@ -114,7 +118,8 @@ namespace LIKAsys.Core
             s.ShadowStrength = 0.75;
 
             s.Layout = WidgetLayout.Vertical;
-            s.Reveal = RevealAnimation.Fade;
+            s.Reveal = RevealAnimation.FromTop;
+            s.Animations = true;
             s.TrayIconMode = TrayIconMode.Fps;
         }
 
@@ -175,6 +180,7 @@ namespace LIKAsys.Core
 
             s.Layout = WidgetLayout.Vertical;
             s.Reveal = RevealAnimation.FromRight;
+            s.Animations = true;
             s.TrayIconMode = TrayIconMode.Cpu;
         }
 

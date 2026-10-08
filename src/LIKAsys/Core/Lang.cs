@@ -233,6 +233,7 @@ namespace LIKAsys.Core
             { "IKONAT", "ICONS" },
             { "Stili i ikonave", "Icon style" },
             { "Madhësia e ikonave", "Icon size" },
+            { "Animacione (shiritat rrëshqasin, rreshtat vijnë me radhë)", "Animations (bars glide, rows arrive one by one)" },
             { "Efekt ndriçimi (glow)", "Glow effect" },
             { "Hije pas shkrimit (lexohet mbi çdo sfond)", "Shadow behind the text (readable on any background)" },
             { "SHIRITAT DHE RENDITJA", "BARS AND LAYOUT" },
