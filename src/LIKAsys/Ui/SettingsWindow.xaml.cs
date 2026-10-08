@@ -563,6 +563,7 @@ namespace LIKAsys.Ui
             catch { }
 
             StartViewCombo.ItemsSource = Tr("Siç e lashë herën e fundit", "Gjithmonë i plotë", "Gjithmonë i minimizuar");
+            RevealCombo.ItemsSource = Tr("Pa lëvizje", "Bie nga lart", "Rrëshqet nga e djathta", "Rrëshqet nga e majta", "Ngrihet nga poshtë", "Shfaqet butë");
             IconCombo.ItemsSource = Tr("3D (me thellësi)", "Outline (vija të holla)", "Solid (të mbushura)", "Pa ikona");
             BarCombo.ItemsSource = Tr("Të rrumbullakosur", "Katrorë", "Të segmentuar", "Pa shirita");
             LayoutCombo.ItemsSource = Tr("Vertikale (njëra mbi tjetrën)", "Horizontale (në një shirit)", "Kompakte (pa shirita)");
@@ -600,6 +601,7 @@ namespace LIKAsys.Ui
                 TempCombo.SelectedIndex = string.Equals(_settings.TempUnit, "F", StringComparison.OrdinalIgnoreCase) ? 1 : 0;
                 TrayIconCombo.SelectedIndex = (int)_settings.TrayIconMode;
                 StartViewCombo.SelectedIndex = (int)_settings.StartView;
+                RevealCombo.SelectedIndex = (int)_settings.Reveal;
 
                 int vi = Array.FindIndex(WeightKeys, k => string.Equals(k, _settings.ValueWeight, StringComparison.OrdinalIgnoreCase));
                 int li = Array.FindIndex(WeightKeys, k => string.Equals(k, _settings.LabelWeight, StringComparison.OrdinalIgnoreCase));
@@ -653,7 +655,7 @@ namespace LIKAsys.Ui
             var p = e.PropertyName ?? "";
             if (p.Length == 0 || p == nameof(AppSettings.ThemeName))
             {
-                Dispatcher.BeginInvoke(new Action(() => { SyncThemeSelection(); RefreshColors(); SyncCombos(); }));
+                Dispatcher.BeginInvoke(new Action(() => { SyncThemeSelection(); RefreshColors(); SyncCombos(); SyncProfileSelection(); }));
             }
             else if (p == nameof(AppSettings.Position))
             {
@@ -774,7 +776,9 @@ namespace LIKAsys.Ui
             AddProfileCard(UiProfile.Gaming, "Gaming",
                 "FPS, 1% low, VRAM dhe temperatura. Numra të mëdhenj, ikona 3D, theks cyan.");
             AddProfileCard(UiProfile.It, "IT",
-                "Disku, I/O, rrjeti, ping dhe uptime. Rreshta të ngjeshur, ikona teknike, theks i gjelbër.");
+                "Disku, I/O, rrjeti, ping dhe uptime. Shkronja monospace, ikona teknike, theks i gjelbër.");
+            AddProfileCard(UiProfile.Apple, "IT - Apple Style",
+                "Jashtëzakonisht i pastër. Qelq i bardhë, pa korniza, pa shkëlqim, ikona me vijë floku. Bie nga lart.");
 
             SyncProfileSelection();
         }
@@ -808,7 +812,9 @@ namespace LIKAsys.Ui
                 Background = new SolidColorBrush(Color.FromArgb(0x1F, 0xFF, 0xFF, 0xFF)),
                 Child = new System.Windows.Shapes.Path
                 {
-                    Data = Application.Current.TryFindResource(profile == UiProfile.It ? "IconCpuIt" : "IconFps") as Geometry,
+                    Data = Application.Current.TryFindResource(
+                        profile == UiProfile.It ? "IconCpuIt" :
+                        profile == UiProfile.Apple ? "IconCpuApple" : "IconFps") as Geometry,
                     Stroke = new SolidColorBrush(Color.FromRgb(0xEA, 0xF2, 0xFF)),
                     StrokeThickness = 1.6,
                     Width = 21,
@@ -881,6 +887,17 @@ namespace LIKAsys.Ui
             SyncThemeSelection();
             SyncProfileSelection();
         }
+
+        private void Reveal_Changed(object sender, SelectionChangedEventArgs e)
+        {
+            if (_loading) return;
+            int i = RevealCombo.SelectedIndex;
+            if (i < 0) return;
+            _settings.Reveal = (RevealAnimation)i;
+            RevealPreview?.Invoke(this, EventArgs.Empty);
+        }
+
+        public event EventHandler RevealPreview;
 
         private void StartView_Changed(object sender, SelectionChangedEventArgs e)
         {

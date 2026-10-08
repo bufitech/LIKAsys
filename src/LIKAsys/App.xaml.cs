@@ -89,6 +89,23 @@ namespace LIKAsys
             {
                 _tray = new TrayManager(_settings);
                 _tray.ToggleWidget += (s, a) => ToggleWidget();
+                _tray.ProfilePicked += (s, p) =>
+                {
+                    // deferred: the menu that raised this click is still unwinding, and
+                    // Rebuild() throws away the very ContextMenuStrip it lives on
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        try
+                        {
+                            Profiles.Apply(_settings, p);
+                            _tray?.Rebuild();
+                            if (_settings.WidgetVisible) _widget?.Reveal();
+                            SettingsStore.Save(_settings);
+                            _tray?.Notify("LIKAsys", Lang.T("Profili u ndryshua ne ") + Profiles.Name(p));
+                        }
+                        catch (Exception ex) { AppInfo.Log("ProfilePicked: " + ex.Message); }
+                    }), System.Windows.Threading.DispatcherPriority.Background);
+                };
                 _tray.ToggleMinimize += (s, a) =>
                 {
                     _widget?.SetMinimized(!_settings.Minimized);
@@ -135,7 +152,7 @@ namespace LIKAsys
                 _widget = new WidgetWindow(_settings, _metrics);
                 _widget.SettingsRequested += (s, a) => ShowSettings();
                 _widget.MinimizedChanged += (s, a) => { try { _tray?.Rebuild(); } catch { } SaveSoon(); };
-                if (_settings.WidgetVisible) _widget.Show();
+                if (_settings.WidgetVisible) { _widget.Show(); _widget.Reveal(); }
                 AppInfo.Log("ok: widget");
             }
             catch (Exception ex)
@@ -262,6 +279,7 @@ namespace LIKAsys
                     _widget.SettingsRequested += (s, a) => ShowSettings();
                 }
                 _widget.Show();
+                _widget.Reveal();
                 _widget.BuildRows();
                 _widget.ApplySettings();
                 _tray?.Sync();
@@ -364,6 +382,7 @@ namespace LIKAsys
                         var v = k?.GetValue("SetupProfile") as string;
                         if (string.IsNullOrEmpty(v)) continue;
                         if (string.Equals(v, "it", StringComparison.OrdinalIgnoreCase)) p = UiProfile.It;
+                        else if (string.Equals(v, "apple", StringComparison.OrdinalIgnoreCase)) p = UiProfile.Apple;
                         break;
                     }
                 }
@@ -386,6 +405,7 @@ namespace LIKAsys
             else
             {
                 _widget.Show();
+                _widget.Reveal();
                 _settings.WidgetVisible = true;
                 _widget.ApplySettings();
             }
@@ -409,6 +429,7 @@ namespace LIKAsys
                 _settingsWindow?.SetCheckEnabled(true);
             };
             _settingsWindow.ResetRequested += (s, a) => ResetSettings();
+            _settingsWindow.RevealPreview += (s, a) => _widget?.Reveal();
             _settingsWindow.LanguageChanged += (s, a) =>
             {
                 AppInfo.Log("language -> " + Lang.Code);

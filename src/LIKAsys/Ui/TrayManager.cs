@@ -30,6 +30,7 @@ namespace LIKAsys.Ui
 
         public event EventHandler ToggleWidget;
         public event EventHandler ToggleMinimize;
+        public event EventHandler<UiProfile> ProfilePicked;
         public event EventHandler OpenSettings;
         public event EventHandler CheckUpdates;
         public event EventHandler OpenLog;
@@ -81,6 +82,14 @@ namespace LIKAsys.Ui
             _menu.Items.Add(_miTop);
             _menu.Items.Add(_miClick);
             _menu.Items.Add(_miLock);
+
+            // quick profile switch - one click, no settings window
+            var prof = new ToolStripMenuItem(Lang.T("Profili"));
+            AddProfile(prof, "Gaming", UiProfile.Gaming);
+            AddProfile(prof, "IT", UiProfile.It);
+            AddProfile(prof, "IT Apple", UiProfile.Apple);
+            _menu.Items.Add(prof);
+            _menu.Items.Add(new ToolStripSeparator());
 
             _miPos = new ToolStripMenuItem(Lang.T("Pozicioni"));
             var pos = _miPos;
@@ -139,6 +148,13 @@ namespace LIKAsys.Ui
         {
             var mi = new ToolStripMenuItem(text, null, handler) { Checked = state, CheckOnClick = false };
             return mi;
+        }
+
+        private void AddProfile(ToolStripMenuItem parent, string text, UiProfile p)
+        {
+            var mi = new ToolStripMenuItem(text, null, (s, e) => ProfilePicked?.Invoke(this, p))
+            { Checked = _settings.Profile == p };
+            parent.DropDownItems.Add(mi);
         }
 
         private void AddPos(ToolStripMenuItem parent, string text, WidgetPosition p)

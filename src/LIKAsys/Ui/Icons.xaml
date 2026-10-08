@@ -45,6 +45,69 @@
         <LineGeometry StartPoint="19.4,12.6" EndPoint="17.8,13.2" />
     </GeometryGroup>
 
+    <!-- ============ Apple profile: hairline, geometric, nothing extra ============ -->
+
+    <GeometryGroup x:Key="IconCpuApple" FillRule="EvenOdd">
+        <RectangleGeometry Rect="5.5,5.5 13,13" RadiusX="3.6" RadiusY="3.6" />
+        <RectangleGeometry Rect="9.6,9.6 4.8,4.8" RadiusX="1.6" RadiusY="1.6" />
+        <LineGeometry StartPoint="9.5,5.5" EndPoint="9.5,2.8" />
+        <LineGeometry StartPoint="14.5,5.5" EndPoint="14.5,2.8" />
+        <LineGeometry StartPoint="9.5,18.5" EndPoint="9.5,21.2" />
+        <LineGeometry StartPoint="14.5,18.5" EndPoint="14.5,21.2" />
+        <LineGeometry StartPoint="5.5,9.5" EndPoint="2.8,9.5" />
+        <LineGeometry StartPoint="5.5,14.5" EndPoint="2.8,14.5" />
+        <LineGeometry StartPoint="18.5,9.5" EndPoint="21.2,9.5" />
+        <LineGeometry StartPoint="18.5,14.5" EndPoint="21.2,14.5" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconGpuApple" FillRule="EvenOdd">
+        <RectangleGeometry Rect="2.6,6.4 18.8,11.2" RadiusX="3.2" RadiusY="3.2" />
+        <EllipseGeometry Center="9.4,12" RadiusX="2.4" RadiusY="2.4" />
+        <LineGeometry StartPoint="14.6,12" EndPoint="18.2,12" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconRamApple" FillRule="EvenOdd">
+        <RectangleGeometry Rect="2.8,7.2 18.4,9.6" RadiusX="2.8" RadiusY="2.8" />
+        <LineGeometry StartPoint="8.4,10.4" EndPoint="8.4,13.6" />
+        <LineGeometry StartPoint="12,10.4" EndPoint="12,13.6" />
+        <LineGeometry StartPoint="15.6,10.4" EndPoint="15.6,13.6" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconDiskApple" FillRule="EvenOdd">
+        <RectangleGeometry Rect="2.8,4.6 18.4,14.8" RadiusX="4" RadiusY="4" />
+        <EllipseGeometry Center="12,12" RadiusX="1.6" RadiusY="1.6" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconDiskIoApple" FillRule="EvenOdd">
+        <RectangleGeometry Rect="2.8,4.6 18.4,14.8" RadiusX="4" RadiusY="4" />
+        <PathGeometry Figures="M9,14.6 L9,9.4" />
+        <PathGeometry Figures="M6.8,11.6 L9,9.2 L11.2,11.6" />
+        <PathGeometry Figures="M15,9.4 L15,14.6" />
+        <PathGeometry Figures="M12.8,12.4 L15,14.8 L17.2,12.4" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconNetApple" FillRule="EvenOdd">
+        <PathGeometry Figures="M3.2,9.6 A13,13 0 0 1 20.8,9.6" />
+        <PathGeometry Figures="M6.8,13.4 A8,8 0 0 1 17.2,13.4" />
+        <EllipseGeometry Center="12,18" RadiusX="1.5" RadiusY="1.5" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconPingApple" FillRule="EvenOdd">
+        <EllipseGeometry Center="12,12" RadiusX="2" RadiusY="2" />
+        <PathGeometry Figures="M7.4,16.6 A6.5,6.5 0 0 1 7.4,7.4" />
+        <PathGeometry Figures="M16.6,7.4 A6.5,6.5 0 0 1 16.6,16.6" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconUptimeApple" FillRule="EvenOdd">
+        <EllipseGeometry Center="12,12" RadiusX="9" RadiusY="9" />
+        <PathGeometry Figures="M12,6.8 L12,12.2 L15.6,14" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconFpsApple" FillRule="EvenOdd">
+        <PathGeometry Figures="M3.6,16.8 A9,9 0 0 1 20.4,16.8" />
+        <LineGeometry StartPoint="12,16.4" EndPoint="16.4,10.8" />
+    </GeometryGroup>
+
     <!-- ================= storage + uptime (shared) ================= -->
 
     <!-- disk: platters seen from the side -->

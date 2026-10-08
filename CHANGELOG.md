@@ -1,3 +1,12 @@
+## 1.6
+
+- **Profil i ri: IT - Apple Style.** Jashtëzakonisht i pastër - qelq i bardhë i ngrirë, pa korniza, pa shkëlqim, qoshe të buta 18px, ikona me vijë floku dhe etiketa pa shkronja të mëdha.
+- **Çdo profil ndryshon gjithçka.** Jo vetëm cilat rreshta shfaqen: tani ndryshon edhe shkronjat (Segoe UI / monospace / Segoe UI Variable), madhësitë, trashësia, ikonat, shiritat, qoshet, hapësirat, hija dhe ngjyrat.
+- **Lëvizje kur shfaqet.** Widget-i vjen me "drop" nga lart, rrëshqitje nga anash, ngritje nga poshtë ose shfaqje të butë. Zgjidhet te Cilësimet > Sistemi; secili profil ka lëvizjen e vet si parazgjedhje.
+- **Ndërrim i shpejtë i profilit nga ikona afër orës.** Klik i djathtë > Profili > Gaming / IT / IT Apple.
+- Instaluesi tani pyet për të tre profilet dhe flet shqip ose anglisht - e zgjedh vetë në fillim.
+- Rregullim: një ndryshim i pamjes nuk e hap më vetë kartelën që e kishe lënë të minimizuar.
+
 # LIKAsys - historiku i versioneve
 
 ## v1.5 - 2026-10-08

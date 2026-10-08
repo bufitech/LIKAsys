@@ -100,6 +100,7 @@ namespace LIKAsys.Core
         private bool _profileChosen = false;
         private bool _minimized = false;
         private StartView _startView = StartView.Remember;
+        private RevealAnimation _reveal = RevealAnimation.Fade;
         private string _pingHost = "1.1.1.1";
         private bool _showFpsApp = true;
         private bool _showFpsLow = false, _showFrameTime = false;
@@ -239,6 +240,9 @@ namespace LIKAsys.Core
         /// <summary>Collapsed to a small bar. Survives restarts unless StartView overrides it.</summary>
         public bool Minimized { get => _minimized; set => Set(ref _minimized, value); }
         public StartView StartView { get => _startView; set => Set(ref _startView, value); }
+
+        /// <summary>How the card arrives: a drop from the top, a slide from a side, or nothing.</summary>
+        public RevealAnimation Reveal { get => _reveal; set => Set(ref _reveal, value); }
 
         public bool StartWithWindows { get => _startWithWindows; set => Set(ref _startWithWindows, value); }
         public bool AutoCheckUpdates { get => _autoCheckUpdates; set => Set(ref _autoCheckUpdates, value); }

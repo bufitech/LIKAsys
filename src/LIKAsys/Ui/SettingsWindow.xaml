@@ -423,6 +423,15 @@
                                     <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0" TextWrapping="Wrap"
                                                Text="I minimizuar do të thotë një shirit i vetëm me numrat kryesorë - mbetet sipër, por nuk zë vend." />
 
+                                    <Grid Margin="0,10,0,2">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Si vjen në ekran" />
+                                        <ComboBox x:Name="RevealCombo" Grid.Column="1" Style="{StaticResource Combo}"
+                                                  SelectionChanged="Reveal_Changed" Width="320" HorizontalAlignment="Left" />
+                                    </Grid>
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0" TextWrapping="Wrap"
+                                               Text="Lëvizja zgjat më pak se gjysmë sekonde dhe shihet sa herë widget-i shfaqet ose kthehet nga i minimizuari." />
+
                                     <TextBlock Style="{StaticResource H2}" Text="IKONA NË TRAY" Margin="0,18,0,8" />
                                     <Grid Margin="0,2,0,6">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>

@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using System.Windows.Media.Animation;
 using LIKAsys.Core;
 using LIKAsys.Monitoring;
 
@@ -20,6 +21,7 @@ namespace LIKAsys.Ui
         private double _fpsScale = 60;
         private double _netScale = 10;
         private double _diskScale = 20;
+        private bool _animating;
         private bool _ready;
         private bool _hiddenByGameRule;
 
@@ -38,7 +40,7 @@ namespace LIKAsys.Ui
             MouseLeftButtonDown += OnDragStart;
             MouseLeftButtonUp += OnDragEnd;
             MouseRightButtonUp += (s, e) => MenuRequested?.Invoke(this, PointToScreen(e.GetPosition(this)));
-            SizeChanged += (s, e) => { if (_ready) { UpdateBlurAndRegion(); WidgetPlacement.Apply(this, _settings); } };
+            SizeChanged += (s, e) => { if (_ready && !_animating) { UpdateBlurAndRegion(); WidgetPlacement.Apply(this, _settings); } };
 
             if (_metrics != null) _metrics.Updated += OnMetrics;
             Localize();
@@ -77,6 +79,7 @@ namespace LIKAsys.Ui
                 {
                     UpdateBlurAndRegion();
                     WidgetPlacement.Apply(this, _settings);
+                    if (!on && IsVisible) Reveal();
                 }), System.Windows.Threading.DispatcherPriority.Loaded);
             }
             catch (Exception ex) { AppInfo.Log("SetMinimized: " + ex.Message); }
@@ -98,6 +101,78 @@ namespace LIKAsys.Ui
                 MiniLine.Text = parts.Count > 0 ? string.Join("   ", parts) : "";
             }
             catch { }
+        }
+
+        /// <summary>
+        /// Brings the card in with a motion instead of a hard pop: a drop from above, a
+        /// slide from a side, or just a fade. The window itself is moved rather than a
+        /// transform, so nothing clips and the final position stays exactly where the
+        /// placement logic wants it.
+        /// </summary>
+        public void Reveal()
+        {
+            try
+            {
+                var mode = _settings.Reveal;
+
+                BeginAnimation(OpacityProperty, null);
+                BeginAnimation(TopProperty, null);
+                BeginAnimation(LeftProperty, null);
+                Opacity = 1;
+
+                if (mode == RevealAnimation.None) { _animating = false; return; }
+
+                WidgetPlacement.Apply(this, _settings);
+                double tx = Left, ty = Top;
+                if (double.IsNaN(tx) || double.IsNaN(ty)) return;
+
+                double dx = 0, dy = 0;
+                const double travel = 34;
+                switch (mode)
+                {
+                    case RevealAnimation.FromTop: dy = -travel; break;
+                    case RevealAnimation.FromBottom: dy = travel; break;
+                    case RevealAnimation.FromLeft: dx = -travel; break;
+                    case RevealAnimation.FromRight: dx = travel; break;
+                }
+
+                var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+                var dur = new Duration(TimeSpan.FromMilliseconds(mode == RevealAnimation.Fade ? 260 : 420));
+
+                _animating = true;
+                Opacity = 0;
+                var fade = new DoubleAnimation(0, 1, dur) { EasingFunction = ease };
+
+                if (dx != 0 || dy != 0)
+                {
+                    Left = tx + dx;
+                    Top = ty + dy;
+
+                    var slide = new DoubleAnimation(dy != 0 ? ty + dy : tx + dx, dy != 0 ? ty : tx, dur)
+                    { EasingFunction = ease };
+                    slide.Completed += (s, e) =>
+                    {
+                        _animating = false;
+                        BeginAnimation(TopProperty, null);
+                        BeginAnimation(LeftProperty, null);
+                        BeginAnimation(OpacityProperty, null);
+                        Top = ty; Left = tx; Opacity = 1;
+                    };
+                    BeginAnimation(OpacityProperty, fade);
+                    BeginAnimation(dy != 0 ? TopProperty : LeftProperty, slide);
+                }
+                else
+                {
+                    fade.Completed += (s, e) =>
+                    {
+                        _animating = false;
+                        BeginAnimation(OpacityProperty, null);
+                        Opacity = 1;
+                    };
+                    BeginAnimation(OpacityProperty, fade);
+                }
+            }
+            catch (Exception ex) { _animating = false; Opacity = 1; AppInfo.Log("Reveal: " + ex.Message); }
         }
 
         /// <summary>Re-renders the tooltips and the footer in the current language.</summary>
@@ -128,14 +203,14 @@ namespace LIKAsys.Ui
             if (_settings.ShowGpu) _rows.Add(NewRow("gpu", "GPU", Ico("IconGpu")));
             if (_settings.ShowVram) _rows.Add(NewRow("vram", "VRAM", Ico("IconGpu")));
             if (_settings.ShowRam) _rows.Add(NewRow("ram", "RAM", Ico("IconRam")));
-            if (_settings.ShowDisk) _rows.Add(NewRow("disk", "DISK", "IconDisk"));
-            if (_settings.ShowDiskIo) _rows.Add(NewRow("diskio", "I/O", "IconDiskIo"));
-            if (_settings.ShowFps) _rows.Add(NewRow("fps", "FPS", "IconFps"));
+            if (_settings.ShowDisk) _rows.Add(NewRow("disk", "DISK", Ico("IconDisk")));
+            if (_settings.ShowDiskIo) _rows.Add(NewRow("diskio", "I/O", Ico("IconDiskIo")));
+            if (_settings.ShowFps) _rows.Add(NewRow("fps", "FPS", Ico("IconFps")));
             if (_settings.ShowFpsLow) _rows.Add(NewRow("fpslow", "1% LOW", "IconLow"));
             if (_settings.ShowFrameTime) _rows.Add(NewRow("frametime", "FRAME", "IconFrame"));
             if (_settings.ShowNet) _rows.Add(NewRow("net", "NET", Ico("IconNet")));
             if (_settings.ShowPing) _rows.Add(NewRow("ping", "PING", Ico("IconPing")));
-            if (_settings.ShowUptime) _rows.Add(NewRow("uptime", "UPTIME", "IconUptime"));
+            if (_settings.ShowUptime) _rows.Add(NewRow("uptime", "UPTIME", Ico("IconUptime")));
             if (_rows.Count == 0) _rows.Add(NewRow("cpu", "CPU", Ico("IconCpu")));
             StyleRows();
             if (_metrics?.Latest != null) OnMetrics(_metrics.Latest);
@@ -146,12 +221,31 @@ namespace LIKAsys.Ui
         /// the kind of thing on a rack diagram - while Gaming keeps the rounded set.
         /// Anything without an IT variant simply falls through to the shared icon.
         /// </summary>
-        private string Ico(string gamingKey)
+        private string Ico(string baseKey)
         {
-            if (_settings.Profile != UiProfile.It) return gamingKey;
-            string it = gamingKey + "It";
-            try { if (Application.Current.TryFindResource(it) != null) return it; } catch { }
-            return gamingKey;
+            string suffix = Profiles.IconSuffix(_settings.Profile);
+            if (suffix.Length == 0) return baseKey;
+            try { if (Application.Current.TryFindResource(baseKey + suffix) != null) return baseKey + suffix; } catch { }
+            return baseKey;
+        }
+
+        /// <summary>
+        /// The Apple profile does not shout: real acronyms stay capitals, everything else
+        /// drops to sentence case, the way a macOS widget would write it.
+        /// </summary>
+        private string Lbl(string label)
+        {
+            if (_settings.Profile != UiProfile.Apple) return label;
+            switch (label)
+            {
+                case "DISK": return "Disk";
+                case "NET": return "Network";
+                case "PING": return "Ping";
+                case "UPTIME": return "Uptime";
+                case "FRAME": return "Frame";
+                case "1% LOW": return "1% low";
+                default: return label;   // CPU, GPU, RAM, VRAM, FPS, I/O
+            }
         }
 
         private MetricRowVm NewRow(string key, string label, string iconKey)
@@ -161,7 +255,7 @@ namespace LIKAsys.Ui
             return new MetricRowVm
             {
                 Key = key,
-                Label = _settings.UpperCaseLabels ? label.ToUpperInvariant() : label,
+                Label = _settings.UpperCaseLabels ? Lbl(label).ToUpperInvariant() : Lbl(label),
                 Icon = geo
             };
         }
@@ -297,6 +391,15 @@ namespace LIKAsys.Ui
                 HeaderRow.Visibility = _settings.ShowHeader ? Visibility.Visible : Visibility.Collapsed;
                 FooterRow.Visibility = _settings.ShowFooter ? Visibility.Visible : Visibility.Collapsed;
                 BrandDot.Visibility = _settings.ShowBrandDot ? Visibility.Visible : Visibility.Collapsed;
+
+                // a restyle must never quietly re-open a card the user collapsed
+                if (_settings.Minimized)
+                {
+                    RowsHost.Visibility = Visibility.Collapsed;
+                    FooterRow.Visibility = Visibility.Collapsed;
+                    MiniLine.Visibility = Visibility.Visible;
+                    HeaderRow.Margin = new Thickness(0);
+                }
 
                 var accent = Accent;
                 BrandText.Foreground = Solid(TextC);
