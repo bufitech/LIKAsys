@@ -56,6 +56,7 @@
                         <RadioButton Style="{StaticResource SideTab}" Content="Ngjyrat" Tag="PanelColors" Checked="Tab_Checked" GroupName="tabs" />
                         <RadioButton Style="{StaticResource SideTab}" Content="Pamja e kartelës" Tag="PanelLook" Checked="Tab_Checked" GroupName="tabs" />
                         <RadioButton Style="{StaticResource SideTab}" Content="Fonti dhe teksti" Tag="PanelFont" Checked="Tab_Checked" GroupName="tabs" />
+                        <RadioButton x:Name="TabMouse" Style="{StaticResource SideTab}" Content="Mouse" Tag="PanelMouse" Checked="Tab_Checked" GroupName="tabs" />
                         <RadioButton Style="{StaticResource SideTab}" Content="Pozicioni" Tag="PanelPos" Checked="Tab_Checked" GroupName="tabs" />
                         <RadioButton Style="{StaticResource SideTab}" Content="Metrikat" Tag="PanelMetrics" Checked="Tab_Checked" GroupName="tabs" />
                         <RadioButton Style="{StaticResource SideTab}" Content="Sistemi dhe update" Tag="PanelSystem" Checked="Tab_Checked" GroupName="tabs" />
@@ -284,6 +285,19 @@
                                     </Grid>
                                     <CheckBox Style="{StaticResource Switch}" Content="Etiketat me shkronja të mëdha (CPU / cpu)" IsChecked="{Binding UpperCaseLabels, Mode=TwoWay}" />
                                     <CheckBox Style="{StaticResource Switch}" Content="Shfaq njësitë (%, GB, FPS)" IsChecked="{Binding ShowUnits, Mode=TwoWay}" />
+                                </StackPanel>
+
+                                <!-- ======================= MOUSE (vetem IT) ======================= -->
+                                <StackPanel x:Name="PanelMouse" Visibility="Collapsed">
+                                    <TextBlock Style="{StaticResource H2}" Text="KURSORI I MOUSE-IT" />
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,0,0,14" TextWrapping="Wrap"
+                                               Text="Katër kursorë të bërë për profilin IT. Secili ndryshon shigjetën, kursorin e tekstit, kursorin e linkut dhe shenjëstrën." />
+                                    <StackPanel x:Name="MouseHost" />
+                                    <Border Background="#141C2A" CornerRadius="10" Padding="14,12" Margin="0,6,0,0"
+                                            BorderBrush="#1FFFFFFF" BorderThickness="1" HorizontalAlignment="Left" Width="460">
+                                        <TextBlock Style="{StaticResource Caption}" TextWrapping="Wrap"
+                                                   Text="Kursori ndryshon në gjithë Windows-in sa kohë LIKAsys është hapur. Kur e mbyll programin, kthehet kursori yt. Asgjë nuk shkruhet në regjistër." />
+                                    </Border>
                                 </StackPanel>
 
                                 <!-- ======================= POZICIONI ======================= -->

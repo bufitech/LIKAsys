@@ -50,4 +50,13 @@
     <Resource Include="assets/LIKAsys.ico" />
   </ItemGroup>
 
+  <!-- Cursor packs stay loose files on disk: SetSystemCursor loads them through
+       LoadImage(LR_LOADFROMFILE), which cannot read a packed WPF resource. -->
+  <ItemGroup>
+    <Content Include="assets/cursors/**/*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

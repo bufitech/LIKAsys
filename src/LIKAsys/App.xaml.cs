@@ -15,6 +15,7 @@ namespace LIKAsys
     public partial class App : Application
     {
         private AppSettings _settings;
+        private UiProfile _lastProfile = UiProfile.Gaming;
         private MetricsService _metrics;
         private WidgetWindow _widget;
         private SettingsWindow _settingsWindow;
@@ -39,8 +40,12 @@ namespace LIKAsys
             AppDomain.CurrentDomain.UnhandledException += (s, args) =>
             {
                 AppInfo.Log("Fatal: " + args.ExceptionObject);
+                MouseCursors.Restore();
                 ReportOnce("LIKAsys", args.ExceptionObject as Exception);
             };
+
+            // last resort: whatever takes the process down, the user keeps their pointer
+            try { AppDomain.CurrentDomain.ProcessExit += (s, args) => MouseCursors.Restore(); } catch { }
 
             bool admin = false;
             try { admin = Native.IsElevated(); } catch { }
@@ -85,6 +90,7 @@ namespace LIKAsys
 
             try { ApplyAccentResource(); } catch (Exception ex) { AppInfo.Log("accent: " + ex.Message); }
             try { _settings.StartWithWindows = StartupManager.IsEnabled(); } catch { }
+            _lastProfile = _settings.Profile;
             _settings.PropertyChanged += OnSettingChanged;
 
             // ------------------------------- 2. tray FIRST: always a way back in
@@ -200,6 +206,8 @@ namespace LIKAsys
             // ------------------------------------------- 6. first run / report
             if (problems.Count == 0)
             {
+                MouseCursors.Sync(_settings);
+
                 if (!_settings.FirstRunDone)
                 {
                     _settings.FirstRunDone = true;
@@ -337,6 +345,16 @@ namespace LIKAsys
                 var p = e.PropertyName ?? "";
 
                 if (p.Length == 0) ApplyAccentResource();   // batch (theme switch)
+                if (p.Length == 0) MouseCursors.Sync(_settings);
+
+                // the Mouse submenu only exists in IT, so the tray has to be rebuilt
+                // when the profile moves - a plain Sync() would leave a stale menu
+                if (_lastProfile != _settings.Profile)
+                {
+                    _lastProfile = _settings.Profile;
+                    Dispatcher.BeginInvoke(new Action(() => { try { _tray?.Rebuild(); } catch { } }),
+                        System.Windows.Threading.DispatcherPriority.Background);
+                }
 
                 switch (p)
                 {
@@ -349,6 +367,10 @@ namespace LIKAsys
                     case nameof(AppSettings.FpsEnabled):
                         _metrics?.RestartFps();
                         _settingsWindow?.RefreshStatus();
+                        break;
+                    case nameof(AppSettings.MouseCursor):
+                    case nameof(AppSettings.Profile):
+                        MouseCursors.Sync(_settings);
                         break;
                     case nameof(AppSettings.AutoCheckUpdates):
                         if (_settings.AutoCheckUpdates) _updateTimer?.Start(); else _updateTimer?.Stop();
@@ -572,6 +594,7 @@ namespace LIKAsys
             try
             {
                 SettingsStore.Save(_settings);
+                MouseCursors.Restore();
                 _tray?.Dispose();
                 _metrics?.Dispose();
                 SingleInstance.Release();
@@ -584,6 +607,7 @@ namespace LIKAsys
         {
             try
             {
+                MouseCursors.Restore();
                 _tray?.Dispose();
                 _metrics?.Dispose();
                 SingleInstance.Release();

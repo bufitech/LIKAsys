@@ -114,6 +114,14 @@ namespace LIKAsys.Ui
                 AddTheme(work, t.Name);
             if (work.DropDownItems.Count > 0) _menu.Items.Add(work);
 
+            // pointer packs belong to the IT profile, so the item is simply absent in Gaming
+            if (_settings.Profile == UiProfile.It)
+            {
+                var mouse = new ToolStripMenuItem(Lang.T("Kursori i mouse-it"));
+                foreach (var pack in MouseCursors.All) AddCursor(mouse, pack);
+                _menu.Items.Add(mouse);
+            }
+
             _miPos = new ToolStripMenuItem(Lang.T("Pozicioni"));
             AddPos(_miPos, Lang.T("Lart majtas"), WidgetPosition.TopLeft);
             AddPos(_miPos, Lang.T("Lart në mes"), WidgetPosition.TopCenter);
@@ -324,6 +332,18 @@ namespace LIKAsys.Ui
         {
             var mi = new ToolStripMenuItem(name, null, (s, e) => ThemePicked?.Invoke(this, name))
             { Checked = string.Equals(_settings.ThemeName, name, StringComparison.OrdinalIgnoreCase) };
+            parent.DropDownItems.Add(mi);
+        }
+
+        private void AddCursor(ToolStripMenuItem parent, CursorPack pack)
+        {
+            var mi = new ToolStripMenuItem(Lang.T(pack.Name), null, (s, e) =>
+            {
+                _settings.MouseCursor = pack.Style;
+                Sync();
+                Changed?.Invoke(this, EventArgs.Empty);
+            })
+            { Checked = _settings.MouseCursor == pack.Style };
             parent.DropDownItems.Add(mi);
         }
 

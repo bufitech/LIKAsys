@@ -30,7 +30,7 @@ namespace LIKAsys.Ui
 
         private static readonly string[] PanelNames =
         {
-            "PanelThemes", "PanelColors", "PanelLook", "PanelFont",
+            "PanelThemes", "PanelColors", "PanelLook", "PanelFont", "PanelMouse",
             "PanelPos", "PanelMetrics", "PanelSystem", "PanelLang", "PanelAbout"
         };
 
@@ -73,6 +73,7 @@ namespace LIKAsys.Ui
             BuildThemeTab();
             BuildColorTab();
             BuildLangTab();
+            BuildMouseTab();
             BuildProfileTab();
             FillCombos();
             SyncFromSettings();
@@ -534,6 +535,7 @@ namespace LIKAsys.Ui
                 BuildThemeTab();
                 BuildColorTab();
                 BuildLangTab();
+                BuildMouseTab();
                 BuildProfileTab();
                 FillCombos();
             }
@@ -643,6 +645,8 @@ namespace LIKAsys.Ui
             SyncCombos();
             SyncThemeSelection();
             RefreshColors();
+            SyncMouseTab();
+            SyncMouseTabVisibility();
 
             VersionLine.Text = $"LIKAsys {AppInfo.VersionText}";
             AboutVersion.Text = $"{AppInfo.VersionText}  -  {AppInfo.WebsiteShort}";
@@ -655,7 +659,11 @@ namespace LIKAsys.Ui
             var p = e.PropertyName ?? "";
             if (p.Length == 0 || p == nameof(AppSettings.ThemeName))
             {
-                Dispatcher.BeginInvoke(new Action(() => { SyncThemeSelection(); RefreshColors(); SyncCombos(); SyncProfileSelection(); }));
+                Dispatcher.BeginInvoke(new Action(() => { SyncThemeSelection(); RefreshColors(); SyncCombos(); SyncProfileSelection(); SyncMouseTab(); SyncMouseTabVisibility(); }));
+            }
+            else if (p == nameof(AppSettings.Profile) || p == nameof(AppSettings.MouseCursor))
+            {
+                Dispatcher.BeginInvoke(new Action(() => { SyncMouseTab(); SyncMouseTabVisibility(); }));
             }
             else if (p == nameof(AppSettings.Position))
             {
@@ -702,6 +710,182 @@ namespace LIKAsys.Ui
 
         // ============================================================ handlers
 
+        // ============================================================ mouse tab
+
+        private readonly List<Border> _mouseCards = new List<Border>();
+
+        /// <summary>
+        /// Pointer packs are an IT-profile idea, so the whole tab disappears in Gaming.
+        /// Every card draws the real .cur artwork: the preview strip beside each name is
+        /// the same four pointers the machine will get, rendered from the shipped files.
+        /// </summary>
+        private void BuildMouseTab()
+        {
+            if (MouseHost == null) return;
+            MouseHost.Children.Clear();
+            _mouseCards.Clear();
+
+            foreach (var pack in MouseCursors.All) AddMouseCard(pack);
+
+            SyncMouseTab();
+        }
+
+        private void AddMouseCard(CursorPack pack)
+        {
+            var card = new Border
+            {
+                CornerRadius = new CornerRadius(10),
+                Margin = new Thickness(0, 0, 0, 10),
+                Padding = new Thickness(14, 11, 16, 11),
+                BorderThickness = new Thickness(1.6),
+                BorderBrush = new SolidColorBrush(Color.FromArgb(0x2A, 0xFF, 0xFF, 0xFF)),
+                Background = new SolidColorBrush(Color.FromArgb(0xFF, 0x13, 0x1A, 0x26)),
+                Cursor = Cursors.Hand,
+                Tag = pack.Style,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = 460
+            };
+
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(128) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            UIElement art = null;
+            var png = MouseCursors.PreviewPath(pack);
+            if (png != null)
+            {
+                try
+                {
+                    var bmp = new System.Windows.Media.Imaging.BitmapImage();
+                    bmp.BeginInit();
+                    bmp.UriSource = new Uri(png, UriKind.Absolute);
+                    bmp.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+                    bmp.EndInit();
+                    bmp.Freeze();
+                    art = new Image
+                    {
+                        Source = bmp,
+                        Width = 112,
+                        Stretch = Stretch.Uniform,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Margin = new Thickness(0, 0, 14, 0)
+                    };
+                    RenderOptions.SetBitmapScalingMode((Image)art, BitmapScalingMode.HighQuality);
+                }
+                catch { art = null; }
+            }
+
+            if (art == null)
+            {
+                art = new Border
+                {
+                    Width = 112,
+                    Height = 34,
+                    CornerRadius = new CornerRadius(8),
+                    Margin = new Thickness(0, 0, 14, 0),
+                    Background = new SolidColorBrush(Color.FromArgb(0x16, 0xFF, 0xFF, 0xFF)),
+                    Child = new TextBlock
+                    {
+                        Text = "Windows",
+                        FontSize = 11.5,
+                        Foreground = new SolidColorBrush(Color.FromRgb(0x8C, 0x9B, 0xB2)),
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
+                    }
+                };
+            }
+            Grid.SetColumn(art, 0);
+            grid.Children.Add(art);
+
+            var text = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
+            text.Children.Add(new TextBlock
+            {
+                Text = Lang.T(pack.Name),
+                FontSize = 14,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = new SolidColorBrush(Color.FromRgb(0xEA, 0xF2, 0xFF))
+            });
+            text.Children.Add(new TextBlock
+            {
+                Text = Lang.T(pack.Desc),
+                FontSize = 11,
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 2, 0, 0),
+                Foreground = new SolidColorBrush(Color.FromRgb(0x5D, 0x6E, 0x85))
+            });
+            Grid.SetColumn(text, 1);
+            grid.Children.Add(text);
+
+            var tick = new TextBlock
+            {
+                Text = "\u2713",
+                FontSize = 17,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(10, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Center,
+                Visibility = Visibility.Hidden
+            };
+            Grid.SetColumn(tick, 2);
+            grid.Children.Add(tick);
+
+            card.Child = grid;
+            card.MouseLeftButtonUp += (s, e) => PickMouseCursor(pack.Style);
+            _mouseCards.Add(card);
+            MouseHost.Children.Add(card);
+        }
+
+        private void PickMouseCursor(MouseCursorStyle style)
+        {
+            if (_settings.MouseCursor != style) _settings.MouseCursor = style;
+            SyncMouseTab();
+        }
+
+        private void SyncMouseTab()
+        {
+            var accent = ParseBrush(_settings.Accent, Color.FromRgb(0x00, 0xE5, 0xFF));
+            foreach (var card in _mouseCards)
+            {
+                bool on = (MouseCursorStyle)card.Tag == _settings.MouseCursor;
+                card.BorderBrush = on ? accent : new SolidColorBrush(Color.FromArgb(0x2A, 0xFF, 0xFF, 0xFF));
+                card.Background = new SolidColorBrush(on
+                    ? Color.FromArgb(0xFF, 0x16, 0x22, 0x33)
+                    : Color.FromArgb(0xFF, 0x13, 0x1A, 0x26));
+                var g = card.Child as Grid;
+                if (g == null) continue;
+                foreach (var child in g.Children)
+                {
+                    var tb = child as TextBlock;
+                    if (tb == null || tb.Text != "\u2713") continue;
+                    tb.Visibility = on ? Visibility.Visible : Visibility.Hidden;
+                    tb.Foreground = accent;
+                }
+            }
+        }
+
+        private static SolidColorBrush ParseBrush(string hex, Color fallback)
+        {
+            try
+            {
+                var c = (Color)ColorConverter.ConvertFromString(hex);
+                return new SolidColorBrush(c);
+            }
+            catch { return new SolidColorBrush(fallback); }
+        }
+
+        /// <summary>Hides the Mouse tab outside the IT profile and steps off it if it was open.</summary>
+        private void SyncMouseTabVisibility()
+        {
+            if (TabMouse == null) return;
+            bool it = _settings.Profile == UiProfile.It;
+            TabMouse.Visibility = it ? Visibility.Visible : Visibility.Collapsed;
+            if (!it && TabMouse.IsChecked == true)
+            {
+                TabMouse.IsChecked = false;
+                if (TabThemes != null) TabThemes.IsChecked = true;
+            }
+        }
+
         private void Tab_Checked(object sender, RoutedEventArgs e)
         {
             if (!(sender is RadioButton rb) || rb.Tag == null) return;
@@ -713,6 +897,7 @@ namespace LIKAsys.Ui
             }
             try { Scroller.ScrollToTop(); } catch { }
             if (want == "PanelMetrics") RefreshStatus();
+            if (want == "PanelMouse") SyncMouseTab();
         }
 
         private void Pos_Checked(object sender, RoutedEventArgs e)

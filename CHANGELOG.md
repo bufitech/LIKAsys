@@ -1,3 +1,19 @@
+## 2.4
+
+**Kursorë për mouse-in, vetëm në profilin IT.** Katër grupe kursorësh të bërë nga ne, secili ndryshe nga tjetri.
+
+- **Neon.** Xham i errët me buzë ciani që ndriçon.
+- **Terminal.** Piksel jeshil fosfori me vija skanimi. Kursori i tekstit bëhet bllok konsole.
+- **Carbon.** Metal i ngurtë me një fije të bardhë rreth e rrotull.
+- **Blueprint.** Vizatim teknik me vija të holla, hijezim diagonal dhe shenjëstër blu.
+
+Secili grup ndryshon katër kursorë njëherësh: shigjetën, kursorin e tekstit, kursorin e linkut dhe shenjëstrën. Çdo skedar mban pesë madhësi, nga 32 deri në 128 piksel, prandaj mbetet i qartë edhe në ekran 4K.
+
+- Fleta e re **Mouse** te Cilësimet, e dukshme vetëm kur je në profilin IT. Në Gaming nuk shfaqet fare.
+- Edhe menyja afër orës e ka nënmenynë **Kursori i mouse-it** kur profili është IT.
+- Kursori ndryshon në gjithë Windows-in sa kohë LIKAsys është hapur. Asgjë nuk shkruhet në regjistër dhe kursori yt kthehet kur e mbyll programin, kur ndërron profilin ose nëse programi bie.
+- Kontroll i ri në build, `check-cursors.py`, që nuk e lëshon një version pa kursorë të vlefshëm dhe pa rikthimin e lidhur në të katër rrugët e daljes.
+
 ## 2.3
 
 **Dynamic Island, e rishkruar.** Versioni i parë dilte si kartelë e zezë me qoshe të rrumbullakta. Tani është kapsulë e vërtetë.

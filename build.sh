@@ -26,12 +26,15 @@ echo "[0/4] kontrolli i temave"
 python3 "$(dirname "$0")/scripts/check-themes.py" || exit 1
 echo "[0/4] kontrolli i pamjes"
 python3 "$(dirname "$0")/scripts/check-ui.py" || exit 1
+echo "[0/4] kontrolli i kursoreve"
+python3 "$(dirname "$0")/scripts/check-cursors.py" || exit 1
 
 # 1. branding assets -------------------------------------------------------
 
 if command -v python3 >/dev/null && python3 -c "import PIL" 2>/dev/null; then
   echo "[1/4] ikona + bitmaps"
   python3 "$ROOT/tools/make_branding.py"
+  python3 "$ROOT/tools/make_cursors.py"
 else
   echo "[1/4] (kalohet: pillow mungon, perdoren asetet ekzistuese)"
 fi
