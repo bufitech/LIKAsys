@@ -20,6 +20,14 @@ namespace LIKAsys.Monitoring
 
         public double Fps;              // -1 = n/a
         public double FrameTimeMs;      // -1 = n/a
+        public double DiskUsedPct = -1;
+        public double DiskFreeGb = -1;
+        public double DiskTotalGb = -1;
+        public double DiskReadMbs = -1;
+        public double DiskWriteMbs = -1;
+        public string DiskName = "";
+        public double UptimeSec = -1;
+
         public double FpsLow1 = -1;     // 1% low
         public double FpsLow01 = -1;    // 0.1% low
         public string FpsSource = "";   // process name of the measured app

@@ -19,10 +19,12 @@ namespace LIKAsys.Ui
         private readonly ObservableCollection<MetricRowVm> _rows = new ObservableCollection<MetricRowVm>();
         private double _fpsScale = 60;
         private double _netScale = 10;
+        private double _diskScale = 20;
         private bool _ready;
         private bool _hiddenByGameRule;
 
         public event EventHandler SettingsRequested;
+        public event EventHandler MinimizedChanged;
         public event EventHandler<Point> MenuRequested;
 
         public WidgetWindow(AppSettings settings, MetricsService metrics)
@@ -42,6 +44,60 @@ namespace LIKAsys.Ui
             Localize();
             BuildRows();
             ApplySettings();
+            SetMinimized(_settings.Minimized);
+        }
+
+        /// <summary>
+        /// Collapses the card to a single bar, or opens it back up.
+        ///
+        /// Minimised is not "hidden": the widget is still there, still on top, still
+        /// reading the machine - it just shrinks to one line with the headline numbers
+        /// so it can sit over a game or a full screen terminal without taking space.
+        /// </summary>
+        public void SetMinimized(bool on)
+        {
+            try
+            {
+                _settings.Minimized = on;
+
+                RowsHost.Visibility = on ? Visibility.Collapsed : Visibility.Visible;
+                FooterRow.Visibility = on ? Visibility.Collapsed : Visibility.Visible;
+                MiniLine.Visibility = on ? Visibility.Visible : Visibility.Collapsed;
+                HeaderRow.Margin = on ? new Thickness(0) : new Thickness(0, 0, 0, 8);
+
+                MinIcon.Data = (Geometry)Application.Current.TryFindResource(on ? "IconRestore" : "IconMinimize");
+                MinBtn.ToolTip = Lang.T(on ? "Hape te plote" : "Minimizo");
+
+                // while collapsed the controls must always be reachable, not hover-only
+                if (on) HeaderButtons.Opacity = 1.0;
+                else HeaderButtons.ClearValue(OpacityProperty);
+
+                if (_metrics?.Latest != null) OnMetrics(_metrics.Latest);
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    UpdateBlurAndRegion();
+                    WidgetPlacement.Apply(this, _settings);
+                }), System.Windows.Threading.DispatcherPriority.Loaded);
+            }
+            catch (Exception ex) { AppInfo.Log("SetMinimized: " + ex.Message); }
+        }
+
+        /// <summary>The one-line summary shown while collapsed: the first few rows, short form.</summary>
+        private void UpdateMiniLine()
+        {
+            if (MiniLine.Visibility != Visibility.Visible) return;
+            try
+            {
+                var parts = new List<string>();
+                foreach (var r in _rows)
+                {
+                    if (parts.Count >= 3) break;
+                    if (string.IsNullOrEmpty(r.Value) || r.Value == "--") continue;
+                    parts.Add(r.Label + " " + r.Value + (string.IsNullOrEmpty(r.Unit) ? "" : r.Unit));
+                }
+                MiniLine.Text = parts.Count > 0 ? string.Join("   ", parts) : "";
+            }
+            catch { }
         }
 
         /// <summary>Re-renders the tooltips and the footer in the current language.</summary>
@@ -68,18 +124,34 @@ namespace LIKAsys.Ui
         public void BuildRows()
         {
             _rows.Clear();
-            if (_settings.ShowCpu) _rows.Add(NewRow("cpu", "CPU", "IconCpu"));
-            if (_settings.ShowGpu) _rows.Add(NewRow("gpu", "GPU", "IconGpu"));
-            if (_settings.ShowVram) _rows.Add(NewRow("vram", "VRAM", "IconGpu"));
-            if (_settings.ShowRam) _rows.Add(NewRow("ram", "RAM", "IconRam"));
+            if (_settings.ShowCpu) _rows.Add(NewRow("cpu", "CPU", Ico("IconCpu")));
+            if (_settings.ShowGpu) _rows.Add(NewRow("gpu", "GPU", Ico("IconGpu")));
+            if (_settings.ShowVram) _rows.Add(NewRow("vram", "VRAM", Ico("IconGpu")));
+            if (_settings.ShowRam) _rows.Add(NewRow("ram", "RAM", Ico("IconRam")));
+            if (_settings.ShowDisk) _rows.Add(NewRow("disk", "DISK", "IconDisk"));
+            if (_settings.ShowDiskIo) _rows.Add(NewRow("diskio", "I/O", "IconDiskIo"));
             if (_settings.ShowFps) _rows.Add(NewRow("fps", "FPS", "IconFps"));
             if (_settings.ShowFpsLow) _rows.Add(NewRow("fpslow", "1% LOW", "IconLow"));
             if (_settings.ShowFrameTime) _rows.Add(NewRow("frametime", "FRAME", "IconFrame"));
-            if (_settings.ShowNet) _rows.Add(NewRow("net", "NET", "IconNet"));
-            if (_settings.ShowPing) _rows.Add(NewRow("ping", "PING", "IconPing"));
-            if (_rows.Count == 0) _rows.Add(NewRow("cpu", "CPU", "IconCpu"));
+            if (_settings.ShowNet) _rows.Add(NewRow("net", "NET", Ico("IconNet")));
+            if (_settings.ShowPing) _rows.Add(NewRow("ping", "PING", Ico("IconPing")));
+            if (_settings.ShowUptime) _rows.Add(NewRow("uptime", "UPTIME", "IconUptime"));
+            if (_rows.Count == 0) _rows.Add(NewRow("cpu", "CPU", Ico("IconCpu")));
             StyleRows();
             if (_metrics?.Latest != null) OnMetrics(_metrics.Latest);
+        }
+
+        /// <summary>
+        /// The IT profile draws a completely different icon family - flat, technical,
+        /// the kind of thing on a rack diagram - while Gaming keeps the rounded set.
+        /// Anything without an IT variant simply falls through to the shared icon.
+        /// </summary>
+        private string Ico(string gamingKey)
+        {
+            if (_settings.Profile != UiProfile.It) return gamingKey;
+            string it = gamingKey + "It";
+            try { if (Application.Current.TryFindResource(it) != null) return it; } catch { }
+            return gamingKey;
         }
 
         private MetricRowVm NewRow(string key, string label, string iconKey)
@@ -340,6 +412,7 @@ namespace LIKAsys.Ui
                 r.UnitVisibility = _settings.ShowUnits ? Visibility.Visible : Visibility.Collapsed;
                 r.BarVisibility = (_settings.ShowBars && !compact && _settings.BarStyle != BarStyle.None)
                     ? Visibility.Visible : Visibility.Collapsed;
+                if (r.Key == "uptime") r.BarVisibility = Visibility.Collapsed;
                 r.RowMargin = horizontal
                     ? new Thickness(0, 1, 16, 1)
                     : new Thickness(0, _settings.RowSpacing, 0, _settings.RowSpacing);
@@ -441,6 +514,9 @@ namespace LIKAsys.Ui
                 case "vram": return "88.88";
                 case "fps": return "8888";
                 case "fpslow": return "8888";
+                case "disk": return "888";
+                case "diskio": return "888.8";
+                case "uptime": return "88888";
                 case "frametime": return "88.8";
                 case "net": return "888.8";
                 case "ping": return "8888";
@@ -468,6 +544,9 @@ namespace LIKAsys.Ui
                 case "ram": return "88.8 / 88.8 GB";
                 case "fps": return _settings.ShowFpsApp ? "nnnnnnnnnn" : "";
                 case "fpslow": return "0.1% 8888";
+                case "disk": return "8888 GB";
+                case "diskio": return "\u2193 888.8";
+                case "uptime": return "nnnnnnn";
                 case "frametime": return "";
                 case "net": return "\u2191 888.8";
                 case "ping": return "nnnnnnnnnn";
@@ -589,6 +668,67 @@ namespace LIKAsys.Ui
                                 break;
                             }
 
+                        case "disk":
+                            {
+                                if (s.DiskUsedPct >= 0)
+                                {
+                                    r.Value = s.DiskUsedPct.ToString("0", CultureInfo.InvariantCulture);
+                                    r.Detail = s.DiskFreeGb >= 0
+                                        ? s.DiskFreeGb.ToString(s.DiskFreeGb < 100 ? "0.0" : "0", CultureInfo.InvariantCulture) + " GB " + Lang.T("lire")
+                                        : "";
+                                    Paint(r, s.DiskUsedPct);
+                                }
+                                else
+                                {
+                                    r.Value = "--";
+                                    r.Percent = 0;
+                                    r.Detail = "";
+                                    r.ValueBrush = Solid(DetailC);
+                                    r.BarBrush = Solid(Accent);
+                                }
+                                r.Unit = "%";
+                                break;
+                            }
+
+                        case "diskio":
+                            {
+                                double rd = Math.Max(0, s.DiskReadMbs);
+                                double wr = Math.Max(0, s.DiskWriteMbs);
+                                double top = Math.Max(rd, wr);
+                                if (top > _diskScale) _diskScale = Math.Min(2000, top);
+                                else _diskScale = Math.Max(20, _diskScale * 0.995);
+
+                                r.Value = rd.ToString(rd < 100 ? "0.0" : "0", CultureInfo.InvariantCulture);
+                                r.Unit = "MB/s";
+                                r.Detail = "\u2191 " + wr.ToString(wr < 100 ? "0.0" : "0", CultureInfo.InvariantCulture);
+                                r.Percent = _diskScale > 0 ? Math.Min(100.0, top / _diskScale * 100.0) : 0;
+                                r.ValueBrush = Solid(Accent);
+                                r.BarBrush = Solid(Accent);
+                                break;
+                            }
+
+                        case "uptime":
+                            {
+                                if (s.UptimeSec > 0)
+                                {
+                                    var t = TimeSpan.FromSeconds(s.UptimeSec);
+                                    r.Value = t.TotalDays >= 1
+                                        ? ((int)t.TotalDays).ToString(CultureInfo.InvariantCulture) + "d " + t.Hours.ToString(CultureInfo.InvariantCulture) + "h"
+                                        : t.Hours.ToString(CultureInfo.InvariantCulture) + "h " + t.Minutes.ToString("00", CultureInfo.InvariantCulture) + "m";
+                                    r.ValueBrush = Solid(Accent);
+                                }
+                                else
+                                {
+                                    r.Value = "--";
+                                    r.ValueBrush = Solid(DetailC);
+                                }
+                                r.Unit = "";
+                                r.Detail = "";
+                                r.Percent = 0;
+                                r.BarBrush = Solid(Accent);
+                                break;
+                            }
+
                         case "fpslow":
                             {
                                 double max = _settings.FpsBarMax > 0 ? _settings.FpsBarMax : _fpsScale;
@@ -660,6 +800,8 @@ namespace LIKAsys.Ui
                             break;
                     }
                 }
+
+                UpdateMiniLine();
             }
             catch (Exception ex) { AppInfo.Log("OnMetrics: " + ex.Message); }
         }
@@ -734,6 +876,12 @@ namespace LIKAsys.Ui
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e) => SettingsRequested?.Invoke(this, EventArgs.Empty);
+
+        private void Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            SetMinimized(!_settings.Minimized);
+            MinimizedChanged?.Invoke(this, EventArgs.Empty);
+        }
 
         private void Hide_Click(object sender, RoutedEventArgs e)
         {

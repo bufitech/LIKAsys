@@ -10,6 +10,7 @@ Unicode true
 !include "FileFunc.nsh"
 !include "LogicLib.nsh"
 !include "WinVer.nsh"
+!include "nsDialogs.nsh"
 
 !ifndef VERSION
   !define VERSION "1.0"
@@ -46,6 +47,10 @@ VIAddVersionKey "ProductVersion"  "${VERSION}"
 VIAddVersionKey "LegalCopyright"  "(c) 2026 LIKAsys"
 
 Var UpdateMode
+Var UserProfile
+Var UserProfileDlg
+Var RbGaming
+Var RbIt
 
 ; ---------------------------------------------------------------- interface
 !define MUI_ABORTWARNING
@@ -74,6 +79,7 @@ Var UpdateMode
 !define MUI_FINISHPAGE_LINK_LOCATION "${WEBSITE}"
 
 !insertmacro MUI_PAGE_WELCOME
+Page custom ProfilePageShow ProfilePageLeave
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
@@ -83,6 +89,70 @@ Var UpdateMode
 
 !insertmacro MUI_LANGUAGE "Albanian"
 !insertmacro MUI_LANGUAGE "English"
+
+
+; ---------------------------------------------------------------- profile page
+; Asked once, at install time: is this machine for gaming or for IT work?
+; The answer lands in the registry and LIKAsys reads it the first time it runs.
+; Skipped entirely during an in-app update - nobody wants to answer this twice.
+Function ProfilePageShow
+  ${If} $UpdateMode == "1"
+    Abort
+  ${EndIf}
+
+  !insertmacro MUI_HEADER_TEXT "Per cfare e perdor kete kompjuter?" "LIKAsys pershtatet vete sipas pergjigjes."
+
+  nsDialogs::Create 1018
+  Pop $UserProfileDlg
+  ${If} $UserProfileDlg == error
+    Abort
+  ${EndIf}
+
+  ${NSD_CreateLabel} 0 0 100% 26u "Zgjidh nje profil. Ai vendos cilat matje shfaqen, si duken ikonat dhe cfare ngjyre ka widget-i. Mund ta ndryshosh kurdo me vone te Cilesimet."
+  Pop $0
+
+  ; both radio buttons are created back to back so Windows treats them as one
+  ; group, and an explicit click handler enforces it even if it does not
+  ${NSD_CreateRadioButton} 0 34u 100% 12u "Gaming"
+  Pop $RbGaming
+  ${NSD_CreateRadioButton} 0 80u 100% 12u "IT"
+  Pop $RbIt
+
+  ${NSD_CreateLabel} 14u 47u 95% 28u "FPS, 1% low, VRAM dhe temperatura. Numra te medhenj, ikona 3D, theks cyan. Zgjidhe kete nese luan."
+  Pop $0
+  ${NSD_CreateLabel} 14u 93u 95% 28u "Disku, lexim/shkrim, rrjeti, ping dhe uptime. Rreshta te ngjeshur, ikona teknike, theks i gjelber. Zgjidhe kete nese punon me kompjutera."
+  Pop $0
+
+  ${NSD_OnClick} $RbGaming OnPickGaming
+  ${NSD_OnClick} $RbIt OnPickIt
+
+  ${If} $UserProfile == "it"
+    ${NSD_Check} $RbIt
+  ${Else}
+    ${NSD_Check} $RbGaming
+  ${EndIf}
+
+  nsDialogs::Show
+FunctionEnd
+
+Function OnPickGaming
+  ${NSD_Check} $RbGaming
+  ${NSD_Uncheck} $RbIt
+FunctionEnd
+
+Function OnPickIt
+  ${NSD_Check} $RbIt
+  ${NSD_Uncheck} $RbGaming
+FunctionEnd
+
+Function ProfilePageLeave
+  ${NSD_GetState} $RbIt $0
+  ${If} $0 == ${BST_CHECKED}
+    StrCpy $UserProfile "it"
+  ${Else}
+    StrCpy $UserProfile "gaming"
+  ${EndIf}
+FunctionEnd
 
 ; ---------------------------------------------------------------- helpers
 Function StopRunning
@@ -109,6 +179,7 @@ Function .onInit
   ${EndIf}
 
   StrCpy $UpdateMode "0"
+  StrCpy $UserProfile "gaming"
   ${GetParameters} $R0
   ClearErrors
   ${GetOptions} $R0 "/UPDATE" $R1
@@ -137,6 +208,11 @@ Section "LIKAsys" SecMain
 
   WriteRegStr HKLM "${APPREG}" "InstallDir" "$INSTDIR"
   WriteRegStr HKLM "${APPREG}" "Version" "${VERSION}"
+
+  ; only stamp the profile on a real install; an update must not reset it
+  ${If} $UpdateMode != "1"
+    WriteRegStr HKLM "${APPREG}" "SetupProfile" "$UserProfile"
+  ${EndIf}
 
   WriteRegStr   HKLM "${REGKEY}" "DisplayName"     "${APPNAME} - monitor i sistemit"
   WriteRegStr   HKLM "${REGKEY}" "DisplayIcon"     "$INSTDIR\${EXEFILE}"

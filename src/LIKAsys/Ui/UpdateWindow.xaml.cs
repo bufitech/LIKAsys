@@ -56,7 +56,7 @@ namespace LIKAsys.Ui
             {
                 FillCol.Width = new GridLength(Math.Max(0.001, p), GridUnitType.Star);
                 RestCol.Width = new GridLength(Math.Max(0.001, 100 - p), GridUnitType.Star);
-                ProgressText.Text = $"Duke shkarkuar... {p.ToString("0", CultureInfo.InvariantCulture)}%";
+                ProgressText.Text = Lang.T("Duke shkarkuar...") + " " + p.ToString("0", CultureInfo.InvariantCulture) + "%";
             });
 
             var path = await UpdateService.DownloadAsync(_info, progress, _cts.Token);
@@ -82,7 +82,7 @@ namespace LIKAsys.Ui
             }
             else
             {
-                ProgressText.Text = "Nuk u nis instaluesi. Hape dosjen Downloads dhe nise manualisht.";
+                ProgressText.Text = Lang.T("Nuk u nis instaluesi. Hape dosjen Downloads dhe nise manualisht.");
                 InstallBtn.IsEnabled = true;
                 LaterBtn.IsEnabled = true;
                 _busy = false;

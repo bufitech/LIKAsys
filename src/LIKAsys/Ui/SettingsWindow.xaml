@@ -333,7 +333,12 @@
 
                                 <!-- ======================= METRIKAT ======================= -->
                                 <StackPanel x:Name="PanelMetrics" Visibility="Collapsed">
-                                    <TextBlock Style="{StaticResource H2}" Text="ÇFARË TË SHFAQET" />
+                                    <TextBlock Style="{StaticResource H2}" Text="PROFILI" />
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,0,0,12" TextWrapping="Wrap"
+                                               Text="Zgjidh për çfarë e përdor këtë kompjuter. Profili i ndërron njëherësh rreshtat, ikonat dhe ngjyrat. Pastaj mund të ndryshosh çdo gjë veç e veç më poshtë." />
+                                    <StackPanel x:Name="ProfileHost" />
+
+                                    <TextBlock Style="{StaticResource H2}" Text="ÇFARË TË SHFAQET" Margin="0,18,0,8" />
                                     <CheckBox Style="{StaticResource Switch}" Content="CPU - përqindja e përdorimit" IsChecked="{Binding ShowCpu, Mode=TwoWay}" />
                                     <CheckBox Style="{StaticResource Switch}" Content="CPU - temperatura" IsChecked="{Binding ShowCpuTemp, Mode=TwoWay}" />
                                     <CheckBox Style="{StaticResource Switch}" Content="CPU - shpejtësia (GHz)" IsChecked="{Binding ShowCpuClock, Mode=TwoWay}" />
@@ -348,6 +353,11 @@
                                     <CheckBox Style="{StaticResource Switch}" Content="FRAME - koha e një kuadri në ms" IsChecked="{Binding ShowFrameTime, Mode=TwoWay}" />
                                     <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0" TextWrapping="Wrap"
                                                Text="1% LOW tregon sa bien kuadrot në momentet më të këqija. Sa më afër FPS-së mesatare, aq më e qetë loja." />
+
+                                    <TextBlock Style="{StaticResource H2}" Text="RUAJTJA" Margin="0,16,0,8" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="DISK - sa është mbushur disku i sistemit" IsChecked="{Binding ShowDisk, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="I/O - lexim dhe shkrim në MB/s" IsChecked="{Binding ShowDiskIo, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="UPTIME - sa kohë është ndezur kompjuteri" IsChecked="{Binding ShowUptime, Mode=TwoWay}" />
 
                                     <TextBlock Style="{StaticResource H2}" Text="RRJETI" Margin="0,16,0,8" />
                                     <CheckBox Style="{StaticResource Switch}" Content="NET - shpejtësia e shkarkimit dhe ngarkimit" IsChecked="{Binding ShowNet, Mode=TwoWay}" />
@@ -403,6 +413,15 @@
                                     <TextBlock Style="{StaticResource H2}" Text="NISJA" />
                                     <CheckBox Style="{StaticResource Switch}" Content="Nis bashkë me Windows (pa dritare UAC)"
                                               IsChecked="{Binding StartWithWindows, Mode=TwoWay}" />
+
+                                    <Grid Margin="0,8,0,2">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Si të hapet widget-i" />
+                                        <ComboBox x:Name="StartViewCombo" Grid.Column="1" Style="{StaticResource Combo}"
+                                                  SelectionChanged="StartView_Changed" Width="320" HorizontalAlignment="Left" />
+                                    </Grid>
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0" TextWrapping="Wrap"
+                                               Text="I minimizuar do të thotë një shirit i vetëm me numrat kryesorë - mbetet sipër, por nuk zë vend." />
 
                                     <TextBlock Style="{StaticResource H2}" Text="IKONA NË TRAY" Margin="0,18,0,8" />
                                     <Grid Margin="0,2,0,6">

@@ -73,6 +73,7 @@ namespace LIKAsys.Ui
             BuildThemeTab();
             BuildColorTab();
             BuildLangTab();
+            BuildProfileTab();
             FillCombos();
             SyncFromSettings();
 
@@ -415,7 +416,7 @@ namespace LIKAsys.Ui
             LangHost.Children.Clear();
             _langCards.Clear();
 
-            AddLangCard("sq", "Shqip", "Gjuha e parazgjedhur e LIKAsys", "AL");
+            AddLangCard("sq", "Shqip", Lang.T("Gjuha e parazgjedhur e LIKAsys"), "AL");
             AddLangCard("en", "English", "International / English interface", "EN");
 
             SyncLangSelection();
@@ -533,6 +534,7 @@ namespace LIKAsys.Ui
                 BuildThemeTab();
                 BuildColorTab();
                 BuildLangTab();
+                BuildProfileTab();
                 FillCombos();
             }
             catch { }
@@ -560,6 +562,7 @@ namespace LIKAsys.Ui
             }
             catch { }
 
+            StartViewCombo.ItemsSource = Tr("Siç e lashë herën e fundit", "Gjithmonë i plotë", "Gjithmonë i minimizuar");
             IconCombo.ItemsSource = Tr("3D (me thellësi)", "Outline (vija të holla)", "Solid (të mbushura)", "Pa ikona");
             BarCombo.ItemsSource = Tr("Të rrumbullakosur", "Katrorë", "Të segmentuar", "Pa shirita");
             LayoutCombo.ItemsSource = Tr("Vertikale (njëra mbi tjetrën)", "Horizontale (në një shirit)", "Kompakte (pa shirita)");
@@ -596,6 +599,7 @@ namespace LIKAsys.Ui
                 DecimalsCombo.SelectedIndex = Math.Max(0, Math.Min(2, _settings.Decimals));
                 TempCombo.SelectedIndex = string.Equals(_settings.TempUnit, "F", StringComparison.OrdinalIgnoreCase) ? 1 : 0;
                 TrayIconCombo.SelectedIndex = (int)_settings.TrayIconMode;
+                StartViewCombo.SelectedIndex = (int)_settings.StartView;
 
                 int vi = Array.FindIndex(WeightKeys, k => string.Equals(k, _settings.ValueWeight, StringComparison.OrdinalIgnoreCase));
                 int li = Array.FindIndex(WeightKeys, k => string.Equals(k, _settings.LabelWeight, StringComparison.OrdinalIgnoreCase));
@@ -755,6 +759,134 @@ namespace LIKAsys.Ui
         {
             if (_loading || DecimalsCombo.SelectedIndex < 0) return;
             _settings.Decimals = DecimalsCombo.SelectedIndex;
+        }
+
+
+        // ============================================================ profile cards
+
+        private readonly List<Border> _profileCards = new List<Border>();
+
+        private void BuildProfileTab()
+        {
+            ProfileHost.Children.Clear();
+            _profileCards.Clear();
+
+            AddProfileCard(UiProfile.Gaming, "Gaming",
+                "FPS, 1% low, VRAM dhe temperatura. Numra të mëdhenj, ikona 3D, theks cyan.");
+            AddProfileCard(UiProfile.It, "IT",
+                "Disku, I/O, rrjeti, ping dhe uptime. Rreshta të ngjeshur, ikona teknike, theks i gjelbër.");
+
+            SyncProfileSelection();
+        }
+
+        private void AddProfileCard(UiProfile profile, string title, string subtitle)
+        {
+            var card = new Border
+            {
+                CornerRadius = new CornerRadius(10),
+                Margin = new Thickness(0, 0, 0, 10),
+                Padding = new Thickness(16, 13, 16, 13),
+                BorderThickness = new Thickness(1.6),
+                BorderBrush = new SolidColorBrush(Color.FromArgb(0x2A, 0xFF, 0xFF, 0xFF)),
+                Background = new SolidColorBrush(Color.FromArgb(0xFF, 0x13, 0x1A, 0x26)),
+                Cursor = Cursors.Hand,
+                Tag = profile,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = 420
+            };
+
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            var glyph = new Border
+            {
+                Width = 40,
+                Height = 40,
+                CornerRadius = new CornerRadius(8),
+                Margin = new Thickness(0, 0, 14, 0),
+                Background = new SolidColorBrush(Color.FromArgb(0x1F, 0xFF, 0xFF, 0xFF)),
+                Child = new System.Windows.Shapes.Path
+                {
+                    Data = Application.Current.TryFindResource(profile == UiProfile.It ? "IconCpuIt" : "IconFps") as Geometry,
+                    Stroke = new SolidColorBrush(Color.FromRgb(0xEA, 0xF2, 0xFF)),
+                    StrokeThickness = 1.6,
+                    Width = 21,
+                    Height = 21,
+                    Stretch = Stretch.Uniform,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                }
+            };
+            Grid.SetColumn(glyph, 0);
+            grid.Children.Add(glyph);
+
+            var text = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
+            text.Children.Add(new TextBlock
+            {
+                Text = Lang.T(title),
+                FontSize = 14,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = new SolidColorBrush(Color.FromRgb(0xEA, 0xF2, 0xFF))
+            });
+            text.Children.Add(new TextBlock
+            {
+                Text = Lang.T(subtitle),
+                FontSize = 11.5,
+                Margin = new Thickness(0, 3, 0, 0),
+                TextWrapping = TextWrapping.Wrap,
+                Foreground = new SolidColorBrush(Color.FromRgb(0x7E, 0x8E, 0xA8))
+            });
+            Grid.SetColumn(text, 1);
+            grid.Children.Add(text);
+
+            card.Child = grid;
+            card.MouseLeftButtonUp += (s, e) => PickProfile(profile);
+
+            ProfileHost.Children.Add(card);
+            _profileCards.Add(card);
+        }
+
+        private void SyncProfileSelection()
+        {
+            var accent = Brush(_settings.Accent, 0x00, 0xE5, 0xFF);
+            foreach (var c in _profileCards)
+            {
+                bool on = (UiProfile)c.Tag == _settings.Profile;
+                c.BorderBrush = on ? accent : new SolidColorBrush(Color.FromArgb(0x2A, 0xFF, 0xFF, 0xFF));
+            }
+        }
+
+        private void PickProfile(UiProfile p)
+        {
+            Profiles.Apply(_settings, p);
+            SyncProfileSelection();
+            ReloadFromSettings();
+        }
+
+        /// <summary>Pulls every control back in line after a profile or theme rewrote the settings.</summary>
+        private void ReloadFromSettings()
+        {
+            bool old = _loading;
+            _loading = true;
+            try
+            {
+                FillCombos();
+            }
+            catch { }
+            finally { _loading = old; }
+
+            SyncCombos();
+            RefreshColors();
+            SyncThemeSelection();
+            SyncProfileSelection();
+        }
+
+        private void StartView_Changed(object sender, SelectionChangedEventArgs e)
+        {
+            if (_loading) return;
+            int i = StartViewCombo.SelectedIndex;
+            if (i >= 0) _settings.StartView = (StartView)i;
         }
 
         private void TrayIcon_Changed(object sender, SelectionChangedEventArgs e)

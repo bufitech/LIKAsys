@@ -100,9 +100,12 @@
                         </Ellipse>
                         <TextBlock x:Name="BrandText" Text="LIKAsys" FontSize="11" FontWeight="Bold"
                                    Foreground="#FFEAF2FF" VerticalAlignment="Center" />
+                        <TextBlock x:Name="MiniLine" FontSize="11" Margin="10,0,6,0" Visibility="Collapsed"
+                                   Foreground="#FFBFD0E6" VerticalAlignment="Center"
+                                   Typography.NumeralAlignment="Tabular" />
                     </StackPanel>
 
-                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <StackPanel x:Name="HeaderButtons" Grid.Column="2" Orientation="Horizontal">
                         <StackPanel.Style>
                             <Style TargetType="StackPanel">
                                 <Setter Property="Opacity" Value="0" />
@@ -113,6 +116,11 @@
                                 </Style.Triggers>
                             </Style>
                         </StackPanel.Style>
+                        <Button x:Name="MinBtn" Style="{StaticResource IconButton}" Width="19" Height="19"
+                                Click="Minimize_Click" ToolTip="Minimizo">
+                            <Path x:Name="MinIcon" Data="{StaticResource IconMinimize}" Stroke="#FF93A6BE" StrokeThickness="1.7"
+                                  Width="13" Height="13" Stretch="Uniform" />
+                        </Button>
                         <Button Style="{StaticResource IconButton}" Width="19" Height="19" Click="Settings_Click" ToolTip="Cilesimet">
                             <Path x:Name="GearIcon" Data="{StaticResource IconSettings}" Stroke="#FF93A6BE" StrokeThickness="1.7"
                                   Width="13" Height="13" Stretch="Uniform" />

@@ -15,6 +15,7 @@ namespace LIKAsys.Monitoring
         private readonly HardwareMonitor _hw = new HardwareMonitor();
         private readonly FpsMonitor _fps = new FpsMonitor();
         private readonly NetMonitor _net;
+        private readonly DiskMonitor _disk;
 
         private CancellationTokenSource _cts;
         private int _sensorDivider;
@@ -29,6 +30,7 @@ namespace LIKAsys.Monitoring
         {
             _settings = settings;
             _net = new NetMonitor(settings);
+            _disk = new DiskMonitor();
         }
 
         public void Start()
@@ -69,6 +71,7 @@ namespace LIKAsys.Monitoring
                     else if (_settings.AdvancedSensors) { s.CpuTemp = snap.CpuTemp; s.GpuTemp = snap.GpuTemp; s.CpuClockMhz = snap.CpuClockMhz; if (s.VramTotalMb <= 0) s.VramTotalMb = snap.VramTotalMb; }
 
                     if (_settings.ShowNet || _settings.ShowPing) _net.Sample(s);
+                    if (_settings.ShowDisk || _settings.ShowDiskIo || _settings.ShowUptime) _disk.Sample(s);
 
                     if (_settings.FpsEnabled)
                     {
@@ -104,6 +107,7 @@ namespace LIKAsys.Monitoring
             _hw.Dispose();
             _gpu.Dispose();
             _net.Dispose();
+            _disk.Dispose();
         }
     }
 }

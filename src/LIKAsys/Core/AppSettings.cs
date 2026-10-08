@@ -24,6 +24,9 @@ namespace LIKAsys.Core
     /// <summary>What the tray icon itself draws. Logo = the plain LIKAsys icon.</summary>
     public enum TrayIconMode { Logo, Cpu, CpuTemp, Gpu, GpuTemp, Ram, Fps }
 
+    /// <summary>How the widget comes up when LIKAsys starts.</summary>
+    public enum StartView { Remember, Full, Minimized }
+
     public class AppSettings : INotifyPropertyChanged
     {
         // ======================================================= theme
@@ -92,6 +95,11 @@ namespace LIKAsys.Core
         private bool _showVram = true, _showRam = true, _showFps = true;
         private bool _showCpuClock = true;
         private bool _showNet = false, _showPing = false;
+        private bool _showDisk = false, _showDiskIo = false, _showUptime = false;
+        private UiProfile _profile = UiProfile.Gaming;
+        private bool _profileChosen = false;
+        private bool _minimized = false;
+        private StartView _startView = StartView.Remember;
         private string _pingHost = "1.1.1.1";
         private bool _showFpsApp = true;
         private bool _showFpsLow = false, _showFrameTime = false;
@@ -203,6 +211,9 @@ namespace LIKAsys.Core
         public bool ShowFpsApp { get => _showFpsApp; set => Set(ref _showFpsApp, value); }
         public bool ShowFpsLow { get => _showFpsLow; set => Set(ref _showFpsLow, value); }
         public bool ShowFrameTime { get => _showFrameTime; set => Set(ref _showFrameTime, value); }
+        public bool ShowDisk { get => _showDisk; set => Set(ref _showDisk, value); }
+        public bool ShowDiskIo { get => _showDiskIo; set => Set(ref _showDiskIo, value); }
+        public bool ShowUptime { get => _showUptime; set => Set(ref _showUptime, value); }
         public bool ShowNet { get => _showNet; set => Set(ref _showNet, value); }
         public bool ShowPing { get => _showPing; set => Set(ref _showPing, value); }
         public string PingHost { get => _pingHost; set => Set(ref _pingHost, string.IsNullOrWhiteSpace(value) ? "1.1.1.1" : value.Trim()); }
@@ -220,6 +231,14 @@ namespace LIKAsys.Core
         }
 
         public TrayIconMode TrayIconMode { get => _trayIconMode; set => Set(ref _trayIconMode, value); }
+
+        /// <summary>Gaming or IT. Picked during setup, changeable in the settings at any time.</summary>
+        public UiProfile Profile { get => _profile; set => Set(ref _profile, value); }
+        public bool ProfileChosen { get => _profileChosen; set => Set(ref _profileChosen, value); }
+
+        /// <summary>Collapsed to a small bar. Survives restarts unless StartView overrides it.</summary>
+        public bool Minimized { get => _minimized; set => Set(ref _minimized, value); }
+        public StartView StartView { get => _startView; set => Set(ref _startView, value); }
 
         public bool StartWithWindows { get => _startWithWindows; set => Set(ref _startWithWindows, value); }
         public bool AutoCheckUpdates { get => _autoCheckUpdates; set => Set(ref _autoCheckUpdates, value); }

@@ -34,7 +34,7 @@ namespace LIKAsys
             {
                 AppInfo.Log("UI exception: " + args.Exception);
                 args.Handled = true;
-                ReportOnce("Gabim gjate punes", args.Exception);
+                ReportOnce(Lang.T("Gabim gjate punes"), args.Exception);
             };
             AppDomain.CurrentDomain.UnhandledException += (s, args) =>
                 AppInfo.Log("Fatal: " + args.ExceptionObject);
@@ -72,7 +72,7 @@ namespace LIKAsys
             catch (Exception ex)
             {
                 AppInfo.Log("SETTINGS FAILED: " + ex);
-                problems.Add("Cilesimet nuk u lexuan dot - u perdoren ato fillestare.");
+                problems.Add(Lang.T("Cilesimet nuk u lexuan dot - u perdoren ato fillestare."));
             }
             if (_settings == null) _settings = new AppSettings();
 
@@ -89,6 +89,12 @@ namespace LIKAsys
             {
                 _tray = new TrayManager(_settings);
                 _tray.ToggleWidget += (s, a) => ToggleWidget();
+                _tray.ToggleMinimize += (s, a) =>
+                {
+                    _widget?.SetMinimized(!_settings.Minimized);
+                    try { _tray?.Rebuild(); } catch { }
+                    SaveSoon();
+                };
                 _tray.OpenSettings += (s, a) => ShowSettings();
                 _tray.CheckUpdates += (s, a) => OnTrayUpdateClick();
                 _tray.OpenLog += (s, a) => AppInfo.OpenUrl(AppInfo.LogFile);
@@ -100,7 +106,7 @@ namespace LIKAsys
             catch (Exception ex)
             {
                 AppInfo.Log("TRAY FAILED: " + ex);
-                problems.Add("Ikona afer ores nuk u krijua: " + ex.Message);
+                problems.Add(Lang.T("Ikona afer ores nuk u krijua: ") + ex.Message);
             }
 
             // ---------------------------------------------------- 3. metrics
@@ -114,21 +120,28 @@ namespace LIKAsys
             catch (Exception ex)
             {
                 AppInfo.Log("METRICS FAILED: " + ex);
-                problems.Add("Matja e sistemit nuk u nis: " + ex.Message);
+                problems.Add(Lang.T("Matja e sistemit nuk u nis: ") + ex.Message);
             }
 
             // ---------------------------------------------------- 4. widget
             try
             {
+                // the profile the installer asked about, honoured once, on the very first run
+                ApplySetupProfile();
+
+                if (_settings.StartView == StartView.Full) _settings.Minimized = false;
+                else if (_settings.StartView == StartView.Minimized) _settings.Minimized = true;
+
                 _widget = new WidgetWindow(_settings, _metrics);
                 _widget.SettingsRequested += (s, a) => ShowSettings();
+                _widget.MinimizedChanged += (s, a) => { try { _tray?.Rebuild(); } catch { } SaveSoon(); };
                 if (_settings.WidgetVisible) _widget.Show();
                 AppInfo.Log("ok: widget");
             }
             catch (Exception ex)
             {
                 AppInfo.Log("WIDGET FAILED: " + ex);
-                problems.Add("Widget-i nuk u hap: " + ex.Message);
+                problems.Add(Lang.T("Widget-i nuk u hap: ") + ex.Message);
             }
 
             // ---------------------------------------------------- 5. timers
@@ -156,8 +169,8 @@ namespace LIKAsys
                 {
                     _settings.FirstRunDone = true;
                     try { SettingsStore.Save(_settings); } catch { }
-                    _tray?.Notify("LIKAsys eshte gati",
-                        "Widget-i u hap ne qoshe te ekranit. Kliko dy here mbi ikonen per ta fshehur ose shfaqur.");
+                    _tray?.Notify(Lang.T("LIKAsys eshte gati"),
+                        Lang.T("Widget-i u hap ne qoshe te ekranit. Kliko dy here mbi ikonen per ta fshehur ose shfaqur."));
                 }
             }
             else
@@ -166,9 +179,9 @@ namespace LIKAsys
                 try
                 {
                     MessageBox.Show(
-                        "LIKAsys u nis, por disa pjese nuk punuan:\n\n   - " + string.Join("\n   - ", problems) +
-                        "\n\nDetajet e plota jane ketu:\n" + AppInfo.LogFile,
-                        "LIKAsys - diagnostike", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        Lang.T("LIKAsys u nis, por disa pjese nuk punuan:") + "\n\n   - " + string.Join("\n   - ", problems) +
+                        "\n\n" + Lang.T("Detajet e plota jane ketu:") + "\n" + AppInfo.LogFile,
+                        Lang.T("LIKAsys - diagnostike"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 catch { }
             }
@@ -219,7 +232,7 @@ namespace LIKAsys
             _reported = true;
             try
             {
-                MessageBox.Show(title + ":\n\n" + ex.Message + "\n\nDetajet: " + AppInfo.LogFile,
+                MessageBox.Show(title + ":\n\n" + ex.Message + "\n\n" + Lang.T("Detajet: ") + AppInfo.LogFile,
                     "LIKAsys", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             catch { }
@@ -258,7 +271,7 @@ namespace LIKAsys
             catch (Exception ex)
             {
                 AppInfo.Log("RescueWidget: " + ex);
-                ReportOnce("Widget-i nuk u rikthye dot", ex);
+                ReportOnce(Lang.T("Widget-i nuk u rikthye dot"), ex);
             }
         }
 
@@ -306,6 +319,8 @@ namespace LIKAsys
                     p == nameof(AppSettings.ShowVram) || p == nameof(AppSettings.ShowRam) ||
                     p == nameof(AppSettings.ShowFps) || p == nameof(AppSettings.ShowNet) ||
                     p == nameof(AppSettings.ShowFpsLow) || p == nameof(AppSettings.ShowFrameTime) ||
+                    p == nameof(AppSettings.ShowDisk) || p == nameof(AppSettings.ShowDiskIo) ||
+                    p == nameof(AppSettings.ShowUptime) || p == nameof(AppSettings.Profile) ||
                     p == nameof(AppSettings.ShowPing) || p.Length == 0)
                 {
                     _widget?.BuildRows();
@@ -324,6 +339,41 @@ namespace LIKAsys
         }
 
         // ------------------------------------------------------------ windows
+
+        /// <summary>
+        /// The installer asks once whether the machine is for gaming or for IT work and
+        /// leaves the answer in the registry. We read it exactly once, on a fresh install,
+        /// and after that the user owns the setting - an upgrade never rewrites it.
+        /// </summary>
+        private void ApplySetupProfile()
+        {
+            if (_settings.ProfileChosen) return;
+            if (_settings.FirstRunDone) { _settings.ProfileChosen = true; return; }
+
+            try
+            {
+                var p = UiProfile.Gaming;
+
+                // NSIS is 32-bit, so on a 64-bit Windows its key lands under Wow6432Node.
+                // Look in both views rather than guess which one it is.
+                foreach (var view in new[] { Microsoft.Win32.RegistryView.Registry64, Microsoft.Win32.RegistryView.Registry32 })
+                {
+                    using (var root = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, view))
+                    using (var k = root.OpenSubKey(@"SOFTWARE\LIKAsys"))
+                    {
+                        var v = k?.GetValue("SetupProfile") as string;
+                        if (string.IsNullOrEmpty(v)) continue;
+                        if (string.Equals(v, "it", StringComparison.OrdinalIgnoreCase)) p = UiProfile.It;
+                        break;
+                    }
+                }
+
+                AppInfo.Log("setup profile -> " + Profiles.Name(p));
+                Profiles.Apply(_settings, p);
+                try { SettingsStore.Save(_settings); } catch { }
+            }
+            catch (Exception ex) { AppInfo.Log("ApplySetupProfile: " + ex.Message); }
+        }
 
         private void ToggleWidget()
         {

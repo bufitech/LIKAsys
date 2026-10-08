@@ -45,6 +45,86 @@
         <LineGeometry StartPoint="19.4,12.6" EndPoint="17.8,13.2" />
     </GeometryGroup>
 
+    <!-- ================= storage + uptime (shared) ================= -->
+
+    <!-- disk: platters seen from the side -->
+    <GeometryGroup x:Key="IconDisk" FillRule="EvenOdd">
+        <PathGeometry Figures="M3.6,6.6 A8.4,2.8 0 1 1 20.4,6.6 A8.4,2.8 0 1 1 3.6,6.6" />
+        <PathGeometry Figures="M3.6,6.6 L3.6,17.4 A8.4,2.8 0 0 0 20.4,17.4 L20.4,6.6" />
+        <PathGeometry Figures="M3.6,12 A8.4,2.8 0 0 0 20.4,12" />
+    </GeometryGroup>
+
+    <!-- disk throughput: platters with read/write arrows -->
+    <GeometryGroup x:Key="IconDiskIo" FillRule="EvenOdd">
+        <PathGeometry Figures="M2.6,6 A6.6,2.4 0 1 1 15.8,6 A6.6,2.4 0 1 1 2.6,6" />
+        <PathGeometry Figures="M2.6,6 L2.6,15 A6.6,2.4 0 0 0 15.8,15 L15.8,6" />
+        <PathGeometry Figures="M19.4,8.4 L19.4,20.2" />
+        <PathGeometry Figures="M16.4,17.4 L19.4,20.6 L22.4,17.4" />
+    </GeometryGroup>
+
+    <!-- uptime: a clock with a sweep -->
+    <GeometryGroup x:Key="IconUptime" FillRule="EvenOdd">
+        <EllipseGeometry Center="12,12" RadiusX="8.8" RadiusY="8.8" />
+        <PathGeometry Figures="M12,7 L12,12.4 L15.8,14.6" />
+    </GeometryGroup>
+
+    <!-- ================= IT profile: flat, technical set ================= -->
+
+    <!-- processor: a plain square die with contacts -->
+    <GeometryGroup x:Key="IconCpuIt" FillRule="EvenOdd">
+        <RectangleGeometry Rect="5,5 14,14" />
+        <RectangleGeometry Rect="9,9 6,6" />
+        <LineGeometry StartPoint="8,5" EndPoint="8,2.4" />
+        <LineGeometry StartPoint="12,5" EndPoint="12,2.4" />
+        <LineGeometry StartPoint="16,5" EndPoint="16,2.4" />
+        <LineGeometry StartPoint="8,19" EndPoint="8,21.6" />
+        <LineGeometry StartPoint="12,19" EndPoint="12,21.6" />
+        <LineGeometry StartPoint="16,19" EndPoint="16,21.6" />
+        <LineGeometry StartPoint="5,8" EndPoint="2.4,8" />
+        <LineGeometry StartPoint="5,12" EndPoint="2.4,12" />
+        <LineGeometry StartPoint="5,16" EndPoint="2.4,16" />
+        <LineGeometry StartPoint="19,8" EndPoint="21.6,8" />
+        <LineGeometry StartPoint="19,12" EndPoint="21.6,12" />
+        <LineGeometry StartPoint="19,16" EndPoint="21.6,16" />
+    </GeometryGroup>
+
+    <!-- graphics: an expansion card with a bracket -->
+    <GeometryGroup x:Key="IconGpuIt" FillRule="EvenOdd">
+        <RectangleGeometry Rect="3,6 16,12" />
+        <RectangleGeometry Rect="19,4.4 2,15.2" />
+        <LineGeometry StartPoint="6,9.4" EndPoint="15.4,9.4" />
+        <LineGeometry StartPoint="6,12" EndPoint="15.4,12" />
+        <LineGeometry StartPoint="6,14.6" EndPoint="11.6,14.6" />
+    </GeometryGroup>
+
+    <!-- memory: a module seen flat on -->
+    <GeometryGroup x:Key="IconRamIt" FillRule="EvenOdd">
+        <RectangleGeometry Rect="2.4,6.4 19.2,11.2" />
+        <LineGeometry StartPoint="7.2,6.4" EndPoint="7.2,17.6" />
+        <LineGeometry StartPoint="12,6.4" EndPoint="12,17.6" />
+        <LineGeometry StartPoint="16.8,6.4" EndPoint="16.8,17.6" />
+    </GeometryGroup>
+
+    <!-- network: a switch with two ports -->
+    <GeometryGroup x:Key="IconNetIt" FillRule="EvenOdd">
+        <RectangleGeometry Rect="2.4,13.6 19.2,6.4" />
+        <LineGeometry StartPoint="6.4,16.8" EndPoint="9.2,16.8" />
+        <LineGeometry StartPoint="12,16.8" EndPoint="14.8,16.8" />
+        <PathGeometry Figures="M12,13.6 L12,8.4" />
+        <PathGeometry Figures="M6.4,8.4 L17.6,8.4" />
+        <PathGeometry Figures="M6.4,8.4 L6.4,4.8" />
+        <PathGeometry Figures="M17.6,8.4 L17.6,4.8" />
+    </GeometryGroup>
+
+    <!-- latency: a signal mast -->
+    <GeometryGroup x:Key="IconPingIt" FillRule="EvenOdd">
+        <PathGeometry Figures="M12,9.2 L12,20.4" />
+        <PathGeometry Figures="M8.4,20.4 L15.6,20.4" />
+        <PathGeometry Figures="M7.4,8.2 A6.6,6.6 0 0 1 16.6,8.2" />
+        <PathGeometry Figures="M4.2,5.4 A11,11 0 0 1 19.8,5.4" />
+        <EllipseGeometry Center="12,11.2" RadiusX="1.4" RadiusY="1.4" />
+    </GeometryGroup>
+
     <!-- 1% low: a frame-time graph with one deep dip -->
     <GeometryGroup x:Key="IconLow" FillRule="EvenOdd">
         <PathGeometry Figures="M3,8.4 L6.6,8.4 L8.4,18.6 L10.2,8.4 L13.8,8.4 L15.6,14.4 L17.4,8.4 L21,8.4" />
@@ -71,6 +151,17 @@
     </GeometryGroup>
 
     <!-- ===== ui glyphs ===== -->
+
+    <GeometryGroup x:Key="IconMinimize" FillRule="EvenOdd">
+        <LineGeometry StartPoint="6,14.5" EndPoint="18,14.5" />
+        <PathGeometry Figures="M8,8 L12,12 L16,8" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="IconRestore" FillRule="EvenOdd">
+        <LineGeometry StartPoint="6,9.5" EndPoint="18,9.5" />
+        <PathGeometry Figures="M8,16 L12,12 L16,16" />
+    </GeometryGroup>
+
 
     <GeometryGroup x:Key="IconSettings" FillRule="EvenOdd">
         <LineGeometry StartPoint="4,7" EndPoint="20,7" />

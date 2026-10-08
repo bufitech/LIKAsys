@@ -17,7 +17,7 @@ namespace LIKAsys.Ui
         private readonly AppSettings _settings;
         private NotifyIcon _icon;
         private ContextMenuStrip _menu;
-        private ToolStripMenuItem _miShow, _miTop, _miClick, _miLock, _miPos;
+        private ToolStripMenuItem _miShow, _miMin, _miTop, _miClick, _miLock, _miPos;
 
         // --- live icon state
         private Icon _liveIcon;
@@ -29,6 +29,7 @@ namespace LIKAsys.Ui
         private static extern bool DestroyIcon(IntPtr handle);
 
         public event EventHandler ToggleWidget;
+        public event EventHandler ToggleMinimize;
         public event EventHandler OpenSettings;
         public event EventHandler CheckUpdates;
         public event EventHandler OpenLog;
@@ -58,6 +59,7 @@ namespace LIKAsys.Ui
             _menu.Items.Add(new ToolStripSeparator());
 
             _miShow = Check(Lang.T("Shfaq widget-in"), _settings.WidgetVisible, (s, e) => ToggleWidget?.Invoke(this, EventArgs.Empty));
+            _miMin = Check(Lang.T("Minimizo widget-in"), _settings.Minimized, (s, e) => ToggleMinimize?.Invoke(this, EventArgs.Empty));
             _miTop = Check(Lang.T("Gjithmone siper (always on top)"), _settings.AlwaysOnTop, (s, e) =>
             {
                 _settings.AlwaysOnTop = !_settings.AlwaysOnTop;
@@ -75,6 +77,7 @@ namespace LIKAsys.Ui
             });
 
             _menu.Items.Add(_miShow);
+            _menu.Items.Add(_miMin);
             _menu.Items.Add(_miTop);
             _menu.Items.Add(_miClick);
             _menu.Items.Add(_miLock);
@@ -155,6 +158,7 @@ namespace LIKAsys.Ui
             try
             {
                 if (_miShow != null) _miShow.Checked = _settings.WidgetVisible;
+                if (_miMin != null) _miMin.Checked = _settings.Minimized;
                 if (_miTop != null) _miTop.Checked = _settings.AlwaysOnTop;
                 if (_miClick != null) _miClick.Checked = _settings.ClickThrough;
                 if (_miLock != null) _miLock.Checked = _settings.Locked;
