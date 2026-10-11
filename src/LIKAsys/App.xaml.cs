@@ -16,6 +16,7 @@ namespace LIKAsys
     {
         private AppSettings _settings;
         private UiProfile _lastProfile = UiProfile.Gaming;
+        private bool _lastAdvanced;
         private MetricsService _metrics;
         private WidgetWindow _widget;
         private SettingsWindow _settingsWindow;
@@ -350,9 +351,12 @@ namespace LIKAsys
 
                 // the Mouse submenu only exists in IT, so the tray has to be rebuilt
                 // when the profile moves - a plain Sync() would leave a stale menu
-                if (_lastProfile != _settings.Profile)
+                // the Mouse submenu only exists in IT, and simple mode drops half the
+                // items, so both of those need a full rebuild, not a Sync()
+                if (_lastProfile != _settings.Profile || _lastAdvanced != _settings.Advanced)
                 {
                     _lastProfile = _settings.Profile;
+                    _lastAdvanced = _settings.Advanced;
                     Dispatcher.BeginInvoke(new Action(() => { try { _tray?.Rebuild(); } catch { } }),
                         System.Windows.Threading.DispatcherPriority.Background);
                 }

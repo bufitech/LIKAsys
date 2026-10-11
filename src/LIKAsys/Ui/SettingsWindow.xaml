@@ -2,12 +2,14 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="LIKAsys - Cilësimet" Width="892" Height="668"
+        MinWidth="640" MinHeight="470"
         WindowStyle="None" AllowsTransparency="True" Background="{x:Null}"
-        ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="True"
+        ResizeMode="CanResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="True"
+        StateChanged="Win_StateChanged"
         TextOptions.TextFormattingMode="Display" FontFamily="Segoe UI" UseLayoutRounding="True">
 
-    <Grid Margin="14">
-        <Border CornerRadius="16" Background="#FF0A0D14" BorderBrush="#26FFFFFF" BorderThickness="1">
+    <Grid x:Name="RootPad" Margin="14">
+        <Border x:Name="RootCard" CornerRadius="16" Background="#FF0A0D14" BorderBrush="#26FFFFFF" BorderThickness="1">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="28" ShadowDepth="6" Direction="270" Opacity="0.7" Color="Black" />
             </Border.Effect>
@@ -36,21 +38,43 @@
                         </Border>
                     </StackPanel>
 
-                    <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="34" Height="34"
-                            Margin="0,0,14,0" Click="Close_Click" ToolTip="Mbyll">
-                        <Path Data="{StaticResource IconClose}" Stroke="#FF93A6BE" StrokeThickness="1.7"
-                              Width="15" Height="15" Stretch="Uniform" />
-                    </Button>
+                    <Border Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Margin="0,0,16,0" CornerRadius="8" Padding="3" Background="#FF121925">
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton x:Name="ModeSimple" Style="{StaticResource ModeTab}" GroupName="mode"
+                                         Content="Thjeshtë" Tag="easy" Checked="Mode_Checked" IsChecked="True" />
+                            <RadioButton x:Name="ModeAdvanced" Style="{StaticResource ModeTab}" GroupName="mode"
+                                         Content="Avancuar" Tag="adv" Checked="Mode_Checked" />
+                        </StackPanel>
+                    </Border>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,10,0">
+                        <Button Style="{StaticResource IconButton}" Width="34" Height="34"
+                                Click="Min_Click" ToolTip="Minimizo">
+                            <Path Data="{StaticResource IconMinimize}" Stroke="#FF93A6BE" StrokeThickness="1.7"
+                                  Width="15" Height="15" Stretch="Uniform" />
+                        </Button>
+                        <Button x:Name="MaxBtn" Style="{StaticResource IconButton}" Width="34" Height="34"
+                                Margin="2,0,0,0" Click="Max_Click" ToolTip="Zmadho">
+                            <Path x:Name="MaxPath" Data="{StaticResource IconMaximize}" Stroke="#FF93A6BE"
+                                  StrokeThickness="1.7" Width="14" Height="14" Stretch="Uniform" />
+                        </Button>
+                        <Button Style="{StaticResource IconButton}" Width="34" Height="34"
+                                Margin="2,4,0,0" Click="Close_Click" ToolTip="Mbyll">
+                            <Path Data="{StaticResource IconClose}" Stroke="#FF93A6BE" StrokeThickness="1.7"
+                                  Width="15" Height="15" Stretch="Uniform" />
+                        </Button>
+                    </StackPanel>
                 </Grid>
 
                 <!-- ===== body ===== -->
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="196" />
+                        <ColumnDefinition x:Name="SideCol" Width="196" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0" Margin="14,0,8,14">
+                    <StackPanel x:Name="SideBar" Grid.Column="0" Margin="14,0,8,14">
                         <RadioButton x:Name="TabThemes" Style="{StaticResource SideTab}" Content="Temat" IsChecked="True"
                                      Tag="PanelThemes" Checked="Tab_Checked" GroupName="tabs" />
                         <RadioButton Style="{StaticResource SideTab}" Content="Ngjyrat" Tag="PanelColors" Checked="Tab_Checked" GroupName="tabs" />
@@ -73,6 +97,9 @@
                             BorderBrush="#14FFFFFF" BorderThickness="1">
                         <ScrollViewer x:Name="Scroller" VerticalScrollBarVisibility="Auto" Padding="22,18,16,18">
                             <Grid>
+
+                                <!-- ======================= THJESHT ======================= -->
+                                <StackPanel x:Name="PanelSimple" Visibility="Collapsed" />
 
                                 <!-- ======================= TEMAT ======================= -->
                                 <StackPanel x:Name="PanelThemes">
@@ -532,5 +559,33 @@
                 </Grid>
             </Grid>
         </Border>
+
+        <!-- resize handles, in the shadow gap around the card -->
+        <Grid x:Name="GripHost">
+            <Border Tag="T" Cursor="SizeNS" Background="Transparent" Width="Auto" Height="7"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="12,-7,12,0"
+                    MouseLeftButtonDown="Edge_Down" MouseMove="Edge_Move" MouseLeftButtonUp="Edge_Up" />
+            <Border Tag="B" Cursor="SizeNS" Background="Transparent" Width="Auto" Height="7"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="12,0,12,-7"
+                    MouseLeftButtonDown="Edge_Down" MouseMove="Edge_Move" MouseLeftButtonUp="Edge_Up" />
+            <Border Tag="L" Cursor="SizeWE" Background="Transparent" Width="7" Height="Auto"
+                    HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="-7,12,0,12"
+                    MouseLeftButtonDown="Edge_Down" MouseMove="Edge_Move" MouseLeftButtonUp="Edge_Up" />
+            <Border Tag="R" Cursor="SizeWE" Background="Transparent" Width="7" Height="Auto"
+                    HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="0,12,-7,12"
+                    MouseLeftButtonDown="Edge_Down" MouseMove="Edge_Move" MouseLeftButtonUp="Edge_Up" />
+            <Border Tag="TL" Cursor="SizeNWSE" Background="Transparent" Width="16" Height="16"
+                    HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-7,-7,0,0"
+                    MouseLeftButtonDown="Edge_Down" MouseMove="Edge_Move" MouseLeftButtonUp="Edge_Up" />
+            <Border Tag="TR" Cursor="SizeNESW" Background="Transparent" Width="16" Height="16"
+                    HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-7,-7,0"
+                    MouseLeftButtonDown="Edge_Down" MouseMove="Edge_Move" MouseLeftButtonUp="Edge_Up" />
+            <Border Tag="BL" Cursor="SizeNESW" Background="Transparent" Width="16" Height="16"
+                    HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="-7,0,0,-7"
+                    MouseLeftButtonDown="Edge_Down" MouseMove="Edge_Move" MouseLeftButtonUp="Edge_Up" />
+            <Border Tag="BR" Cursor="SizeNWSE" Background="Transparent" Width="16" Height="16"
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-7,-7"
+                    MouseLeftButtonDown="Edge_Down" MouseMove="Edge_Move" MouseLeftButtonUp="Edge_Up" />
+        </Grid>
     </Grid>
 </Window>

@@ -7,7 +7,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Interop;
 using System.Windows.Shapes;
+using System.Runtime.InteropServices;
 using LIKAsys.Core;
 using LIKAsys.Monitoring;
 using Forms = System.Windows.Forms;
@@ -85,6 +87,7 @@ namespace LIKAsys.Ui
             Closed += (s, e) => { try { _settings.PropertyChanged -= OnExternalChange; } catch { } };
 
             _loading = false;
+            ApplyMode();
         }
 
         private ImageSource TryIcon()
@@ -769,6 +772,7 @@ namespace LIKAsys.Ui
                 BuildMouseTab();
                 BuildProfileTab();
                 FillCombos();
+                if (_simpleBuilt) BuildSimple();
             }
             catch { }
             finally { _loading = old; }
@@ -777,6 +781,7 @@ namespace LIKAsys.Ui
             RefreshColors();
             RefreshStatus();
             SyncThemeSelection();
+            SyncSimple();
         }
 
         private static string[] Tr(params string[] sq) => sq.Select(Lang.T).ToArray();
@@ -891,11 +896,11 @@ namespace LIKAsys.Ui
             var p = e.PropertyName ?? "";
             if (p.Length == 0 || p == nameof(AppSettings.ThemeName))
             {
-                Dispatcher.BeginInvoke(new Action(() => { SyncThemeSelection(); RefreshColors(); SyncCombos(); SyncProfileSelection(); SyncMouseTab(); SyncMouseTabVisibility(); }));
+                Dispatcher.BeginInvoke(new Action(() => { SyncThemeSelection(); RefreshColors(); SyncCombos(); SyncProfileSelection(); SyncMouseTab(); SyncMouseTabVisibility(); SyncSimple(); }));
             }
             else if (p == nameof(AppSettings.Profile) || p == nameof(AppSettings.MouseCursor))
             {
-                Dispatcher.BeginInvoke(new Action(() => { SyncMouseTab(); SyncMouseTabVisibility(); }));
+                Dispatcher.BeginInvoke(new Action(() => { SyncMouseTab(); SyncMouseTabVisibility(); SyncSimple(); }));
             }
             else if (p == nameof(AppSettings.Position))
             {
@@ -905,7 +910,14 @@ namespace LIKAsys.Ui
                     foreach (var rb in PosGrid.Children.OfType<RadioButton>())
                         rb.IsChecked = (string)rb.Tag == _settings.Position.ToString();
                     _loading = old;
+                    SyncSimple();
                 }));
+            }
+            else if (p == nameof(AppSettings.Scale) || p.StartsWith("Show") ||
+                     p == nameof(AppSettings.AlwaysOnTop) || p == nameof(AppSettings.Locked) ||
+                     p == nameof(AppSettings.ClickThrough))
+            {
+                Dispatcher.BeginInvoke(new Action(SyncSimple));
             }
         }
 
@@ -1354,9 +1366,212 @@ namespace LIKAsys.Ui
 
         private void Site_Click(object sender, RoutedEventArgs e) => AppInfo.OpenUrl(AppInfo.Website);
 
+        // ===================================================================
+        //  WINDOW CHROME. The window draws its own frame, so minimise,
+        //  maximise and edge dragging all have to be wired by hand.
+        // ===================================================================
+
+        private const double PadNormal = 14;
+        private double _restoreW, _restoreH, _restoreL, _restoreT;
+        private bool _hasRestore;
+
+        private void Min_Click(object sender, RoutedEventArgs e)
+        {
+            try { WindowState = WindowState.Minimized; } catch { }
+        }
+
+        private void Max_Click(object sender, RoutedEventArgs e) => ToggleMax();
+
+        private void ToggleMax()
+        {
+            try
+            {
+                WindowState = WindowState == WindowState.Maximized
+                    ? WindowState.Normal
+                    : WindowState.Maximized;
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Maximised means edge to edge, so the rounded corners and the shadow gap
+        /// have to go, otherwise there is a dead frame around the window.
+        /// </summary>
+        private void ChromeSync()
+        {
+            bool max = WindowState == WindowState.Maximized;
+            try
+            {
+                RootPad.Margin = new Thickness(max ? 0 : PadNormal);
+                RootCard.CornerRadius = new CornerRadius(max ? 0 : 16);
+                RootCard.BorderThickness = new Thickness(max ? 0 : 1);
+                GripHost.Visibility = max ? Visibility.Collapsed : Visibility.Visible;
+                MaxPath.Data = (Geometry)FindResource(max ? "IconUnmax" : "IconMaximize");
+                MaxBtn.ToolTip = Lang.T(max ? "Ktheje" : "Zmadho");
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Without this a borderless window covers the taskbar when maximised.
+        /// The hook reports the work area of the monitor the window sits on.
+        /// </summary>
+        private void HookMinMax()
+        {
+            try
+            {
+                var h = new WindowInteropHelper(this).Handle;
+                HwndSource.FromHwnd(h)?.AddHook(WndProc);
+            }
+            catch { }
+        }
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            const int WM_GETMINMAXINFO = 0x0024;
+            if (msg != WM_GETMINMAXINFO) return IntPtr.Zero;
+            try
+            {
+                var mon = Native.MonitorFromWindow(hwnd, Native.MONITOR_DEFAULTTONEAREST);
+                if (mon == IntPtr.Zero) return IntPtr.Zero;
+
+                var mi = new Native.MONITORINFO();
+                mi.cbSize = Marshal.SizeOf(typeof(Native.MONITORINFO));
+                if (!Native.GetMonitorInfo(mon, ref mi)) return IntPtr.Zero;
+
+                var mmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
+                mmi.ptMaxPosition.X = mi.rcWork.Left - mi.rcMonitor.Left;
+                mmi.ptMaxPosition.Y = mi.rcWork.Top - mi.rcMonitor.Top;
+                mmi.ptMaxSize.X = mi.rcWork.Right - mi.rcWork.Left;
+                mmi.ptMaxSize.Y = mi.rcWork.Bottom - mi.rcWork.Top;
+                Marshal.StructureToPtr(mmi, lParam, true);
+            }
+            catch { }
+            return IntPtr.Zero;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MINMAXINFO
+        {
+            public Native.POINT ptReserved;
+            public Native.POINT ptMaxSize;
+            public Native.POINT ptMaxPosition;
+            public Native.POINT ptMinTrackSize;
+            public Native.POINT ptMaxTrackSize;
+        }
+
+        // ------------------------- edge dragging -------------------------
+        // Done by hand rather than through the system frame, because the window
+        // is layered and its real edge sits 14 px outside what you can see.
+
+        private string _edge;
+        private Point _edgeStart;
+        private Rect _edgeRect;
+        private double _edgeDpi = 1.0;
+
+        private void Edge_Down(object sender, MouseButtonEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized) return;
+            var el = sender as FrameworkElement;
+            if (el == null) return;
+
+            _edge = el.Tag as string;
+            _edgeStart = ScreenPoint();
+            _edgeRect = new Rect(Left, Top, ActualWidth, ActualHeight);
+            _edgeDpi = DpiScale();
+            el.CaptureMouse();
+            e.Handled = true;
+        }
+
+        private void Edge_Move(object sender, MouseEventArgs e)
+        {
+            if (_edge == null || e.LeftButton != MouseButtonState.Pressed) return;
+
+            var now = ScreenPoint();
+            double dx = (now.X - _edgeStart.X) / _edgeDpi;
+            double dy = (now.Y - _edgeStart.Y) / _edgeDpi;
+            double l = _edgeRect.Left, t = _edgeRect.Top, w = _edgeRect.Width, h = _edgeRect.Height;
+
+            if (_edge.Contains("L")) { l += dx; w -= dx; }
+            if (_edge.Contains("R")) { w += dx; }
+            if (_edge.Contains("T")) { t += dy; h -= dy; }
+            if (_edge.Contains("B")) { h += dy; }
+
+            if (w < MinWidth) { if (_edge.Contains("L")) l -= MinWidth - w; w = MinWidth; }
+            if (h < MinHeight) { if (_edge.Contains("T")) t -= MinHeight - h; h = MinHeight; }
+
+            try { Left = l; Top = t; Width = w; Height = h; } catch { }
+        }
+
+        private void Edge_Up(object sender, MouseButtonEventArgs e)
+        {
+            var el = sender as FrameworkElement;
+            if (el != null) el.ReleaseMouseCapture();
+            _edge = null;
+        }
+
+        /// <summary>The pointer in real screen pixels. Mouse events inside a window
+        /// that is being resized report stale positions, the system cursor does not.</summary>
+        private static Point ScreenPoint()
+        {
+            var p = System.Windows.Forms.Cursor.Position;
+            return new Point(p.X, p.Y);
+        }
+
+        /// <summary>Screen pixels per unit of window size. 1.0 at 100%, 1.5 at 150%.</summary>
+        private double DpiScale()
+        {
+            try
+            {
+                var src = PresentationSource.FromVisual(this);
+                if (src != null && src.CompositionTarget != null)
+                {
+                    double m = src.CompositionTarget.TransformToDevice.M11;
+                    if (m > 0.1) return m;
+                }
+            }
+            catch { }
+            return 1.0;
+        }
+
         private void Title_Drag(object sender, MouseButtonEventArgs e)
         {
-            try { if (e.ButtonState == MouseButtonState.Pressed) DragMove(); } catch { }
+            if (e.ClickCount == 2) { ToggleMax(); return; }
+
+            if (WindowState == WindowState.Maximized)
+            {
+                // Pull a maximised window down and it should come back to size
+                // under the pointer, the way every other window behaves.
+                var p = ScreenPoint();
+                double dpi = DpiScale();
+                double w = _hasRestore ? _restoreW : 892;
+                double ratio = ActualWidth > 1 ? (p.X / dpi) / ActualWidth : 0.5;
+
+                WindowState = WindowState.Normal;
+                Width = w;
+                Height = _hasRestore ? _restoreH : 668;
+                Left = p.X / dpi - w * ratio;
+                Top = Math.Max(0, p.Y / dpi - 26);
+            }
+
+            try { DragMove(); } catch { }
+        }
+
+        private void Win_StateChanged(object sender, EventArgs e)
+        {
+            if (WindowState == WindowState.Normal && ActualWidth > 1)
+            {
+                _restoreW = ActualWidth; _restoreH = ActualHeight;
+                _restoreL = Left; _restoreT = Top; _hasRestore = true;
+            }
+            ChromeSync();
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            HookMinMax();
+            ChromeSync();
         }
 
         private void Close_Click(object sender, RoutedEventArgs e) => Close();

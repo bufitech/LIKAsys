@@ -62,9 +62,14 @@ namespace LIKAsys.Ui
             // --- what the widget is doing right now
             _miShow = Check(Lang.T("Shfaq widget-in"), _settings.WidgetVisible,
                 (s, e) => ToggleWidget?.Invoke(this, EventArgs.Empty));
+            // Simple mode keeps nine items. The full menu has seventeen, which is a lot
+            // to read while a game is running.
+            bool adv = _settings.Advanced;
+
             _menu.Items.Add(_miShow);
-            _menu.Items.Add(Plain(Lang.T("Rikthe widget-in në ekran"),
-                (s, e) => RescueWidget?.Invoke(this, EventArgs.Empty)));
+            if (adv)
+                _menu.Items.Add(Plain(Lang.T("Rikthe widget-in në ekran"),
+                    (s, e) => RescueWidget?.Invoke(this, EventArgs.Empty)));
             _menu.Items.Add(Plain(Lang.T("Cilësimet..."),
                 (s, e) => OpenSettings?.Invoke(this, EventArgs.Empty)));
 
@@ -90,9 +95,12 @@ namespace LIKAsys.Ui
                 (s, e) => ToggleMinimize?.Invoke(this, EventArgs.Empty));
 
             _menu.Items.Add(_miTop);
-            _menu.Items.Add(_miClick);
-            _menu.Items.Add(_miLock);
-            _menu.Items.Add(_miMin);
+            if (adv)
+            {
+                _menu.Items.Add(_miClick);
+                _menu.Items.Add(_miLock);
+                _menu.Items.Add(_miMin);
+            }
 
             // --- everything that opens a submenu
 
@@ -102,20 +110,34 @@ namespace LIKAsys.Ui
             AddProfile(prof, "IT", UiProfile.It);
             _menu.Items.Add(prof);
 
+            if (!adv)
+            {
+                // one theme list instead of two, holding the looks of the profile in use
+                var quick = new ToolStripMenuItem(Lang.T("Tema"));
+                string grp = _settings.Profile == UiProfile.It ? ThemeLibrary.GPune : ThemeLibrary.GLoja;
+                foreach (var t in ThemeLibrary.All.Where(x => x.Group == grp))
+                    AddTheme(quick, t.Name);
+                if (quick.DropDownItems.Count > 0) _menu.Items.Add(quick);
+            }
+
             // the game looks are one right-click away - no settings window in the middle
             // of a match, which is the only time anyone actually wants to change them.
             var games = new ToolStripMenuItem(Lang.T("Tema e lojës"));
-            foreach (var t in ThemeLibrary.All.Where(x => x.Group == ThemeLibrary.GLoja))
-                AddTheme(games, t.Name);
-            if (games.DropDownItems.Count > 0) _menu.Items.Add(games);
+            if (!adv) games = null;
+            if (games != null)
+            {
+                foreach (var t in ThemeLibrary.All.Where(x => x.Group == ThemeLibrary.GLoja))
+                    AddTheme(games, t.Name);
+                if (games.DropDownItems.Count > 0) _menu.Items.Add(games);
 
-            var work = new ToolStripMenuItem(Lang.T("Tema e punës"));
-            foreach (var t in ThemeLibrary.All.Where(x => x.Group == ThemeLibrary.GPune))
-                AddTheme(work, t.Name);
-            if (work.DropDownItems.Count > 0) _menu.Items.Add(work);
+                var work = new ToolStripMenuItem(Lang.T("Tema e punës"));
+                foreach (var t in ThemeLibrary.All.Where(x => x.Group == ThemeLibrary.GPune))
+                    AddTheme(work, t.Name);
+                if (work.DropDownItems.Count > 0) _menu.Items.Add(work);
+            }
 
             // pointer packs belong to the IT profile, so the item is simply absent in Gaming
-            if (_settings.Profile == UiProfile.It)
+            if (adv && _settings.Profile == UiProfile.It)
             {
                 var mouse = new ToolStripMenuItem(Lang.T("Kursori i mouse-it"));
                 foreach (var pack in MouseCursors.All) AddCursor(mouse, pack);

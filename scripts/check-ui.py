@@ -141,6 +141,41 @@ def main():
     if "BuildIconSets" not in sw:
         errors.append("the icon family picker is not built")
 
+    # 9. THE WINDOW FRAME. The settings window draws its own, so minimise, maximise
+    #    and the eight resize handles all have to be present and wired by hand.
+    simple = read(os.path.join(SRC, "Ui", "SettingsWindow.Simple.cs"))
+    sx = read(os.path.join(SRC, "Ui", "SettingsWindow.xaml"))
+    for need, msg in (
+        ("Min_Click", "the minimise button"),
+        ("Max_Click", "the maximise button"),
+        ("WM_GETMINMAXINFO", "the taskbar guard when maximised"),
+        ("Edge_Down", "the resize handles"),
+    ):
+        if need not in sw:
+            errors.append("the settings window lost " + msg)
+    grips = sx.count('MouseLeftButtonDown="Edge_Down"')
+    if grips != 8:
+        errors.append("the settings window has %d resize handles, it needs 8" % grips)
+    if 'ResizeMode="CanResize"' not in sx:
+        errors.append("the settings window is not resizable")
+
+    # 10. SIMPLE MODE. One page, and a way back to the tabs. If the switch or the
+    #     failsafe goes, people land in a window with nothing in it.
+    for need, msg in (
+        ("private void ApplyMode", "the mode switch"),
+        ("private void BuildSimple", "the simple page"),
+        ("private void SyncSimple", "the refresh for the simple page"),
+        ("PanelSimple.Children.Count == 0", "the failsafe back to the tabs"),
+    ):
+        if need not in simple:
+            errors.append("simple mode lost " + msg)
+    if 'x:Name="PanelSimple"' not in sx:
+        errors.append("the simple page has no host in the markup")
+    if sx.count('Style="{StaticResource ModeTab}"') != 2:
+        errors.append("the simple and advanced switch is not two buttons")
+    if "ApplyMode();" not in read(os.path.join(SRC, "Ui", "SettingsWindow.xaml.cs")):
+        errors.append("the mode is never applied when the window opens")
+
     if errors:
         print("pamja e widget-it ka probleme:")
         for e in errors:

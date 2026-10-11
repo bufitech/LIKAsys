@@ -76,6 +76,7 @@ namespace LIKAsys.Core
         private MouseCursorStyle _mouseCursor = MouseCursorStyle.None;
         private bool _matchBar;
         private IconSet _iconSet = IconSet.Auto;
+        private bool _advanced;
         private bool _textShadow = false;
         private IconStyle _iconStyle = IconStyle.ThreeD;
         private double _iconSizeOffset = 6;
@@ -205,6 +206,9 @@ namespace LIKAsys.Core
 
         /// <summary>Family of metric icons. Auto follows the profile.</summary>
         public IconSet IconSet { get => _iconSet; set => Set(ref _iconSet, value); }
+
+        /// <summary>Advanced shows the full tab list in Settings. Off is the one page view.</summary>
+        public bool Advanced { get => _advanced; set => Set(ref _advanced, value); }
 
         /// <summary>Pointer pack. Only honoured in the IT profile; Gaming leaves the mouse alone.</summary>
         public MouseCursorStyle MouseCursor { get => _mouseCursor; set => Set(ref _mouseCursor, value); }

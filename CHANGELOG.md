@@ -1,3 +1,26 @@
+## 2.7
+
+### Cilësimet hapen thjeshtë
+- U shtua një faqe e vetme me gjithçka që i duhet shumicës: profili, tema, madhësia, vendi në ekran, çka shfaqet dhe katër çelësat kryesorë.
+- Butoni `Thjeshtë / Avancuar` lart te dritarja. Avancuar i kthen të dhjetë skedat ashtu siç ishin.
+- Asnjë cilësim nuk u hoq. Të gjitha janë aty ku ishin, te Avancuar.
+- Temat te faqja e thjeshtë janë tetë kartela të mëdha. `Të gjitha temat, 63 sosh` të çon te galeria e plotë.
+- Madhësia bëhet me katër butona: e vogël, normale, e madhe, shumë e madhe.
+- Vendi zgjidhet me një rrjet 3 me 3, pa emra pozicionesh.
+- Rreshtat ndizen e fiken duke klikuar emrin, pa lista me checkbox.
+- Nëse faqja e thjeshtë nuk ndërtohet për ndonjë arsye, dritarja kthehet vetvetiu te skedat. Nuk mbetet e zbrazët.
+
+### Menyja te ora u shkurtua
+- Në modin e thjeshtë ka 9 rreshta në vend të 17.
+- Një listë temash sipas profilit, në vend të dyve.
+- Modi i avancuar e kthen menynë e plotë.
+
+### Dritarja e cilësimeve
+- U shtuan butonat `Minimizo` dhe `Zmadho`, bashkë me `Mbyll`.
+- Zmadhimi e respekton shiritin e Windows-it, nuk e mbulon.
+- Tërhiqet nga të tetë anët dhe qoshet. Më parë rrinte në një madhësi të vetme.
+- Klik i dyfishtë mbi titull e zmadhon. Tërheqja e një dritareje të zmadhuar e kthen në masë normale nën kursor.
+
 ## 2.6
 
 ### Madhësia e widget-it
