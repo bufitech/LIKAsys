@@ -29,6 +29,11 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
+                <!-- the hairline under the row. One pixel, bottom aligned, so it can
+                     never change how tall the row wants to be. -->
+                <Border Grid.ColumnSpan="4" Height="1" VerticalAlignment="Bottom"
+                        Background="{Binding RuleBrush}" Visibility="{Binding RuleVisibility}" />
+
                 <!-- icon, optionally inside its own tile -->
                 <Border Grid.Column="0" Background="{Binding TileBg}" CornerRadius="{Binding TileRadius}"
                         Padding="{Binding TilePad}" Margin="0,0,9,0" VerticalAlignment="Center"

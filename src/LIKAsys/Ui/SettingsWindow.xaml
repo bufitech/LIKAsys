@@ -183,6 +183,15 @@
                                     <CheckBox Style="{StaticResource Switch}" Content="Blur në sfond (akrilik, sfondi pas widget-it turbullohet)"
                                               IsChecked="{Binding Blur, Mode=TwoWay}" />
                                     <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Lloji i qelqit" />
+                                        <ComboBox x:Name="GlassCombo" Grid.Column="1" Style="{StaticResource Combo}"
+                                                  SelectionChanged="GlassCombo_Changed" Width="320" HorizontalAlignment="Left" />
+                                    </Grid>
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,0,0,6" TextWrapping="Wrap"
+                                               Text="Qelqi Apple: shtresë qumështi mbi blur, vijë e ndritshme lart, e errët poshtë, dhe kokrrizë mbi të gjitha." />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Vijë e hollë mes rreshtave" IsChecked="{Binding RowRule, Mode=TwoWay}" />
+                                    <Grid Margin="0,6">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
                                         <TextBlock Style="{StaticResource FieldLabel}" Text="Tejdukshmëria" />
                                         <Slider Grid.Column="1" Style="{StaticResource Slim}" Minimum="0.05" Maximum="1.0" TickFrequency="0.01"

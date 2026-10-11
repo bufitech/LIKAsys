@@ -1438,7 +1438,24 @@ namespace LIKAsys.Ui
                 var bot = C(_settings.BgBottom, Color.FromRgb(0x0A, 0x0D, 0x14));
 
                 Brush bg;
-                if (_settings.Blur)
+                if (_settings.Blur && _settings.Glass == GlassMode.Apple)
+                {
+                    // Frosted material. The blur behind is only half of it. What makes
+                    // it read as glass is the milky sheen on top, brighter where the
+                    // light would land, and the hairlines that ChromeGlass draws.
+                    bool lightMat = LightMaterial;
+                    byte s0 = (byte)(lightMat ? 0x3A : 0x24);
+                    byte s1 = (byte)(lightMat ? 0x1C : 0x0E);
+                    var sheen = lightMat ? Colors.White : Colors.White;
+
+                    var g = new LinearGradientBrush { StartPoint = new Point(0.15, 0), EndPoint = new Point(0.85, 1) };
+                    g.GradientStops.Add(new GradientStop(Color.FromArgb(s0, sheen.R, sheen.G, sheen.B), 0));
+                    g.GradientStops.Add(new GradientStop(Color.FromArgb((byte)((s0 + s1) / 2), sheen.R, sheen.G, sheen.B), 0.45));
+                    g.GradientStops.Add(new GradientStop(Color.FromArgb(s1, sheen.R, sheen.G, sheen.B), 1));
+                    g.Freeze();
+                    bg = g;
+                }
+                else if (_settings.Blur)
                 {
                     // the acrylic tint does the heavy lifting - keep only a light sheen on top
                     var g = new LinearGradientBrush { StartPoint = new Point(0, 0), EndPoint = new Point(0.4, 1) };
@@ -1465,7 +1482,16 @@ namespace LIKAsys.Ui
                 else
                 {
                     var bc = C(_settings.BorderColor, Color.FromArgb(0x4D, 0x00, 0xE5, 0xFF));
-                    if (_settings.AccentGradient)
+                    if (_settings.Blur && _settings.Glass == GlassMode.Apple)
+                    {
+                        // one hairline all the way round, the colour of the material,
+                        // never the accent. An accent ring is the thing that makes a
+                        // frosted panel look like a gamer skin.
+                        Card.BorderBrush = Solid(LightMaterial
+                            ? Color.FromArgb(0x26, 0x00, 0x00, 0x00)
+                            : Color.FromArgb(0x3C, 0xFF, 0xFF, 0xFF));
+                    }
+                    else if (_settings.AccentGradient)
                     {
                         var ac = Accent;
                         var gb = new LinearGradientBrush { StartPoint = new Point(0, 0), EndPoint = new Point(1, 1) };
@@ -1625,6 +1651,13 @@ namespace LIKAsys.Ui
             var barRadius = _settings.BarStyle == BarStyle.Square
                 ? new CornerRadius(0)
                 : new CornerRadius(Math.Max(0, _settings.BarHeight / 2.0));
+            // the hairline between rows. Dark on a light panel, light on a dark one.
+            Brush ruleBrush = null;
+            if (_settings.RowRule && !_isleOn)
+                ruleBrush = Solid(LightMaterial
+                    ? Color.FromArgb(0x14, 0x00, 0x00, 0x00)
+                    : Color.FromArgb(0x14, 0xFF, 0xFF, 0xFF));
+
             Brush mask = _settings.BarStyle == BarStyle.Segmented ? SegmentMask()
                        : _settings.BarStyle == BarStyle.Dots ? DotMask()
                        : _settings.BarStyle == BarStyle.Stripes ? StripeMask()
@@ -1645,6 +1678,9 @@ namespace LIKAsys.Ui
                 r.BarHeight = _settings.BarHeight;
                 r.BarRadius = barRadius;
                 r.BarMask = mask;
+                r.RuleBrush = ruleBrush;
+                r.RuleVisibility = ruleBrush != null && !horizontal && !compact
+                    ? Visibility.Visible : Visibility.Collapsed;
                 r.LabelBrush = labelBrush;
                 r.DetailBrush = detailBrush;
                 r.TrackBrush = trackBrush;
@@ -1798,10 +1834,13 @@ namespace LIKAsys.Ui
                 {
                     Rim.Margin = new Thickness(bt);
                     Rim.CornerRadius = inner;
-                    Rim.BorderBrush = RimBrush;
+                    Rim.BorderBrush = (_settings.Blur && _settings.Glass == GlassMode.Apple)
+                        ? (LightMaterial ? RimGlassLight : RimGlassDark)
+                        : RimBrush;
                 }
 
-                bool glassy = _settings.Blur || _settings.BackgroundOpacity < 0.94;
+                bool glassy = _settings.Blur || _settings.BackgroundOpacity < 0.94
+                              || _settings.Glass == GlassMode.Apple;
                 Grain.Visibility = (_settings.Grain && glassy) ? Visibility.Visible : Visibility.Collapsed;
                 if (Grain.Visibility == Visibility.Visible)
                 {
@@ -1812,7 +1851,37 @@ namespace LIKAsys.Ui
             catch { }
         }
 
+        /// <summary>
+        /// True when the card is a light panel. Read from the text colour, because a
+        /// theme with near black text is by definition meant to sit on something bright.
+        /// </summary>
+        private bool LightMaterial
+        {
+            get
+            {
+                var t = C(_settings.TextColor, Color.FromRgb(0xEA, 0xF2, 0xFF));
+                return (0.299 * t.R + 0.587 * t.G + 0.114 * t.B) < 128;
+            }
+        }
+
         private static readonly Brush RimBrush = BuildRim();
+        private static readonly Brush RimGlassDark = BuildRimGlass(false);
+        private static readonly Brush RimGlassLight = BuildRimGlass(true);
+
+        /// <summary>
+        /// The frosted rim: a bright hairline where the light lands and a dark one at
+        /// the bottom, so the panel has a thickness instead of being a flat sticker.
+        /// </summary>
+        private static Brush BuildRimGlass(bool light)
+        {
+            var g = new LinearGradientBrush { StartPoint = new Point(0.5, 0), EndPoint = new Point(0.5, 1) };
+            g.GradientStops.Add(new GradientStop(Color.FromArgb((byte)(light ? 0xB4 : 0x8C), 0xFF, 0xFF, 0xFF), 0));
+            g.GradientStops.Add(new GradientStop(Color.FromArgb((byte)(light ? 0x3A : 0x24), 0xFF, 0xFF, 0xFF), 0.18));
+            g.GradientStops.Add(new GradientStop(Color.FromArgb(0x00, 0xFF, 0xFF, 0xFF), 0.5));
+            g.GradientStops.Add(new GradientStop(Color.FromArgb((byte)(light ? 0x14 : 0x30), 0x00, 0x00, 0x00), 1));
+            g.Freeze();
+            return g;
+        }
 
         private static Brush BuildRim()
         {

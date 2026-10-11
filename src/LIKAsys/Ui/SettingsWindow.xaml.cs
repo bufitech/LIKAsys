@@ -811,6 +811,7 @@ namespace LIKAsys.Ui
             RevealCombo.ItemsSource = Tr("Pa lëvizje", "Bie nga lart", "Rrëshqet nga e djathta", "Rrëshqet nga e majta", "Ngrihet nga poshtë", "Shfaqet butë");
             IconCombo.ItemsSource = Tr("3D (me thellësi)", "Outline (vija të holla)", "Vijë floku (e qetë)", "Solid (të mbushura)", "Pa ikona");
             BarCombo.ItemsSource = Tr("Të rrumbullakosur", "Katrorë", "Të segmentuar", "Pa shirita", "Me pika", "Me vija të pjerrëta");
+            GlassCombo.ItemsSource = Tr("I butë", "Qelq Apple");
             LayoutCombo.ItemsSource = Tr("Vertikale (njëra mbi tjetrën)", "Horizontale (në një shirit)", "Kompakte (pa shirita)");
             DecimalsCombo.ItemsSource = Tr("0  -  p.sh. 75%", "1  -  p.sh. 75.4%", "2  -  p.sh. 75.42%");
             TempCombo.ItemsSource = Tr("Celsius (°C)", "Fahrenheit (°F)");
@@ -831,6 +832,7 @@ namespace LIKAsys.Ui
                 IconCombo.SelectedIndex = (int)_settings.IconStyle;
                 BuildIconSets();
                 BarCombo.SelectedIndex = (int)_settings.BarStyle;
+                GlassCombo.SelectedIndex = (int)_settings.Glass;
                 LayoutCombo.SelectedIndex = (int)_settings.Layout;
                 DecimalsCombo.SelectedIndex = Math.Max(0, Math.Min(2, _settings.Decimals));
                 TempCombo.SelectedIndex = string.Equals(_settings.TempUnit, "F", StringComparison.OrdinalIgnoreCase) ? 1 : 0;
@@ -1157,6 +1159,13 @@ namespace LIKAsys.Ui
         {
             if (_loading || IconCombo.SelectedIndex < 0) return;
             _settings.IconStyle = (IconStyle)IconCombo.SelectedIndex;
+        }
+
+        private void GlassCombo_Changed(object sender, SelectionChangedEventArgs e)
+        {
+            if (_loading || GlassCombo.SelectedIndex < 0) return;
+            _settings.Glass = (GlassMode)GlassCombo.SelectedIndex;
+            if (_settings.Glass == GlassMode.Apple && !_settings.Blur) _settings.Blur = true;
         }
 
         private void BarCombo_Changed(object sender, SelectionChangedEventArgs e)

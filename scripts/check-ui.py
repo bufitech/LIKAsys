@@ -273,6 +273,34 @@ def main():
     if bars is None or bars.group(1).count('"') // 2 != 6:
         errors.append("the bar picker does not offer all six shapes")
 
+    # 15. THE FROSTED GLASS. The material is four pieces that only work together: the
+    #     milky sheen, the hairline round the edge, the bright rim with its dark
+    #     bottom, and the grain. Lose one and the card stops reading as glass.
+    for need, msg in (
+        ("_settings.Glass == GlassMode.Apple", "the frosted material"),
+        ("private bool LightMaterial", "the test for a light panel"),
+        ("RimGlassDark", "the frosted rim"),
+        ("private static Brush BuildRimGlass", "the builder of the frosted rim"),
+        ("r.RuleBrush = ruleBrush", "the hairline between the rows"),
+    ):
+        if need not in code:
+            errors.append("the glass lost " + msg)
+
+    if 'Visibility="{Binding RuleVisibility}"' not in xaml:
+        errors.append("the row hairline is not in the markup")
+
+    sw = read(os.path.join(SRC, "Ui", "SettingsWindow.xaml.cs"))
+    if "GlassCombo.SelectedIndex = (int)_settings.Glass" not in sw:
+        errors.append("the glass picker never shows what is selected")
+    if "_settings.Glass = (GlassMode)GlassCombo.SelectedIndex" not in sw:
+        errors.append("the glass picker changes nothing")
+
+    tl = read(os.path.join(SRC, "Core", "ThemeLibrary.cs"))
+    if "s.Glass = t.Glass" not in tl or "s.RowRule = t.Rule" not in tl:
+        errors.append("a theme can no longer carry its glass")
+    if tl.count("Glass=GlassMode.Apple") < 5:
+        errors.append("the frosted themes are gone")
+
     if errors:
         print("pamja e widget-it ka probleme:")
         for e in errors:

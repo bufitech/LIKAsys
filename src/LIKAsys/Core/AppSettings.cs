@@ -37,6 +37,13 @@ namespace LIKAsys.Core
 
     public enum BarStyle { Rounded, Square, Segmented, None, Dots, Stripes }
 
+    /// <summary>
+    /// How the blurred background is dressed. Soft is the old one, a tint over the
+    /// blur. Apple is the frosted material: a milky sheen, a bright hairline on the
+    /// top edge, a dark one at the bottom, and grain over all of it.
+    /// </summary>
+    public enum GlassMode { Soft, Apple }
+
     public enum ValueStyle { Right, Inline }
 
     /// <summary>What the tray icon itself draws. Logo = the plain LIKAsys icon.</summary>
@@ -99,6 +106,8 @@ namespace LIKAsys.Core
         private bool _grain = true;
         private bool _barGradient = true;
         private bool _hotPulse = true;
+        private GlassMode _glass = GlassMode.Soft;
+        private bool _rowRule = false;
         private IconStyle _iconStyle = IconStyle.ThreeD;
         private double _iconSizeOffset = 6;
 
@@ -251,6 +260,12 @@ namespace LIKAsys.Core
 
         /// <summary>Above 90 percent the bar breathes, so a hot reading catches the eye.</summary>
         public bool HotPulse { get => _hotPulse; set => Set(ref _hotPulse, value); }
+
+        /// <summary>Which material the blur wears. Only matters while Blur is on.</summary>
+        public GlassMode Glass { get => _glass; set => Set(ref _glass, value); }
+
+        /// <summary>A hairline between the rows, the way a list looks on a Mac.</summary>
+        public bool RowRule { get => _rowRule; set => Set(ref _rowRule, value); }
         public IconStyle IconStyle { get => _iconStyle; set => Set(ref _iconStyle, value); }
         public double IconSizeOffset { get => _iconSizeOffset; set => Set(ref _iconSizeOffset, Clamp(value, -2, 22)); }
 

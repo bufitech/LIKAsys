@@ -79,6 +79,13 @@ namespace LIKAsys.Ui
         public Brush ValueBrush { get => _valueBrush; set => Set(ref _valueBrush, value); }
         public Brush BarBrush { get => _barBrush; set => Set(ref _barBrush, value); }
 
+        private Brush _ruleBrush;
+        /// <summary>The hairline under the row. Null when the look does not use one.</summary>
+        public Brush RuleBrush { get => _ruleBrush; set => Set(ref _ruleBrush, value); }
+
+        private Visibility _ruleVisibility = Visibility.Collapsed;
+        public Visibility RuleVisibility { get => _ruleVisibility; set => Set(ref _ruleVisibility, value); }
+
         private double _barPulse = 1.0;
         /// <summary>Breathing for a hot row. Opacity only, so it can never move the layout.</summary>
         public double BarPulse { get => _barPulse; set => Set(ref _barPulse, value); }

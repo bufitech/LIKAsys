@@ -1,3 +1,26 @@
+## 3.0
+
+### Qelq i ngrirë, si në Mac
+- Grup i ri temash `Qelq` me pesë tema: Apple Glass, Apple Glass Light, Graphite Glass, Glass Pills dhe Clear Glass.
+- Material i vërtetë mbi blur, jo thjesht një ngjyrë sipër: shtresë qumështi me gradient diagonal, më e ndritshme aty ku do të binte drita.
+- Vijë e hollë e ndritshme përgjatë buzës së sipërme dhe një e errët poshtë, që pllaka të ketë trashësi.
+- Kornizë prej një piksel në ngjyrë të materialit, kurrë në ngjyrë të theksit. Unaza me ngjyrë e bën qelqin të duket si lëkurë lojërash.
+- Kokrriza del edhe mbi qelqin Apple, pavarësisht tejdukshmërisë.
+- Kartela e kupton vetë nëse pllaka është e ndritshme apo e errët, duke lexuar ngjyrën e tekstit. Vijat e holla kthehen sipas saj.
+
+### Vijë e hollë mes rreshtave
+- Një piksel me tetë përqind mes rreshtave, si një listë në Mac. E errët mbi pllakë të ndritshme, e çelët mbi të errët.
+- Fiket dhe ndizet veç, mbi çdo temë.
+
+### Lloji i qelqit është cilësim
+- Te Pamja e kartelës, nën çelësin e blur-it: `I butë` ose `Qelq Apple`.
+- Zgjedhja e qelqit Apple e ndez vetë blur-in, sepse pa të nuk ka kuptim.
+- Çdo temë nga 78 mund ta marrë të njëjtin material.
+
+### Tjetër
+- Gjithsej 78 tema në 8 grupe.
+- Te faqja e thjeshtë, Apple Clean u zëvendësua me Apple Glass mes tetë temave të shpejta.
+
 ## 2.9
 
 ### Finesat, pesë detaje që e ndryshojnë pamjen

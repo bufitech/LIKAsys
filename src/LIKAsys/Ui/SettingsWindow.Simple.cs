@@ -22,7 +22,7 @@ namespace LIKAsys.Ui
         private static readonly string[] QuickThemes =
         {
             "Midnight Glass", "Night City", "Terminal", "Dynamic Island",
-            "Match Bar", "Apple Clean", "Nord", "Pure Black"
+            "Match Bar", "Apple Glass", "Nord", "Pure Black"
         };
 
         private static readonly double[] QuickSizes = { 0.85, 1.0, 1.25, 1.5 };

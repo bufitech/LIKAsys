@@ -32,6 +32,8 @@ namespace LIKAsys.Core
         public double Radius = 14;
         public double BorderThickness = 1;
         public bool Blur = false;
+        public GlassMode Glass = GlassMode.Soft;
+        public bool Rule = false;
         public bool Glow = true;
         public bool Shadow = true;
         public bool Gradient = true;
@@ -112,8 +114,14 @@ namespace LIKAsys.Core
         /// </summary>
         public const string GCapsule = "Kapsula";
 
+        /// <summary>
+        /// Frosted panels. The wallpaper stays visible through the card, blurred, with
+        /// a bright hairline on the top edge. Nothing here uses an accent ring.
+        /// </summary>
+        public const string GGlass = "Qelq";
+
         public static readonly string[] GroupOrder =
-        { GCapsule, GLoja, GPune, GMinimal, GClassic, GLight, GKosova };
+        { GGlass, GCapsule, GLoja, GPune, GMinimal, GClassic, GLight, GKosova };
 
         public static readonly ThemePreset[] All =
         {
@@ -628,6 +636,66 @@ namespace LIKAsys.Core
             //  KAPSULA - one pill per reading, one colour per reading. Nothing in the
             //  other groups is built like this, so they never blend together.
             // ==========================================================================
+            // ==========================================================================
+            //  QELQ - frosted panels. The blur is the background, the hairlines are the
+            //  frame, and the type is quiet on purpose.
+            // ==========================================================================
+            new ThemePreset { Name="Apple Glass", Group=GGlass, Note="qelq i ngrirë, i errët",
+                Blur=true, Glass=GlassMode.Apple, Rule=true,
+                Accent="#0A84FF", Accent2="#5AC8FA",
+                BgTop="#1C1C1E", BgBottom="#1C1C1E", Border="#3CFFFFFF",
+                Opacity=0.62, Radius=20, BorderThickness=1, Glow=false, Shadow=false, Gradient=false,
+                Text="#F5F5F7", Label="#A1A1A6", Detail="#86868B", Track="#26FFFFFF",
+                Warn="#FF9F0A", Danger="#FF453A", Colorize=false, BrandDot=false,
+                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Rounded, BarH=3,
+                PadH=16, PadV=13, RowSpace=7, Font="Segoe UI Variable Display, Segoe UI Variable, Segoe UI",
+                Upper=false, ValueOff=1.5, LabelOff=-2, ValueWeight="Medium", LabelWeight="Normal" },
+
+            new ThemePreset { Name="Apple Glass Light", Group=GGlass, Note="i njëjti qelq, por i ndritshëm",
+                Blur=true, Glass=GlassMode.Apple, Rule=true,
+                Accent="#007AFF", Accent2="#34C759",
+                BgTop="#FFFFFF", BgBottom="#F2F2F7", Border="#26000000",
+                Opacity=0.6, Radius=20, BorderThickness=1, Glow=false, Shadow=false, Gradient=false,
+                Text="#1D1D1F", Label="#6E6E73", Detail="#8E8E93", Track="#18000000",
+                Warn="#FF9500", Danger="#FF3B30", Colorize=false, BrandDot=false,
+                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Rounded, BarH=3,
+                PadH=16, PadV=13, RowSpace=7, Font="Segoe UI Variable Display, Segoe UI Variable, Segoe UI",
+                Upper=false, ValueOff=1.5, LabelOff=-2, ValueWeight="Medium", LabelWeight="Normal" },
+
+            new ThemePreset { Name="Graphite Glass", Group=GGlass, Note="qelq pa asnjë ngjyrë",
+                Blur=true, Glass=GlassMode.Apple, Rule=true,
+                Accent="#98989D", Accent2="#C7C7CC",
+                BgTop="#2C2C2E", BgBottom="#2C2C2E", Border="#34FFFFFF",
+                Opacity=0.66, Radius=18, BorderThickness=1, Glow=false, Shadow=false, Gradient=false,
+                Text="#F2F2F7", Label="#AEAEB2", Detail="#8E8E93", Track="#22FFFFFF",
+                Warn="#D1D1D6", Danger="#FF453A", Colorize=false, BrandDot=false,
+                Icons=IconStyle.Hairline, IconOff=1, BarStyle=BarStyle.Rounded, BarH=2.5,
+                PadH=15, PadV=12, RowSpace=7, Font="Segoe UI Variable Display, Segoe UI Variable, Segoe UI",
+                Upper=false, ValueOff=1, LabelOff=-2, ValueWeight="Medium", LabelWeight="Normal" },
+
+            new ThemePreset { Name="Glass Pills", Group=GGlass, Note="qelq me kapsula pastel",
+                Blur=true, Glass=GlassMode.Apple, Rule=false,
+                Capsule=true, Palette="pastel", Spark=true,
+                Accent="#64D2FF", Accent2="#BF5AF2",
+                BgTop="#1C1C1E", BgBottom="#1C1C1E", Border="#32FFFFFF",
+                Opacity=0.55, Radius=24, BorderThickness=1, Glow=false, Shadow=false, Gradient=false,
+                Text="#FFFFFF", Label="#C7C7CC", Detail="#98989D", Track="#22FFFFFF",
+                Warn="#FFD60A", Danger="#FF453A", Colorize=false, BrandDot=false,
+                Icons=IconStyle.Hairline, IconOff=3, BarStyle=BarStyle.Rounded, BarH=3,
+                PadH=12, PadV=11, RowSpace=5, Font="Segoe UI Variable Display, Segoe UI Variable, Segoe UI",
+                Upper=false, ValueOff=2, LabelOff=-2.5, ValueWeight="Medium", LabelWeight="Normal" },
+
+            new ThemePreset { Name="Clear Glass", Group=GGlass, Note="sa më pak qelq, veç numrat",
+                Blur=true, Glass=GlassMode.Apple, Rule=false,
+                Accent="#FFFFFF", Accent2="#D1D1D6",
+                BgTop="#101014", BgBottom="#101014", Border="#2AFFFFFF",
+                Opacity=0.34, Radius=22, BorderThickness=1, Glow=false, Shadow=false, Gradient=false,
+                Text="#FFFFFF", Label="#D8D8DC", Detail="#AEAEB2", Track="#1EFFFFFF",
+                Warn="#FFD60A", Danger="#FF453A", Colorize=false, BrandDot=false, TextShadow=true,
+                Icons=IconStyle.Hairline, IconOff=1, Bars=false, BarStyle=BarStyle.None,
+                PadH=15, PadV=12, RowSpace=6, Font="Segoe UI Variable Display, Segoe UI Variable, Segoe UI",
+                Upper=false, ValueOff=2, LabelOff=-2, ValueWeight="Medium", LabelWeight="Normal" },
+
             new ThemePreset { Name="Neon Pills", Group=GCapsule, Note="secila matje me ngjyrën e vet",
                 Capsule=true, Palette="neon", Spark=true,
                 Accent="#2E9BFF", Accent2="#B14BFF",
@@ -804,6 +872,8 @@ namespace LIKAsys.Core
                 s.CornerRadius = t.Radius;
                 s.BorderThickness = t.BorderThickness;
                 s.Blur = t.Blur;
+                s.Glass = t.Glass;
+                s.RowRule = t.Rule;
                 s.GlowEffect = t.Glow;
                 s.ShadowEnabled = t.Shadow;
                 s.AccentGradient = t.Gradient;
