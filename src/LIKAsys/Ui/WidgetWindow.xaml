@@ -64,6 +64,7 @@
                           Visibility="{Binding BarVisibility}" OpacityMask="{Binding BarMask}">
                         <Border CornerRadius="{Binding BarRadius}" Background="{Binding TrackBrush}" />
                         <Border CornerRadius="{Binding BarRadius}" Background="{Binding BarBrush}"
+                                Opacity="{Binding BarPulse}"
                                 HorizontalAlignment="Stretch" RenderTransformOrigin="0,0.5">
                             <Border.RenderTransform>
                                 <ScaleTransform ScaleX="{Binding Fill}" ScaleY="1" />
@@ -206,6 +207,13 @@
                 </StackPanel>
             </StackPanel>
         </Border>
+
+        <!-- A very fine grain, only over see through cards. Flat alpha reads as plastic,
+             a little noise reads as glass. Nothing here takes part in layout or hit testing. -->
+        <Border x:Name="Grain" IsHitTestVisible="False" Visibility="Collapsed" Opacity="0.4" />
+
+        <!-- one pixel of light along the top edge, inside the border -->
+        <Border x:Name="Rim" IsHitTestVisible="False" Visibility="Collapsed" BorderThickness="1" />
 
         <!-- drag this to make the whole widget bigger or smaller. Hidden until the
              pointer is on the card, so it never sits in a screenshot. -->

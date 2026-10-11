@@ -810,7 +810,7 @@ namespace LIKAsys.Ui
             StartViewCombo.ItemsSource = Tr("Siç e lashë herën e fundit", "Gjithmonë i plotë", "Gjithmonë i minimizuar");
             RevealCombo.ItemsSource = Tr("Pa lëvizje", "Bie nga lart", "Rrëshqet nga e djathta", "Rrëshqet nga e majta", "Ngrihet nga poshtë", "Shfaqet butë");
             IconCombo.ItemsSource = Tr("3D (me thellësi)", "Outline (vija të holla)", "Vijë floku (e qetë)", "Solid (të mbushura)", "Pa ikona");
-            BarCombo.ItemsSource = Tr("Të rrumbullakosur", "Katrorë", "Të segmentuar", "Pa shirita");
+            BarCombo.ItemsSource = Tr("Të rrumbullakosur", "Katrorë", "Të segmentuar", "Pa shirita", "Me pika", "Me vija të pjerrëta");
             LayoutCombo.ItemsSource = Tr("Vertikale (njëra mbi tjetrën)", "Horizontale (në një shirit)", "Kompakte (pa shirita)");
             DecimalsCombo.ItemsSource = Tr("0  -  p.sh. 75%", "1  -  p.sh. 75.4%", "2  -  p.sh. 75.42%");
             TempCombo.ItemsSource = Tr("Celsius (°C)", "Fahrenheit (°F)");

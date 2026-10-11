@@ -242,6 +242,37 @@ def main():
     if 'x:Name="PageTitle"' not in sx:
         errors.append("the page header is not in the markup")
 
+    # 14. THE FINISHING TOUCHES. Each one is a few lines that are easy to lose in a
+    #     refactor, and each one is the difference between a card that looks lit and
+    #     a card that looks flat.
+    for need, msg in (
+        ("private void ChromeGlass", "the rim and the grain"),
+        ("private static ImageBrush GrainBrush", "the grain tile"),
+        ("private static Brush DotMask", "the dotted bar"),
+        ("private static Brush StripeMask", "the slanted bar"),
+        ("private Brush BarPaint", "the gradient bar"),
+        ("private void UpdatePulse", "the breathing of a hot row"),
+        ("_settings.ShadowTint", "the shadow that takes the theme colour"),
+    ):
+        if need not in code:
+            errors.append("the card lost " + msg)
+
+    if 'x:Name="Rim"' not in xaml or 'x:Name="Grain"' not in xaml:
+        errors.append("the rim or the grain is not in the markup")
+    if 'Opacity="{Binding BarPulse}"' not in xaml:
+        errors.append("the bar no longer follows the pulse")
+
+    # the live repaint runs every tick. If it stops reading the capsule colour, every
+    # capsule theme silently falls back to one accent as soon as the first reading lands.
+    if "r.RowColor ?? Accent" not in code:
+        errors.append("the repaint no longer keeps the capsule colour")
+
+    if "Dots, Stripes" not in read(SETTINGS):
+        errors.append("the two new bar shapes are gone from the list")
+    bars = re.search(r"BarCombo\.ItemsSource = Tr\((.*?)\);", read(os.path.join(SRC, "Ui", "SettingsWindow.xaml.cs")))
+    if bars is None or bars.group(1).count('"') // 2 != 6:
+        errors.append("the bar picker does not offer all six shapes")
+
     if errors:
         print("pamja e widget-it ka probleme:")
         for e in errors:

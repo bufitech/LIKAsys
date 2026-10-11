@@ -154,7 +154,7 @@ namespace LIKAsys.Core
                 BorderThickness=1.2, Text="#EDE7DB", Label="#A49C8E", Detail="#726B5F", Track="#262A30",
                 Warn="#E0B050", Danger="#D4452F", Glow=false, Gradient=false, ShadowAmt=0.55,
                 Font="Bahnschrift SemiCondensed, Bahnschrift, Segoe UI",
-                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Square, BarH=3, Upper=true,
+                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Stripes, BarH=3, Upper=true,
                 ValueOff=2.5, LabelOff=-2.5, RowSpace=2.5, PadH=12, PadV=9,
                 ValueWeight="Bold", LabelWeight="SemiBold" },
 
@@ -164,7 +164,7 @@ namespace LIKAsys.Core
                 BorderThickness=1.2, Text="#DED9C5", Label="#8E8A74", Detail="#62604E", Track="#2A2C20",
                 Warn="#D8A531", Danger="#C0392B", Glow=false, Gradient=false, ShadowAmt=0.6,
                 Font="Consolas, Lucida Console, Courier New",
-                Icons=IconStyle.Outline, IconOff=1, BarStyle=BarStyle.Square, BarH=3, Upper=true,
+                Icons=IconStyle.Outline, IconOff=1, BarStyle=BarStyle.Stripes, BarH=3, Upper=true,
                 ValueOff=1.5, LabelOff=-2.5, RowSpace=2, PadH=11, PadV=8,
                 ValueWeight="SemiBold", LabelWeight="Medium" },
 
@@ -194,7 +194,7 @@ namespace LIKAsys.Core
                 BorderThickness=2, Text="#ECECEC", Label="#A8A8A8", Detail="#7A7A7A", Track="#3E3E3E",
                 Warn="#E0B33A", Danger="#C7452F", Glow=false, Gradient=false, TextShadow=true,
                 Font="Lucida Console, Consolas, Courier New",
-                Icons=IconStyle.Solid, IconOff=4, BarStyle=BarStyle.Segmented, BarH=6, Upper=true,
+                Icons=IconStyle.Solid, IconOff=4, BarStyle=BarStyle.Dots, BarH=6, Upper=true,
                 ValueOff=3, LabelOff=-3, RowSpace=3.5, PadH=13, PadV=10,
                 ValueWeight="Bold", LabelWeight="Bold" },
 
@@ -231,14 +231,14 @@ namespace LIKAsys.Core
                 BgTop="#1F0A06", BgBottom="#0B0302", Border="#70FF3B1F", Opacity=0.89, Radius=6,
                 BorderThickness=1.5, Text="#FFEDE6", Label="#C2887A", Detail="#8A5A4C", Track="#301009",
                 Warn="#FFA319", Danger="#FF1744",
-                Upper=true, BarStyle=BarStyle.Segmented, BarH=5.5, ValueOff=5, LabelOff=-3.5,
+                Upper=true, BarStyle=BarStyle.Stripes, BarH=5.5, ValueOff=5, LabelOff=-3.5,
                 IconOff=8, RowSpace=4, PadH=14, PadV=11, ValueWeight="Black" },
 
             new ThemePreset { Name="Reactor", Group=GLoja, Accent="#FFC400", Accent2="#FF6B00",
                 BgTop="#1C1403", BgBottom="#090600", Border="#70FFC400", Opacity=0.9, Radius=3,
                 BorderThickness=1.6, Text="#FFF4D6", Label="#C0A855", Detail="#8A7536", Track="#2B2007",
                 Warn="#FF6B00", Danger="#FF2D2D",
-                Upper=true, BarStyle=BarStyle.Segmented, BarH=6, ValueOff=5, LabelOff=-3.5,
+                Upper=true, BarStyle=BarStyle.Stripes, BarH=6, ValueOff=5, LabelOff=-3.5,
                 IconOff=8, RowSpace=4.5, PadH=15, PadV=11, ValueWeight="Black" },
 
             new ThemePreset { Name="Venom", Group=GLoja, Accent="#39FF14", Accent2="#07A317",
@@ -300,7 +300,7 @@ namespace LIKAsys.Core
                 BorderThickness=1.2, Text="#DCE6F0", Label="#8296AC", Detail="#5A6E82", Track="#1C2530",
                 Warn="#F5A524", Danger="#F43F5E", Glow=false, Gradient=false, ShadowAmt=0.6,
                 Font="Consolas, Lucida Console, Courier New",
-                Icons=IconStyle.Outline, IconOff=2, BarStyle=BarStyle.Segmented, BarH=5, Upper=true,
+                Icons=IconStyle.Outline, IconOff=2, BarStyle=BarStyle.Stripes, BarH=5, Upper=true,
                 ValueOff=2, LabelOff=-2.5, RowSpace=3, PadH=12, PadV=9,
                 ValueWeight="Bold", LabelWeight="SemiBold" },
 
@@ -310,7 +310,7 @@ namespace LIKAsys.Core
                 BorderThickness=1.2, Text="#E8F4FF", Label="#8FB6D9", Detail="#5F87AC", Track="#143158",
                 Warn="#FBBF24", Danger="#FB7185", Glow=false, Gradient=false,
                 Font="Corbel, Candara, Segoe UI",
-                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Square, BarH=2, Upper=true,
+                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Stripes, BarH=2, Upper=true,
                 ValueOff=2, LabelOff=-2.5, RowSpace=4, PadH=14, PadV=11,
                 ValueWeight="SemiBold", LabelWeight="Normal" },
 
@@ -334,7 +334,7 @@ namespace LIKAsys.Core
                 Text="#FFCC66", Label="#C79036", Detail="#8A6424", Track="#241A08",
                 Warn="#FFB000", Danger="#FF4D2D",
                 Font="Lucida Console, Consolas, Courier New",
-                Icons=IconStyle.Solid, IconOff=3, BarStyle=BarStyle.Segmented, BarH=4, Upper=true,
+                Icons=IconStyle.Solid, IconOff=3, BarStyle=BarStyle.Dots, BarH=4, Upper=true,
                 ValueOff=2.5, LabelOff=-2.5, RowSpace=3, PadH=12, PadV=9,
                 ValueWeight="Bold", LabelWeight="Bold" },
 
@@ -345,7 +345,7 @@ namespace LIKAsys.Core
                 Text="#E9E7FB", Label="#9A96C4", Detail="#6D6894", Track="#2A2648",
                 Warn="#FBBF24", Danger="#FB7185",
                 Font="Candara, Calibri, Segoe UI",
-                Icons=IconStyle.ThreeD, IconOff=5, BarStyle=BarStyle.Rounded, BarH=3, Upper=false,
+                Icons=IconStyle.ThreeD, IconOff=5, BarStyle=BarStyle.Dots, BarH=3, Upper=false,
                 ValueOff=2, LabelOff=-2, RowSpace=5, PadH=14, PadV=11,
                 ValueWeight="SemiBold", LabelWeight="Normal" },
 
@@ -403,7 +403,7 @@ namespace LIKAsys.Core
                 Text="#0F172A", Label="#64748B", Detail="#94A3B8", Track="#16000000",
                 Warn="#D97706", Danger="#DC2626", Colorize=false,
                 Font="Trebuchet MS, Tahoma, Segoe UI",
-                Icons=IconStyle.ThreeD, IconOff=5, BarStyle=BarStyle.Rounded, BarH=4, Upper=false,
+                Icons=IconStyle.ThreeD, IconOff=5, BarStyle=BarStyle.Dots, BarH=4, Upper=false,
                 ValueOff=2, LabelOff=-2, RowSpace=6, PadH=15, PadV=12,
                 ValueWeight="Bold", LabelWeight="Medium" },
 
@@ -414,7 +414,7 @@ namespace LIKAsys.Core
                 Text="#1A1A1A", Label="#57534E", Detail="#8C837A", Track="#1F000000",
                 Warn="#A16207", Danger="#B91C1C", Colorize=false, BrandDot=false,
                 Font="Georgia, Constantia, Cambria",
-                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Square, BarH=2, Upper=false,
+                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Dots, BarH=2, Upper=false,
                 ValueOff=1.5, LabelOff=-2, RowSpace=5, PadH=15, PadV=12,
                 ValueWeight="SemiBold", LabelWeight="Normal" },
 
@@ -425,7 +425,7 @@ namespace LIKAsys.Core
                 Text="#111111", Label="#44403C", Detail="#78716C", Track="#26000000",
                 Warn="#44403C", Danger="#111111", Colorize=false, BrandDot=false,
                 Font="Verdana, Tahoma, Segoe UI",
-                Icons=IconStyle.Outline, IconOff=2, BarStyle=BarStyle.Square, BarH=3, Upper=false,
+                Icons=IconStyle.Outline, IconOff=2, BarStyle=BarStyle.Dots, BarH=3, Upper=false,
                 ValueOff=1, LabelOff=-2, RowSpace=5, PadH=13, PadV=10,
                 ValueWeight="Bold", LabelWeight="Normal" },
 
@@ -669,7 +669,7 @@ namespace LIKAsys.Core
                 Opacity=0.0, Radius=0, BorderThickness=0, Glow=true, Shadow=false, Gradient=false,
                 Text="#FFF3E6", Label="#C9A88E", Detail="#A8886E", Track="#241A12",
                 Font="Bahnschrift, Segoe UI", Icons=IconStyle.Solid, IconOff=6,
-                BarStyle=BarStyle.Segmented, BarH=5, Upper=true,
+                BarStyle=BarStyle.Stripes, BarH=5, Upper=true,
                 ValueOff=4, LabelOff=-3, RowSpace=7, PadH=0, PadV=0,
                 ValueWeight="Black", LabelWeight="Bold", BrandDot=false },
 
@@ -680,7 +680,7 @@ namespace LIKAsys.Core
                 Opacity=0.0, Radius=0, BorderThickness=0, Glow=false, Shadow=false, Gradient=false,
                 Text="#F2F6FB", Label="#A9BACD", Detail="#8C9DB2", Track="#1C2330",
                 Font="Segoe UI Variable, Segoe UI", Icons=IconStyle.Hairline, IconOff=5,
-                BarStyle=BarStyle.Rounded, BarH=3, Upper=false,
+                BarStyle=BarStyle.Dots, BarH=3, Upper=false,
                 ValueOff=3, LabelOff=-3, RowSpace=6, PadH=0, PadV=0,
                 ValueWeight="SemiBold", LabelWeight="Normal", BrandDot=false },
 

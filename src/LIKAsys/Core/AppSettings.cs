@@ -35,7 +35,7 @@ namespace LIKAsys.Core
         Fixed
     }
 
-    public enum BarStyle { Rounded, Square, Segmented, None }
+    public enum BarStyle { Rounded, Square, Segmented, None, Dots, Stripes }
 
     public enum ValueStyle { Right, Inline }
 
@@ -94,6 +94,11 @@ namespace LIKAsys.Core
         private bool _rowSpark;
         private string _monitorId = "";
         private bool _textShadow = false;
+        private bool _shadowTint = true;
+        private bool _innerLight = true;
+        private bool _grain = true;
+        private bool _barGradient = true;
+        private bool _hotPulse = true;
         private IconStyle _iconStyle = IconStyle.ThreeD;
         private double _iconSizeOffset = 6;
 
@@ -231,6 +236,21 @@ namespace LIKAsys.Core
 
         /// <summary>Soft black shadow behind every glyph - makes a background-less widget readable on any wallpaper.</summary>
         public bool TextShadow { get => _textShadow; set => Set(ref _textShadow, value); }
+
+        /// <summary>The card drops its own colour, not a grey blob, onto the wallpaper.</summary>
+        public bool ShadowTint { get => _shadowTint; set => Set(ref _shadowTint, value); }
+
+        /// <summary>One pixel of light on the top edge, the way real glass catches it.</summary>
+        public bool InnerLight { get => _innerLight; set => Set(ref _innerLight, value); }
+
+        /// <summary>A very fine grain over see through cards, so they stop looking flat.</summary>
+        public bool Grain { get => _grain; set => Set(ref _grain, value); }
+
+        /// <summary>The bar runs from the accent into a brighter tip instead of one flat colour.</summary>
+        public bool BarGradient { get => _barGradient; set => Set(ref _barGradient, value); }
+
+        /// <summary>Above 90 percent the bar breathes, so a hot reading catches the eye.</summary>
+        public bool HotPulse { get => _hotPulse; set => Set(ref _hotPulse, value); }
         public IconStyle IconStyle { get => _iconStyle; set => Set(ref _iconStyle, value); }
         public double IconSizeOffset { get => _iconSizeOffset; set => Set(ref _iconSizeOffset, Clamp(value, -2, 22)); }
 

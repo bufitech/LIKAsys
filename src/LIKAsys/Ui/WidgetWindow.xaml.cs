@@ -8,6 +8,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using Ctl = System.Windows.Controls;
 using LIKAsys.Core;
 using LIKAsys.Monitoring;
@@ -287,6 +288,64 @@ namespace LIKAsys.Ui
                 }
             }
             catch { }
+        }
+
+        // ---------------------------------------------------------------- the pulse
+
+        private System.Windows.Threading.DispatcherTimer _pulse;
+        private double _pulsePhase;
+
+        /// <summary>
+        /// Above 90 percent a row breathes. Opacity only, never a size, because the
+        /// window measures itself to its content and anything that moves the layout
+        /// would make it shiver.
+        ///
+        /// The timer only exists while something is actually hot, so a quiet machine
+        /// pays nothing for this.
+        /// </summary>
+        private void UpdatePulse()
+        {
+            try
+            {
+                bool hot = false;
+                if (_settings.HotPulse)
+                    foreach (var r in _rows) if (r.Percent >= 90) { hot = true; break; }
+
+                if (!hot)
+                {
+                    if (_pulse != null && _pulse.IsEnabled) _pulse.Stop();
+                    foreach (var r in _rows) if (r.BarPulse < 1.0) r.BarPulse = 1.0;
+                    return;
+                }
+
+                if (_pulse == null)
+                {
+                    _pulse = new System.Windows.Threading.DispatcherTimer(
+                        System.Windows.Threading.DispatcherPriority.Render)
+                    { Interval = TimeSpan.FromMilliseconds(60) };
+                    _pulse.Tick += (s2, e2) => PulseTick();
+                }
+                if (!_pulse.IsEnabled) _pulse.Start();
+            }
+            catch { }
+        }
+
+        private void PulseTick()
+        {
+            try
+            {
+                _pulsePhase += 0.17;
+                double v = 0.72 + 0.28 * (0.5 + 0.5 * Math.Sin(_pulsePhase));
+                bool any = false;
+                foreach (var r in _rows)
+                {
+                    bool hot = r.Percent >= 90;
+                    r.BarPulse = hot ? v : 1.0;
+                    any |= hot;
+                }
+                if (!any) _pulse.Stop();
+            }
+            catch { try { _pulse.Stop(); } catch { } }
         }
 
         /// <summary>
@@ -573,6 +632,7 @@ namespace LIKAsys.Ui
                 Card.MinWidth = 0;
                 Card.CornerRadius = new CornerRadius(0);
                 Card.Padding = new Thickness(0);
+                ChromeGlass();
                 Card.ToolTip = "LIKAsys  \u00b7  Made in Kosovo with \u2764  \u00b7  Likaapps.com";
 
                 if (!_mbClipHooked) { Card.SizeChanged += MatchClipHandler; _mbClipHooked = true; }
@@ -929,6 +989,7 @@ namespace LIKAsys.Ui
                     Card.ClearValue(WidthProperty);
                     Card.MinWidth = 150;
                     Card.CornerRadius = new CornerRadius(_settings.CornerRadius);
+                    ChromeGlass();
                     _isleRowsH = _isleFootH = -1;
                     _isleOpen = false; _isleT = 0; _isleDir = 0;
                     return;
@@ -1037,6 +1098,7 @@ namespace LIKAsys.Ui
                 // This is what keeps it reading as a pill the whole way through.
                 double r = Math.Min(IsleMaxRadius, Card.ActualHeight / 2);
                 Card.CornerRadius = new CornerRadius(r);
+                ChromeGlass();
 
                 WidgetPlacement.Apply(this, _settings);
             }
@@ -1417,16 +1479,26 @@ namespace LIKAsys.Ui
                 }
 
                 // --- shadow -----------------------------------------------------
+                var shc = Colors.Black;
+                if (_settings.ShadowTint)
+                {
+                    // the accent, darkened. A card that drops its own colour on the
+                    // wallpaper reads as a lit object, a grey blob reads as a window.
+                    var ac = Accent;
+                    shc = Color.FromRgb((byte)(ac.R * 0.42), (byte)(ac.G * 0.42), (byte)(ac.B * 0.42));
+                }
                 Card.Effect = (_settings.ShadowEnabled && !_settings.Blur)
                     ? new DropShadowEffect
                     {
-                        BlurRadius = 22,
+                        BlurRadius = _settings.ShadowTint ? 26 : 22,
                         ShadowDepth = 4,
                         Direction = 270,
                         Opacity = _settings.ShadowStrength,
-                        Color = Colors.Black
+                        Color = shc
                     }
                     : null;
+
+                ChromeGlass();
 
                 // --- text shadow (what makes a background-less widget readable) --
                 CardContent.Effect = _settings.TextShadow
@@ -1553,7 +1625,10 @@ namespace LIKAsys.Ui
             var barRadius = _settings.BarStyle == BarStyle.Square
                 ? new CornerRadius(0)
                 : new CornerRadius(Math.Max(0, _settings.BarHeight / 2.0));
-            Brush mask = _settings.BarStyle == BarStyle.Segmented ? SegmentMask() : null;
+            Brush mask = _settings.BarStyle == BarStyle.Segmented ? SegmentMask()
+                       : _settings.BarStyle == BarStyle.Dots ? DotMask()
+                       : _settings.BarStyle == BarStyle.Stripes ? StripeMask()
+                       : null;
 
             foreach (var r in _rows)
             {
@@ -1627,6 +1702,8 @@ namespace LIKAsys.Ui
 
                 StyleCapsule(r, caps, fs);
             }
+
+            UpdatePulse();
         }
 
         /// <summary>
@@ -1649,6 +1726,7 @@ namespace LIKAsys.Ui
                 r.TileRadius = new CornerRadius(0);
                 r.TilePad = new Thickness(0);
                 r.SparkVisibility = Visibility.Collapsed;
+                r.RowColor = null;
                 return;
             }
 
@@ -1675,8 +1753,9 @@ namespace LIKAsys.Ui
             r.TileRadius = new CornerRadius(Math.Max(5, r.IconBox * 0.34));
             r.TilePad = new Thickness(Math.Max(3, r.IconBox * 0.22));
 
+            r.RowColor = c;
             r.LabelBrush = Solid(c);
-            r.BarBrush = Solid(c);
+            r.BarBrush = BarPaint(c);
             r.IconStroke = Solid(c);
             if (_settings.IconStyle == IconStyle.Solid) { r.IconFill = Solid(c); r.IconStroke = null; }
             r.IconEffect = _settings.GlowEffect ? Glow(c) : null;
@@ -1697,6 +1776,147 @@ namespace LIKAsys.Ui
             }
             catch { }
             return fallback;
+        }
+
+        /// <summary>
+        /// The rim and the grain. Both sit over the card as plain overlays with no size
+        /// of their own, so they can never push the window around while it measures
+        /// itself to its content.
+        /// </summary>
+        private void ChromeGlass()
+        {
+            try
+            {
+                double bt = Card.BorderThickness.Top;
+                var cr = Card.CornerRadius;
+                var inner = new CornerRadius(
+                    Math.Max(0, cr.TopLeft - bt), Math.Max(0, cr.TopRight - bt),
+                    Math.Max(0, cr.BottomRight - bt), Math.Max(0, cr.BottomLeft - bt));
+
+                Rim.Visibility = _settings.InnerLight ? Visibility.Visible : Visibility.Collapsed;
+                if (_settings.InnerLight)
+                {
+                    Rim.Margin = new Thickness(bt);
+                    Rim.CornerRadius = inner;
+                    Rim.BorderBrush = RimBrush;
+                }
+
+                bool glassy = _settings.Blur || _settings.BackgroundOpacity < 0.94;
+                Grain.Visibility = (_settings.Grain && glassy) ? Visibility.Visible : Visibility.Collapsed;
+                if (Grain.Visibility == Visibility.Visible)
+                {
+                    Grain.CornerRadius = cr;
+                    Grain.Background = GrainBrush();
+                }
+            }
+            catch { }
+        }
+
+        private static readonly Brush RimBrush = BuildRim();
+
+        private static Brush BuildRim()
+        {
+            var g = new LinearGradientBrush { StartPoint = new Point(0.5, 0), EndPoint = new Point(0.5, 1) };
+            g.GradientStops.Add(new GradientStop(Color.FromArgb(0x4A, 0xFF, 0xFF, 0xFF), 0));
+            g.GradientStops.Add(new GradientStop(Color.FromArgb(0x16, 0xFF, 0xFF, 0xFF), 0.20));
+            g.GradientStops.Add(new GradientStop(Color.FromArgb(0x00, 0xFF, 0xFF, 0xFF), 0.52));
+            g.GradientStops.Add(new GradientStop(Color.FromArgb(0x12, 0xFF, 0xFF, 0xFF), 1));
+            g.Freeze();
+            return g;
+        }
+
+        private static ImageBrush _grainBrush;
+
+        /// <summary>
+        /// A 64 pixel tile of white specks, built once and reused. Fixed seed, so the
+        /// card looks the same every time the program starts.
+        /// </summary>
+        private static ImageBrush GrainBrush()
+        {
+            if (_grainBrush != null) return _grainBrush;
+            const int n = 64;
+            var px = new byte[n * n * 4];
+            var rnd = new Random(11);
+            for (int i = 0; i < n * n; i++)
+            {
+                byte a = (byte)rnd.Next(0, 74);
+                int o = i * 4;
+                px[o] = px[o + 1] = px[o + 2] = a;   // white, already multiplied by the alpha
+                px[o + 3] = a;
+            }
+            var bmp = BitmapSource.Create(n, n, 96, 96, PixelFormats.Pbgra32, null, px, n * 4);
+            bmp.Freeze();
+            _grainBrush = new ImageBrush(bmp)
+            {
+                TileMode = TileMode.Tile,
+                Viewport = new Rect(0, 0, n, n),
+                ViewportUnits = BrushMappingMode.Absolute,
+                Stretch = Stretch.None
+            };
+            _grainBrush.Freeze();
+            return _grainBrush;
+        }
+
+        /// <summary>Round holes instead of one solid bar.</summary>
+        private static Brush DotMask()
+        {
+            var dg = new DrawingGroup();
+            dg.Children.Add(new GeometryDrawing(Brushes.White, null,
+                new EllipseGeometry(new Point(1.5, 1.5), 1.5, 1.5)));
+            var db = new DrawingBrush(dg)
+            {
+                TileMode = TileMode.Tile,
+                Viewbox = new Rect(0, 0, 4.2, 3), ViewboxUnits = BrushMappingMode.Absolute,
+                Viewport = new Rect(0, 0, 4.2, 3), ViewportUnits = BrushMappingMode.Absolute,
+                Stretch = Stretch.Fill
+            };
+            db.Freeze();
+            return db;
+        }
+
+        /// <summary>A slanted hatch, the way a progress bar looks on machinery.</summary>
+        private static Brush StripeMask()
+        {
+            var fig = new PathFigure { StartPoint = new Point(0, 6), IsClosed = true };
+            fig.Segments.Add(new LineSegment(new Point(3.1, 0), true));
+            fig.Segments.Add(new LineSegment(new Point(5.3, 0), true));
+            fig.Segments.Add(new LineSegment(new Point(2.2, 6), true));
+            var geo = new PathGeometry();
+            geo.Figures.Add(fig);
+
+            var dg = new DrawingGroup();
+            dg.Children.Add(new GeometryDrawing(Brushes.White, null, geo));
+            var db = new DrawingBrush(dg)
+            {
+                TileMode = TileMode.Tile,
+                Viewbox = new Rect(0, 0, 5.3, 6), ViewboxUnits = BrushMappingMode.Absolute,
+                Viewport = new Rect(0, 0, 5.3, 6), ViewportUnits = BrushMappingMode.Absolute,
+                Stretch = Stretch.Fill
+            };
+            db.Freeze();
+            return db;
+        }
+
+        private static readonly Dictionary<uint, Brush> _barCache = new Dictionary<uint, Brush>();
+
+        /// <summary>
+        /// The bar brush. With the gradient on, the fill runs from the colour into a
+        /// brighter tip, which is what makes it read as lit rather than painted.
+        /// Cached, because this runs for every row on every tick.
+        /// </summary>
+        private Brush BarPaint(Color c)
+        {
+            if (!_settings.BarGradient) return Solid(c);
+            uint key = ((uint)c.A << 24) | ((uint)c.R << 16) | ((uint)c.G << 8) | c.B;
+            if (_barCache.TryGetValue(key, out var hit)) return hit;
+
+            var g = new LinearGradientBrush { StartPoint = new Point(0, 0), EndPoint = new Point(1, 0) };
+            g.GradientStops.Add(new GradientStop(Color.FromArgb(c.A, (byte)(c.R * 0.72), (byte)(c.G * 0.72), (byte)(c.B * 0.72)), 0));
+            g.GradientStops.Add(new GradientStop(c, 0.55));
+            g.GradientStops.Add(new GradientStop(Lighten(c, 0.42), 1));
+            g.Freeze();
+            if (_barCache.Count < 256) _barCache[key] = g;
+            return g;
         }
 
         private static Brush SegmentMask()
@@ -2048,6 +2268,7 @@ namespace LIKAsys.Ui
                 }
 
                 UpdateMiniLine();
+                UpdatePulse();
                 if (_mbOn) MatchRefresh(s);
                 if (_isleOn && !_isleOpen && _isleDir == 0) IslandRefresh();
                 if (IsVisible) Kick(); else Settle();
@@ -2101,11 +2322,15 @@ namespace LIKAsys.Ui
 
         private void Paint(MetricRowVm r, double pct)
         {
-            Color c;
-            if (_settings.ColorizeByLoad) c = pct >= 90 ? DangerC : pct >= 75 ? WarnC : Accent;
-            else c = Accent;
+            // a capsule row owns its colour. Before this, the first reading after a
+            // restyle painted every bar back to the one accent.
+            var baseC = r.RowColor ?? Accent;
 
-            r.BarBrush = Solid(c);
+            Color c;
+            if (_settings.ColorizeByLoad) c = pct >= 90 ? DangerC : pct >= 75 ? WarnC : baseC;
+            else c = baseC;
+
+            r.BarBrush = BarPaint(c);
             r.ValueBrush = Solid(_settings.ColorizeByLoad && pct >= 90 ? c : TextC);
         }
 

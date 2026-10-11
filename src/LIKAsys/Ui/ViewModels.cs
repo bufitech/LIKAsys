@@ -78,6 +78,13 @@ namespace LIKAsys.Ui
         public Geometry Icon { get => _icon; set => Set(ref _icon, value); }
         public Brush ValueBrush { get => _valueBrush; set => Set(ref _valueBrush, value); }
         public Brush BarBrush { get => _barBrush; set => Set(ref _barBrush, value); }
+
+        private double _barPulse = 1.0;
+        /// <summary>Breathing for a hot row. Opacity only, so it can never move the layout.</summary>
+        public double BarPulse { get => _barPulse; set => Set(ref _barPulse, value); }
+
+        /// <summary>The capsule colour of this row, or null when the row uses the accent.</summary>
+        public Color? RowColor;
         public Brush LabelBrush { get => _labelBrush; set => Set(ref _labelBrush, value); }
         public Brush DetailBrush { get => _detailBrush; set => Set(ref _detailBrush, value); }
         public Brush UnitBrush { get => _unitBrush; set => Set(ref _unitBrush, value); }

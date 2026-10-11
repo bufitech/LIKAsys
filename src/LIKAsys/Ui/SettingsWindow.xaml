@@ -271,6 +271,15 @@
                                         <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
                                                    Text="{Binding IconSizeOffset, StringFormat={}{0:+0;-0;0}}" />
                                     </Grid>
+                                    <TextBlock Style="{StaticResource H2}" Text="FINESAT" Margin="0,18,0,6" />
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,0,0,8" TextWrapping="Wrap"
+                                               Text="Detaje të vogla që e bëjnë kartelën të duket e punuar. Secila mund të fiket." />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Hija merr ngjyrën e temës" IsChecked="{Binding ShadowTint, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Vijë drite në buzën e sipërme" IsChecked="{Binding InnerLight, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Kokrrizë e imët mbi qelq" IsChecked="{Binding Grain, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Shirita me gradient" IsChecked="{Binding BarGradient, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Rreshti merr frymë mbi 90%" IsChecked="{Binding HotPulse, Mode=TwoWay}" />
+
                                     <TextBlock Style="{StaticResource H2}" Text="KAPSULAT" Margin="0,18,0,6" />
                                     <TextBlock Style="{StaticResource Caption}" Margin="0,0,0,8" TextWrapping="Wrap"
                                                Text="Secila matje merr kapsulën dhe ngjyrën e vet. Punon me çdo temë, jo vetëm me ato të grupit Kapsula." />

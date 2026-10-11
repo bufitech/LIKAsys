@@ -1,3 +1,20 @@
+## 2.9
+
+### Finesat, pesë detaje që e ndryshojnë pamjen
+- Hija e kartelës merr ngjyrën e temës, të errësuar. Nuk është më një njollë gri mbi sfond.
+- Një vijë drite prej një piksel përgjatë buzës së sipërme, brenda kornizës, ashtu si e kap dritën qelqi.
+- Kokrrizë shumë e imët mbi kartelat e tejdukshme. Del vetëm aty ku ka tejdukshmëri ose blur.
+- Shiritat kalojnë nga një ton i thellë te një majë e ndritshme, në vend të një ngjyre të sheshtë.
+- Mbi 90 përqind shiriti merr frymë ngadalë. Vetëm tejdukshmëri, asnjë lëvizje që e tund dritaren.
+- Secila nga të pesta ndizet dhe fiket veç, te Pamja e kartelës, seksioni FINESAT.
+
+### Dy forma të reja shiriti
+- `Me pika` dhe `Me vija të pjerrëta`, bashkë me të rrumbullakosurit, katrorët dhe të segmentuarit. Gjashtë forma gjithsej.
+- 14 tema morën formën e vet të shiritit, që grupet të mos duken si e njëjta temë me ngjyra tjera.
+
+### Rregullime
+- Kapsulat e humbnin ngjyrën e vet sa herë vinte matja e radhës dhe shiriti kthehej në ngjyrën e vetme të theksit. Tani rreshti e mban ngjyrën e vet.
+
 ## 2.8
 
 ### Kapsulat, një ngjyrë për secilën matje
