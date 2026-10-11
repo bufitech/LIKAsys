@@ -619,6 +619,12 @@ namespace LIKAsys.Core
         public static string[] Groups =>
             GroupOrder.Where(g => All.Any(t => t.Group == g)).ToArray();
 
+        /// <summary>
+        /// True when the preset draws its own shape and the three layouts do nothing.
+        /// The Dynamic Island is a capsule and the Match Bar is a strip: both ignore rows.
+        /// </summary>
+        public static bool FixedShape(ThemePreset t) => t != null && (t.Island || t.MatchBar);
+
         /// <summary>One-line description of what the preset does to the shape, for the theme card.</summary>
         public static string Describe(ThemePreset t)
         {

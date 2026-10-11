@@ -176,6 +176,7 @@ namespace LIKAsys
                 _widget = new WidgetWindow(_settings, _metrics);
                 _widget.SettingsRequested += (s, a) => ShowSettings();
                 _widget.MinimizedChanged += (s, a) => { try { _tray?.Rebuild(); } catch { } SaveSoon(); };
+                _widget.SizeSaved += (s, a) => { try { _tray?.Sync(); } catch { } SaveSoon(); };
                 if (_settings.WidgetVisible) { _widget.Show(); _widget.Reveal(); }
                 AppInfo.Log("ok: widget");
             }
@@ -383,7 +384,8 @@ namespace LIKAsys
                     p == nameof(AppSettings.ShowFpsLow) || p == nameof(AppSettings.ShowFrameTime) ||
                     p == nameof(AppSettings.ShowDisk) || p == nameof(AppSettings.ShowDiskIo) ||
                     p == nameof(AppSettings.ShowUptime) || p == nameof(AppSettings.Profile) ||
-                    p == nameof(AppSettings.ShowPing) || p.Length == 0)
+                    p == nameof(AppSettings.ShowPing) || p == nameof(AppSettings.IconSet) ||
+                    p == nameof(AppSettings.IconStyle) || p.Length == 0)
                 {
                     _widget?.BuildRows();
                 }

@@ -80,10 +80,11 @@
                                     <TextBlock Style="{StaticResource Caption}" Margin="0,0,0,12"
                                                Text="Secili grup ka vetë karakterin e vet: Gaming është agresiv me shirita të segmentuar, Classic është vetëm shkrim dhe numra. Klikimi e ndryshon widget-in menjëherë." />
                                     <WrapPanel x:Name="GroupFilter" Margin="0,0,0,10" />
-                                    <StackPanel x:Name="LayoutQuick" Orientation="Horizontal" Margin="0,0,0,14">
-                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Renditja e widget-it"
-                                                   VerticalAlignment="Center" Margin="0,0,12,0" />
-                                    </StackPanel>
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Si rreshtohen matjet"
+                                               Margin="0,4,0,7" />
+                                    <StackPanel x:Name="LayoutQuick" Orientation="Horizontal" Margin="0,0,0,4" />
+                                    <TextBlock x:Name="LayoutNote" Style="{StaticResource Caption}"
+                                               Margin="0,0,0,14" TextWrapping="Wrap" />
                                     <WrapPanel x:Name="ThemeHost" />
                                 </StackPanel>
 
@@ -181,6 +182,12 @@
                                         <ComboBox x:Name="IconCombo" Grid.Column="1" Style="{StaticResource Combo}"
                                                   SelectionChanged="IconCombo_Changed" Width="320" HorizontalAlignment="Left" />
                                     </Grid>
+                                    <Grid Margin="0,8,0,2">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Familja e ikonave" />
+                                        <WrapPanel x:Name="IconSetHost" Grid.Column="1" />
+                                    </Grid>
+
                                     <Grid Margin="0,6">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
                                         <TextBlock Style="{StaticResource FieldLabel}" Text="Madhësia e ikonave" />

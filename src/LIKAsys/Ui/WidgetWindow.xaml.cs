@@ -411,6 +411,98 @@ namespace LIKAsys.Ui
             catch { }
         }
 
+        // ================================================================ size
+        //
+        //  Three ways to resize, because one slider buried in Settings is not a way.
+        //  Drag the corner grip, hold Ctrl and roll the wheel, or pick a percent from
+        //  the tray. All three write the same number: AppSettings.Scale.
+
+        private bool _gripDrag;
+        private System.Drawing.Point _gripStart;
+        private double _gripScale0;
+
+        public const double ScaleMin = 0.6;
+        public const double ScaleMax = 2.5;
+
+        /// <summary>One place that clamps, rounds and stores. Everything else calls this.</summary>
+        public void SetScale(double value)
+        {
+            try
+            {
+                double v = Math.Round(Math.Max(ScaleMin, Math.Min(ScaleMax, value)), 2);
+                if (Math.Abs(v - _settings.Scale) < 0.004) return;
+                _settings.Scale = v;
+            }
+            catch (Exception ex) { AppInfo.Log("SetScale: " + ex.Message); }
+        }
+
+        public void ScaleStep(double delta) { SetScale(_settings.Scale + delta); }
+
+        private void Widget_Wheel(object sender, MouseWheelEventArgs e)
+        {
+            if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control) return;
+            e.Handled = true;
+            ScaleStep(e.Delta > 0 ? 0.05 : -0.05);
+        }
+
+        private void Widget_Enter(object sender, MouseEventArgs e) { GripFade(true); }
+
+        private void Widget_Leave(object sender, MouseEventArgs e)
+        {
+            if (!_gripDrag) GripFade(false);
+        }
+
+        private void GripFade(bool show)
+        {
+            try
+            {
+                if (SizeGrip == null) return;
+                if (_settings.Locked) { SizeGrip.Opacity = 0; return; }
+                SizeGrip.BeginAnimation(OpacityProperty, null);
+                SizeGrip.Opacity = show ? 0.75 : 0;
+            }
+            catch { }
+        }
+
+        private void Grip_Down(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (_settings.Locked) return;
+                _gripDrag = true;
+                _gripStart = System.Windows.Forms.Cursor.Position;
+                _gripScale0 = _settings.Scale;
+                SizeGrip.CaptureMouse();
+                e.Handled = true;
+            }
+            catch { _gripDrag = false; }
+        }
+
+        private void Grip_Move(object sender, MouseEventArgs e)
+        {
+            if (!_gripDrag) return;
+            try
+            {
+                var now = System.Windows.Forms.Cursor.Position;
+                // the card grows down and to the right, so both axes push the same way
+                double push = ((now.X - _gripStart.X) + (now.Y - _gripStart.Y)) / 2.0;
+                SetScale(_gripScale0 + push / 160.0);
+            }
+            catch (Exception ex) { AppInfo.Log("Grip_Move: " + ex.Message); }
+        }
+
+        private void Grip_Up(object sender, MouseButtonEventArgs e)
+        {
+            if (!_gripDrag) return;
+            _gripDrag = false;
+            try { SizeGrip.ReleaseMouseCapture(); } catch { }
+            if (!IsMouseOver) GripFade(false);
+            SizeSaved?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>Raised when a drag ends, so the app can write settings.json once.</summary>
+        public event EventHandler SizeSaved;
+
         // ================================================================ match bar
         //
         //  A CS2-style strip. Not a card: one flat angular line against the top edge of
@@ -1152,9 +1244,20 @@ namespace LIKAsys.Ui
         /// </summary>
         private string Ico(string baseKey)
         {
-            string suffix = _settings.IconStyle == IconStyle.Hairline
-                ? "Apple"
-                : Profiles.IconSuffix(_settings.Profile);
+            string suffix;
+            switch (_settings.IconSet)
+            {
+                case IconSet.Gaming: suffix = ""; break;
+                case IconSet.Tech: suffix = "It"; break;
+                case IconSet.Apple: suffix = "Apple"; break;
+                case IconSet.Badge: suffix = "Badge"; break;
+                case IconSet.Ring: suffix = "Ring"; break;
+                default:
+                    suffix = _settings.IconStyle == IconStyle.Hairline
+                        ? "Apple"
+                        : Profiles.IconSuffix(_settings.Profile);
+                    break;
+            }
             if (suffix.Length == 0) return baseKey;
             try { if (Application.Current.TryFindResource(baseKey + suffix) != null) return baseKey + suffix; } catch { }
             return baseKey;

@@ -106,6 +106,41 @@ def main():
     if 'Name="Match Bar"' not in lib or "MatchBar=true" not in lib:
         errors.append("the Match Bar preset is gone or no longer sets MatchBar=true")
 
+    # 6. THE SIZE. Three ways in (grip, Ctrl+wheel, tray) and one clamp. If the clamp
+    #    goes, a slip of the wheel can shrink the widget to nothing or blow it off screen.
+    for need, msg in (
+        ("private void Grip_Down", "the drag grip"),
+        ("private void Grip_Move", "the drag move"),
+        ("private void Grip_Up", "the drag release"),
+        ("private void Widget_Wheel", "Ctrl and the wheel"),
+        ("Math.Max(ScaleMin, Math.Min(ScaleMax, value))", "the size clamp"),
+    ):
+        if need not in code:
+            errors.append("resizing lost " + msg)
+    if xaml.count('x:Name="SizeGrip"') != 1:
+        errors.append("the markup has %d SizeGrip blocks, it needs exactly one"
+                      % xaml.count('x:Name="SizeGrip"'))
+
+    # 7. THE ICON FAMILIES. Two new sets, eleven icons each, plus the switch that
+    #    reaches them. A missing geometry silently falls back and the set looks dead.
+    ico = read(os.path.join(SRC, "Ui", "Icons.xaml"))
+    for fam in ("Badge", "Ring"):
+        n = sum(1 for m in ("Cpu", "Gpu", "Ram", "Disk", "DiskIo", "Fps",
+                            "Low", "Frame", "Net", "Ping", "Uptime")
+                if 'x:Key="Icon%s%s"' % (m, fam) in ico)
+        if n != 11:
+            errors.append("icon family %s has %d of 11 icons" % (fam, n))
+    for need in ("case IconSet.Badge:", "case IconSet.Ring:", "case IconSet.Tech:"):
+        if need not in code:
+            errors.append("Ico() no longer reaches " + need.strip("case :"))
+
+    # 8. THE LAYOUT CARDS. They must say which arrangement the theme was made for.
+    sw = read(os.path.join(SRC, "Ui", "SettingsWindow.xaml.cs"))
+    if "ThemeLibrary.FixedShape" not in sw:
+        errors.append("the layout cards no longer check for themes with a fixed shape")
+    if "BuildIconSets" not in sw:
+        errors.append("the icon family picker is not built")
+
     if errors:
         print("pamja e widget-it ka probleme:")
         for e in errors:

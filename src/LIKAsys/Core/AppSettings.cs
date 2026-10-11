@@ -17,6 +17,13 @@ namespace LIKAsys.Core
 
     public enum IconStyle { ThreeD, Outline, Hairline, Solid, None }
 
+    /// <summary>
+    /// Which family of icons is drawn. Auto keeps the old behaviour: the profile picks
+    /// the family. The rest are a straight choice, which is the only way a user can tell
+    /// the sets apart without switching profile.
+    /// </summary>
+    public enum IconSet { Auto, Gaming, Tech, Apple, Badge, Ring }
+
     public enum BarStyle { Rounded, Square, Segmented, None }
 
     public enum ValueStyle { Right, Inline }
@@ -68,6 +75,7 @@ namespace LIKAsys.Core
         private bool _island;
         private MouseCursorStyle _mouseCursor = MouseCursorStyle.None;
         private bool _matchBar;
+        private IconSet _iconSet = IconSet.Auto;
         private bool _textShadow = false;
         private IconStyle _iconStyle = IconStyle.ThreeD;
         private double _iconSizeOffset = 6;
@@ -194,6 +202,9 @@ namespace LIKAsys.Core
 
         /// <summary>CS2-style strip: one flat line of small readings along the top edge.</summary>
         public bool MatchBar { get => _matchBar; set => Set(ref _matchBar, value); }
+
+        /// <summary>Family of metric icons. Auto follows the profile.</summary>
+        public IconSet IconSet { get => _iconSet; set => Set(ref _iconSet, value); }
 
         /// <summary>Pointer pack. Only honoured in the IT profile; Gaming leaves the mouse alone.</summary>
         public MouseCursorStyle MouseCursor { get => _mouseCursor; set => Set(ref _mouseCursor, value); }

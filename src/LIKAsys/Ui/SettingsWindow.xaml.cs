@@ -154,24 +154,247 @@ namespace LIKAsys.Ui
         }
 
         /// <summary>Vertical / horizontal / compact, right next to the themes - Classic needs it most.</summary>
+        /// <summary>
+        /// Six real previews instead of a dropdown. Each button draws three live icons
+        /// from its own family, so the difference is visible before anything is clicked.
+        /// </summary>
+        private void BuildIconSets()
+        {
+            IconSetHost.Children.Clear();
+
+            var defs = new[]
+            {
+                new object[] { IconSet.Auto, "Sipas profilit", "" },
+                new object[] { IconSet.Gaming, "Gaming", "" },
+                new object[] { IconSet.Tech, "Tech", "It" },
+                new object[] { IconSet.Apple, "Apple", "Apple" },
+                new object[] { IconSet.Badge, "Badge", "Badge" },
+                new object[] { IconSet.Ring, "Ring", "Ring" },
+            };
+
+            foreach (var d in defs)
+            {
+                var set = (IconSet)d[0];
+                string suffix = (string)d[2];
+                if (set == IconSet.Auto)
+                    suffix = _settings.Profile == UiProfile.It ? "It" : "";
+                IconSetHost.Children.Add(IconSetCard(set, (string)d[1], suffix));
+            }
+        }
+
+        private Border IconSetCard(IconSet set, string name, string suffix)
+        {
+            bool on = _settings.IconSet == set;
+
+            var card = new Border
+            {
+                CornerRadius = new CornerRadius(9),
+                Margin = new Thickness(0, 0, 8, 8),
+                Padding = new Thickness(10, 8, 10, 7),
+                BorderThickness = new Thickness(1.6),
+                BorderBrush = new SolidColorBrush(on
+                    ? Color.FromArgb(0xCC, 0x3D, 0xDC, 0x97)
+                    : Color.FromArgb(0x24, 0xFF, 0xFF, 0xFF)),
+                Background = new SolidColorBrush(Color.FromArgb(on ? (byte)0x14 : (byte)0x08, 0xFF, 0xFF, 0xFF)),
+                Cursor = Cursors.Hand,
+                ToolTip = Lang.T(set == IconSet.Auto
+                    ? "Familja vjen nga profili: Gaming ose Tech"
+                    : "Kliko për ta provuar menjëherë")
+            };
+
+            var sp = new StackPanel();
+            var row = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center };
+            foreach (var key in new[] { "IconCpu", "IconGpu", "IconFps" })
+                row.Children.Add(MiniIcon(key + suffix, key, on));
+            sp.Children.Add(row);
+
+            sp.Children.Add(new TextBlock
+            {
+                Text = Lang.T(name),
+                FontSize = 10,
+                Margin = new Thickness(0, 7, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                FontWeight = on ? FontWeights.SemiBold : FontWeights.Normal,
+                Foreground = new SolidColorBrush(on
+                    ? Color.FromRgb(0xEA, 0xF2, 0xFF)
+                    : Color.FromRgb(0x8C, 0x9D, 0xB4))
+            });
+
+            card.Child = sp;
+            card.MouseLeftButtonUp += (s, e) =>
+            {
+                if (_loading) return;
+                _settings.IconSet = set;
+                BuildIconSets();
+            };
+            return card;
+        }
+
+        private static System.Windows.Shapes.Path MiniIcon(string key, string fallback, bool on)
+        {
+            Geometry g = null;
+            try { g = Application.Current.TryFindResource(key) as Geometry; } catch { }
+            if (g == null)
+                try { g = Application.Current.TryFindResource(fallback) as Geometry; } catch { }
+
+            return new System.Windows.Shapes.Path
+            {
+                Data = g,
+                Width = 19,
+                Height = 19,
+                Margin = new Thickness(3, 0, 3, 0),
+                Stretch = Stretch.Uniform,
+                Stroke = new SolidColorBrush(on
+                    ? Color.FromRgb(0x3D, 0xDC, 0x97)
+                    : Color.FromRgb(0x93, 0xA6, 0xBE)),
+                StrokeThickness = 1.6,
+                StrokeStartLineCap = PenLineCap.Round,
+                StrokeEndLineCap = PenLineCap.Round,
+                StrokeLineJoin = PenLineJoin.Round
+            };
+        }
+
+        /// <summary>
+        /// Three cards, not three words. Each one draws what it does, says it in a line,
+        /// and the one the current theme was designed for carries a dot. When the theme
+        /// makes its own shape, all three go flat and the note says why.
+        /// </summary>
         private void BuildLayoutQuick()
         {
-            while (LayoutQuick.Children.Count > 1) LayoutQuick.Children.RemoveAt(1);
+            LayoutQuick.Children.Clear();
 
-            var names = new[] { "Vertikale", "Horizontale", "Kompakte" };
-            for (int i = 0; i < names.Length; i++)
+            var theme = ThemeLibrary.Find(_settings.ThemeName);
+            bool fixedShape = ThemeLibrary.FixedShape(theme);
+
+            var defs = new[]
             {
-                var layout = (WidgetLayout)i;
-                var rb = new RadioButton
-                {
-                    Style = (Style)FindResource("Chip"),
-                    Content = Lang.T(names[i]),
-                    GroupName = "layoutquick",
-                    IsChecked = _settings.Layout == layout
-                };
-                rb.Checked += (s2, e2) => { if (!_loading) _settings.Layout = layout; };
-                LayoutQuick.Children.Add(rb);
+                new object[] { WidgetLayout.Vertical, "Vertikale",
+                               "Një matje për rresht. Më e lehtë për t'u lexuar." },
+                new object[] { WidgetLayout.Horizontal, "Horizontale",
+                               "Të gjitha në një rresht. Zë pak lartësi." },
+                new object[] { WidgetLayout.Compact, "Kompakte",
+                               "Një rresht, pa shirita, sa më e ngushtë." },
+            };
+
+            foreach (var d in defs)
+            {
+                var layout = (WidgetLayout)d[0];
+                bool on = _settings.Layout == layout && !fixedShape;
+                bool best = theme != null && theme.Layout == layout && !fixedShape;
+                LayoutQuick.Children.Add(LayoutCard(layout, (string)d[1], (string)d[2],
+                                                    on, best, fixedShape));
             }
+
+            LayoutNote.Text = fixedShape
+                ? Lang.T("Kjo temë e ka formën e vet, prandaj rreshtimi nuk ndikon.")
+                : Lang.T("Pika tregon rreshtimin për të cilin është bërë tema.");
+        }
+
+        private Border LayoutCard(WidgetLayout layout, string name, string note,
+                                  bool on, bool best, bool dead)
+        {
+            var card = new Border
+            {
+                Width = 150,
+                CornerRadius = new CornerRadius(10),
+                Margin = new Thickness(0, 0, 9, 0),
+                Padding = new Thickness(11, 9, 11, 10),
+                BorderThickness = new Thickness(1.6),
+                BorderBrush = new SolidColorBrush(on
+                    ? Color.FromArgb(0xCC, 0x3D, 0xDC, 0x97)
+                    : Color.FromArgb(0x24, 0xFF, 0xFF, 0xFF)),
+                Background = new SolidColorBrush(Color.FromArgb(on ? (byte)0x14 : (byte)0x08,
+                                                                0xFF, 0xFF, 0xFF)),
+                Cursor = dead ? Cursors.Arrow : Cursors.Hand,
+                Opacity = dead ? 0.42 : 1.0
+            };
+
+            var sp = new StackPanel();
+            sp.Children.Add(LayoutPreview(layout, on));
+
+            var head = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 9, 0, 0) };
+            head.Children.Add(new TextBlock
+            {
+                Text = Lang.T(name),
+                FontSize = 11.5,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = new SolidColorBrush(Color.FromRgb(0xEA, 0xF2, 0xFF)),
+                VerticalAlignment = VerticalAlignment.Center
+            });
+            if (best)
+                head.Children.Add(new Ellipse
+                {
+                    Width = 6,
+                    Height = 6,
+                    Margin = new Thickness(6, 1, 0, 0),
+                    Fill = new SolidColorBrush(Color.FromRgb(0x3D, 0xDC, 0x97)),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    ToolTip = Lang.T("Rreshtimi për të cilin është bërë kjo temë")
+                });
+            sp.Children.Add(head);
+
+            sp.Children.Add(new TextBlock
+            {
+                Text = Lang.T(note),
+                FontSize = 9,
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 3, 0, 0),
+                Foreground = new SolidColorBrush(Color.FromRgb(0x7E, 0x90, 0xA8))
+            });
+
+            card.Child = sp;
+            if (!dead)
+                card.MouseLeftButtonUp += (s, e) =>
+                {
+                    if (_loading) return;
+                    _settings.Layout = layout;
+                    BuildLayoutQuick();
+                };
+            return card;
+        }
+
+        /// <summary>A tiny drawing of the arrangement, so nobody has to guess what it means.</summary>
+        private static FrameworkElement LayoutPreview(WidgetLayout layout, bool on)
+        {
+            var host = new Border
+            {
+                Height = 34,
+                CornerRadius = new CornerRadius(6),
+                Background = new SolidColorBrush(Color.FromArgb(0x30, 0x06, 0x0A, 0x10)),
+                Padding = new Thickness(7, 6, 7, 6)
+            };
+
+            Brush bar = new SolidColorBrush(on
+                ? Color.FromArgb(0xDD, 0x3D, 0xDC, 0x97)
+                : Color.FromArgb(0x77, 0x93, 0xA6, 0xBE));
+            Brush dim = new SolidColorBrush(Color.FromArgb(0x40, 0x93, 0xA6, 0xBE));
+
+            if (layout == WidgetLayout.Vertical)
+            {
+                var col = new StackPanel();
+                for (int i = 0; i < 3; i++)
+                {
+                    var row = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, i == 0 ? 0 : 3, 0, 0) };
+                    row.Children.Add(new Border { Width = 4, Height = 4, CornerRadius = new CornerRadius(1), Background = bar, VerticalAlignment = VerticalAlignment.Center });
+                    row.Children.Add(new Border { Width = 30, Height = 3, CornerRadius = new CornerRadius(1.5), Background = dim, Margin = new Thickness(4, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center });
+                    col.Children.Add(row);
+                }
+                host.Child = col;
+                return host;
+            }
+
+            var line = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+            int cells = layout == WidgetLayout.Compact ? 4 : 3;
+            for (int i = 0; i < cells; i++)
+            {
+                var cell = new StackPanel { Margin = new Thickness(i == 0 ? 0 : 6, 0, 0, 0) };
+                cell.Children.Add(new Border { Width = layout == WidgetLayout.Compact ? 16 : 22, Height = 3, CornerRadius = new CornerRadius(1.5), Background = bar });
+                if (layout != WidgetLayout.Compact)
+                    cell.Children.Add(new Border { Width = 22, Height = 3, CornerRadius = new CornerRadius(1.5), Background = dim, Margin = new Thickness(0, 3, 0, 0) });
+                line.Children.Add(cell);
+            }
+            host.Child = line;
+            return host;
         }
 
         private void AddChip(string text, string key, bool on)
@@ -289,6 +512,7 @@ namespace LIKAsys.Ui
         private void PickTheme(ThemePreset t)
         {
             ThemeLibrary.Apply(t, _settings);
+            BuildLayoutQuick();
             SyncThemeSelection();
             RefreshColors();
             SyncCombos();
@@ -604,6 +828,7 @@ namespace LIKAsys.Ui
             try
             {
                 IconCombo.SelectedIndex = (int)_settings.IconStyle;
+                BuildIconSets();
                 BarCombo.SelectedIndex = (int)_settings.BarStyle;
                 LayoutCombo.SelectedIndex = (int)_settings.Layout;
                 DecimalsCombo.SelectedIndex = Math.Max(0, Math.Min(2, _settings.Decimals));

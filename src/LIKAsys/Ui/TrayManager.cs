@@ -18,7 +18,7 @@ namespace LIKAsys.Ui
         private readonly AppSettings _settings;
         private NotifyIcon _icon;
         private ContextMenuStrip _menu;
-        private ToolStripMenuItem _miShow, _miMin, _miTop, _miClick, _miLock, _miPos;
+        private ToolStripMenuItem _miShow, _miMin, _miTop, _miClick, _miLock, _miPos, _miSize;
 
         // --- live icon state
         private Icon _liveIcon;
@@ -121,6 +121,21 @@ namespace LIKAsys.Ui
                 foreach (var pack in MouseCursors.All) AddCursor(mouse, pack);
                 _menu.Items.Add(mouse);
             }
+
+            // size, right here. Dragging the corner of the widget does the same thing.
+            _miSize = new ToolStripMenuItem(Lang.T("Madhësia"));
+            foreach (var pct in SizeSteps)
+            {
+                int p = pct;
+                var mi = new ToolStripMenuItem(p + "%", null, (s, e) =>
+                {
+                    _settings.Scale = p / 100.0;
+                    Sync(); Changed?.Invoke(this, EventArgs.Empty);
+                })
+                { Checked = Math.Abs(_settings.Scale - p / 100.0) < 0.005 };
+                _miSize.DropDownItems.Add(mi);
+            }
+            _menu.Items.Add(_miSize);
 
             _miPos = new ToolStripMenuItem(Lang.T("Pozicioni"));
             AddPos(_miPos, Lang.T("Lart majtas"), WidgetPosition.TopLeft);
@@ -315,6 +330,9 @@ namespace LIKAsys.Ui
             catch { }
         }
 
+        /// <summary>The percentages the tray offers. Anything in between comes from the grip.</summary>
+        private static readonly int[] SizeSteps = { 75, 90, 100, 110, 125, 150, 175, 200 };
+
         private ToolStripMenuItem Check(string text, bool state, EventHandler handler)
         {
             var mi = new ToolStripMenuItem(text, null, handler) { Checked = state, CheckOnClick = false };
@@ -368,6 +386,16 @@ namespace LIKAsys.Ui
                 if (_miTop != null) _miTop.Checked = _settings.AlwaysOnTop;
                 if (_miClick != null) _miClick.Checked = _settings.ClickThrough;
                 if (_miLock != null) _miLock.Checked = _settings.Locked;
+                if (_miSize != null)
+                {
+                    int i = 0;
+                    foreach (ToolStripItem sub in _miSize.DropDownItems)
+                    {
+                        if (sub is ToolStripMenuItem sm && i < SizeSteps.Length)
+                            sm.Checked = Math.Abs(_settings.Scale - SizeSteps[i] / 100.0) < 0.005;
+                        i++;
+                    }
+                }
                 foreach (ToolStripItem item in _menu.Items)
                 {
                     if (item is ToolStripMenuItem m && ReferenceEquals(m, _miPos))

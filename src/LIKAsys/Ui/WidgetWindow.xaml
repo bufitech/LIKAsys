@@ -7,7 +7,8 @@
         Topmost="True" Left="-6000" Top="-6000" ShowActivated="False" Focusable="False"
         UseLayoutRounding="True" SnapsToDevicePixels="True"
         TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType"
-        FontFamily="Segoe UI">
+        FontFamily="Segoe UI"
+        PreviewMouseWheel="Widget_Wheel" MouseEnter="Widget_Enter" MouseLeave="Widget_Leave">
 
     <Window.Resources>
         <ui:StarConverter x:Key="Star" />
@@ -188,6 +189,18 @@
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
+        </Border>
+
+        <!-- drag this to make the whole widget bigger or smaller. Hidden until the
+             pointer is on the card, so it never sits in a screenshot. -->
+        <Border x:Name="SizeGrip" Width="16" Height="16" Opacity="0"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Background="#01000000" Cursor="SizeNWSE" ToolTip="Tërhiq për ta zmadhuar"
+                MouseLeftButtonDown="Grip_Down" MouseMove="Grip_Move"
+                MouseLeftButtonUp="Grip_Up">
+            <Path Data="{StaticResource IconGrip}" Stretch="Uniform" Width="9" Height="9"
+                  Margin="0,0,1,1" Stroke="{DynamicResource Accent}" StrokeThickness="1.6"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
         </Border>
     </Grid>
 </Window>

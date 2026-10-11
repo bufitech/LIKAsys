@@ -1,3 +1,24 @@
+## 2.6
+
+### Madhësia e widget-it
+- Kap qoshen e poshtme të djathtë dhe tërhiqe. Kartela shkon nga 60% deri në 250%.
+- Ctrl me rrotën e mouse-it e ndryshon madhësinë me nga 5%.
+- Te menyja afër orës u shtua `Madhësia ▸` me tetë madhësi të gatshme.
+- Rrëshqitësi te Cilësimet, Pamja, mbetet si ishte dhe tani i tregon të njëjtat kufij.
+- Doreza fshihet kur pozicioni është i bllokuar.
+
+### Dy familje të reja ikonash
+- `Badge` e fut secilën ikonë brenda një pllake të rrumbullakosur.
+- `Ring` e fut brenda një rrethi.
+- Gjashtë familje gjithsej: sipas profilit, Gaming, Tech, Apple, Badge, Ring.
+- Te Cilësimet, Pamja, familjet shfaqen si gjashtë kartela me ikona të vërteta, jo si listë me emra.
+- Familja tani zgjidhet veçmas nga profili. Më parë ndryshohej vetëm duke ndërruar profilin.
+
+### Rreshtimi i matjeve
+- Tri mënyrat e rreshtimit u bënë kartela me nga një vizatim të vogël për secilën.
+- Pika jeshile tregon se për cilin rreshtim është bërë tema që po përdoret.
+- Kur tema e ka formën e vet, si Dynamic Island ose Match Bar, kartelat dalin të zbehta me një shpjegim pse.
+
 ## 2.5.1
 
 **Temat u rirenditën. Nga 10 grupe në 6.** Më parë kishte dy grupe që thoshin të njëjtën gjë, Lojëra dhe Gaming, plus grupe të vogla si Qelq, Dev dhe Pa sfond që të detyronin të kërkoje në disa vende.
