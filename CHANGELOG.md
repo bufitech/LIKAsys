@@ -1,3 +1,14 @@
+## 2.5
+
+**Match Bar, një mënyrë e re për Counter-Strike 2.** Widget-i nuk është më kartelë, bëhet një shirit i sheshtë rreth 24 piksel i lartë që rri ngjitur me buzën e sipërme të ekranit, në mes.
+
+- **Vetëm çfarë vlen në raund.** FPS i madh, pastaj 1% low, CPU, GPU dhe ping si numra të vegjël. Djathtas, frametime i gjashtëmbëdhjetë matjeve të fundit si shkopinj të vegjël.
+- **Formë tjetër nga gjithçka tjetër.** Dy qoshet e poshtme janë të prera në kënd, pa qoshe të rrumbullakta, pa kornizë, pa ikona. Ngjyra e theksit është e verdhë amber.
+- **Të thotë kur kërcen.** Kur 1% low bie nën gjysmën e mesatares, vija nën FPS bëhet e kuqe dhe 1% ndizet. Asgjë tjetër nuk lëviz.
+- **Nuk ta merr klikimin.** Tema e ndez vetë përshkueshmërinë nga klikimi dhe e çon widget-in lart në mes. Nëse do ta zhvendosësh, fike nga menyja afër orës.
+
+Match Bar është temë brenda grupit **Lojëra**, jo profil i tretë. E gjen te Cilësimet ose te menyja afër orës, tek `Tema e lojës`. Tani janë 63 tema gjithsej.
+
 ## 2.4
 
 **Kursorë për mouse-in, vetëm në profilin IT.** Katër grupe kursorësh të bërë nga ne, secili ndryshe nga tjetri.

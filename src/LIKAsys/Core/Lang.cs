@@ -170,6 +170,7 @@ namespace LIKAsys.Core
             { "Tema e IT-së", "IT theme" },
 
             // ---- kursoret e mouse-it (vetem profili IT)
+            { "shirit i hollë në krye, për CS2", "a thin strip at the top, for CS2" },
             { "Kursori i mouse-it", "Mouse pointer" },
             { "KURSORI I MOUSE-IT", "MOUSE POINTER" },
             { "Kursori i Windows-it", "Windows pointer" },

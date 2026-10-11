@@ -84,6 +84,28 @@ def main():
     if 'Name="Dynamic Island"' not in lib or "Island=true" not in lib:
         errors.append("the Dynamic Island preset is gone or no longer sets Island=true")
 
+    # 5. THE MATCH BAR GIVE-BACK. The CS2 strip hides the header, the rows and the
+    #    footer and clips the card into an angular silhouette. If leaving the theme
+    #    forgets any one of those, the next theme draws an empty sliver and the user
+    #    has a widget with nothing in it.
+    off = code[code.find("private void MatchMode"):]
+    off = off[:off.find("private void MatchClipHandler")] if "private void MatchClipHandler" in off else off
+    for need, msg in (
+        ("RowsHost.Visibility = Visibility.Visible", "the rows"),
+        ("FooterRow.Visibility = Visibility.Visible", "the footer"),
+        ("HeaderRow.Visibility = Visibility.Visible", "the header"),
+        ("Card.ClearValue(ClipProperty)", "the angular clip"),
+    ):
+        if need not in off:
+            errors.append("leaving the match bar no longer restores " + msg)
+    if xaml.count("MatchHost") != 1:
+        errors.append("the markup has %d MatchHost blocks, it needs exactly one"
+                      % xaml.count("MatchHost"))
+    if "MatchRefresh" not in code or "if (_mbOn) MatchRefresh(s);" not in code:
+        errors.append("the match bar is never refreshed from the metrics tick")
+    if 'Name="Match Bar"' not in lib or "MatchBar=true" not in lib:
+        errors.append("the Match Bar preset is gone or no longer sets MatchBar=true")
+
     if errors:
         print("pamja e widget-it ka probleme:")
         for e in errors:

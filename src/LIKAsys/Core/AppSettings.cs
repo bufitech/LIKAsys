@@ -67,6 +67,7 @@ namespace LIKAsys.Core
         private bool _animations = true;
         private bool _island;
         private MouseCursorStyle _mouseCursor = MouseCursorStyle.None;
+        private bool _matchBar;
         private bool _textShadow = false;
         private IconStyle _iconStyle = IconStyle.ThreeD;
         private double _iconSizeOffset = 6;
@@ -190,6 +191,9 @@ namespace LIKAsys.Core
         /// theme, not by a checkbox, because only one theme is drawn for it.
         /// </summary>
         public bool Island { get => _island; set => Set(ref _island, value); }
+
+        /// <summary>CS2-style strip: one flat line of small readings along the top edge.</summary>
+        public bool MatchBar { get => _matchBar; set => Set(ref _matchBar, value); }
 
         /// <summary>Pointer pack. Only honoured in the IT profile; Gaming leaves the mouse alone.</summary>
         public MouseCursorStyle MouseCursor { get => _mouseCursor; set => Set(ref _mouseCursor, value); }

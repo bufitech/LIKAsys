@@ -8,6 +8,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Animation;
+using Ctl = System.Windows.Controls;
 using LIKAsys.Core;
 using LIKAsys.Monitoring;
 
@@ -410,6 +411,368 @@ namespace LIKAsys.Ui
             catch { }
         }
 
+        // ================================================================ match bar
+        //
+        //  A CS2-style strip. Not a card: one flat angular line against the top edge of
+        //  the screen carrying the smallest readings that matter inside a round. It never
+        //  morphs, never rolls and never animates its layout, because a shooter needs the
+        //  number to be in exactly the same place on every single frame.
+
+        private sealed class MbCell
+        {
+            public string Key;
+            public Ctl.Grid Root;
+            public Ctl.TextBlock Label, Value, Unit;
+            public Ctl.Border Accent;
+        }
+
+        private readonly System.Collections.Generic.List<MbCell> _mb =
+            new System.Collections.Generic.List<MbCell>();
+        private System.Windows.Shapes.Rectangle[] _mbSpark;
+        private readonly double[] _mbFt = new double[MbSparkN];
+        private int _mbFtCount;
+        private bool _mbOn;
+        private bool _mbWarn;
+        private bool _mbClipHooked;
+
+        private const int MbSparkN = 16;
+        private const double MbCut = 7;          // how deep the two bottom corners are cut
+
+        /// <summary>Fakes letter spacing: a WPF Ctl.TextBlock has no tracking.</summary>
+        private static string MbTrack(string t)
+        {
+            if (string.IsNullOrEmpty(t)) return t;
+            var sb = new System.Text.StringBuilder(t.Length * 2);
+            foreach (var ch in t) { sb.Append(ch); sb.Append('\u200A'); }
+            return sb.ToString(0, sb.Length - 1);
+        }
+
+        private void MatchMode(bool on)
+        {
+            try
+            {
+                if (!on)
+                {
+                    if (!_mbOn) return;
+                    _mbOn = false;
+                    MatchHost.Visibility = Visibility.Collapsed;
+                    MatchHost.Children.Clear();
+                    _mb.Clear();
+                    _mbSpark = null;
+                    _mbFtCount = 0;
+                    _mbWarn = false;
+                    HeaderRow.Visibility = Visibility.Visible;
+                    RowsHost.Visibility = Visibility.Visible;
+                    FooterRow.Visibility = Visibility.Visible;
+                    Card.ClearValue(ClipProperty);
+                    Card.MinWidth = 150;
+                    Card.ToolTip = null;
+                    if (_mbClipHooked) { Card.SizeChanged -= MatchClipHandler; _mbClipHooked = false; }
+                    return;
+                }
+
+                _mbOn = true;
+                IslandMode(false);
+                HeaderRow.Visibility = Visibility.Collapsed;
+                RowsHost.Visibility = Visibility.Collapsed;
+                FooterRow.Visibility = Visibility.Collapsed;
+                MatchHost.Visibility = Visibility.Visible;
+                Card.MinWidth = 0;
+                Card.CornerRadius = new CornerRadius(0);
+                Card.Padding = new Thickness(0);
+                Card.ToolTip = "LIKAsys  \u00b7  Made in Kosovo with \u2764  \u00b7  Likaapps.com";
+
+                if (!_mbClipHooked) { Card.SizeChanged += MatchClipHandler; _mbClipHooked = true; }
+
+                MatchBuild();
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    MatchClip();
+                    if (_ready) WidgetPlacement.Apply(this, _settings);
+                }), System.Windows.Threading.DispatcherPriority.Loaded);
+            }
+            catch (Exception ex)
+            {
+                AppInfo.Log("MatchMode: " + ex.Message);
+                try { if (on) MatchMode(false); } catch { }
+            }
+        }
+
+        private void MatchClipHandler(object sender, SizeChangedEventArgs e) { MatchClip(); }
+
+        /// <summary>The angular silhouette: square at the top, both bottom corners cut.</summary>
+        private void MatchClip()
+        {
+            try
+            {
+                if (!_mbOn) return;
+                double w = Card.ActualWidth, h = Card.ActualHeight;
+                if (w <= 2 || h <= 2) return;
+                double c = Math.Min(MbCut, Math.Min(w / 2 - 1, h / 2));
+
+                var f = new PathFigure { StartPoint = new Point(0, 0), IsClosed = true, IsFilled = true };
+                f.Segments.Add(new LineSegment(new Point(w, 0), false));
+                f.Segments.Add(new LineSegment(new Point(w, h - c), false));
+                f.Segments.Add(new LineSegment(new Point(w - c, h), false));
+                f.Segments.Add(new LineSegment(new Point(c, h), false));
+                f.Segments.Add(new LineSegment(new Point(0, h - c), false));
+
+                var g = new PathGeometry();
+                g.Figures.Add(f);
+                g.Freeze();
+                Card.Clip = g;
+            }
+            catch (Exception ex) { AppInfo.Log("MatchClip: " + ex.Message); }
+        }
+
+        private SolidColorBrush MbBrush(string hex, Color fallback)
+        {
+            try { return Solid((Color)ColorConverter.ConvertFromString(hex)); }
+            catch { return Solid(fallback); }
+        }
+
+        private void MatchBuild()
+        {
+            try
+            {
+                MatchHost.Children.Clear();
+                _mb.Clear();
+                _mbSpark = null;
+
+                var lab = MbBrush(_settings.LabelColor, Color.FromRgb(0x6E, 0x78, 0x86));
+                var txt = MbBrush(_settings.TextColor, Colors.White);
+                var det = MbBrush(_settings.DetailColor, Color.FromRgb(0x5C, 0x66, 0x74));
+                var trk = MbBrush(_settings.TrackColor, Color.FromRgb(0x39, 0x41, 0x4D));
+                var acc = MbBrush(_settings.Accent, Color.FromRgb(0xDE, 0x9B, 0x35));
+
+                var cells = new System.Collections.Generic.List<string[]>();
+                if (_settings.ShowFps) cells.Add(new[] { "fps", "FPS", "" });
+                if (_settings.ShowFpsLow) cells.Add(new[] { "low", "1%", "" });
+                if (_settings.ShowCpu) cells.Add(new[] { "cpu", "CPU", "%" });
+                if (_settings.ShowGpu) cells.Add(new[] { "gpu", "GPU", "%" });
+                if (_settings.ShowRam) cells.Add(new[] { "ram", "RAM", "GB" });
+                if (_settings.ShowPing) cells.Add(new[] { "ping", "PING", "MS" });
+                if (cells.Count == 0) cells.Add(new[] { "fps", "FPS", "" });
+
+                bool first = true;
+                foreach (var def in cells)
+                {
+                    MatchHost.Children.Add(MatchCell(def[0], def[1], def[2], first, lab, txt, det, acc));
+                    first = false;
+                }
+
+                if (_settings.ShowFrameTime) MatchHost.Children.Add(MatchSpark(trk));
+            }
+            catch (Exception ex) { AppInfo.Log("MatchBuild: " + ex.Message); }
+        }
+
+        private Ctl.Grid MatchCell(string key, string label, string unit, bool first,
+                               Brush lab, Brush txt, Brush det, Brush acc)
+        {
+            bool primary = key == "fps";
+
+            var root = new Ctl.Grid { VerticalAlignment = VerticalAlignment.Stretch };
+
+            if (primary)
+            {
+                var a = ((SolidColorBrush)acc).Color;
+                var g = new LinearGradientBrush { StartPoint = new Point(0, 0), EndPoint = new Point(0, 1) };
+                g.GradientStops.Add(new GradientStop(Color.FromArgb(0x1A, a.R, a.G, a.B), 0));
+                g.GradientStops.Add(new GradientStop(Color.FromArgb(0x00, a.R, a.G, a.B), 0.8));
+                g.Freeze();
+                root.Background = g;
+            }
+
+            var line = new Ctl.StackPanel
+            {
+                Orientation = Ctl.Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(9, 3, 9, 4)
+            };
+
+            var lb = new Ctl.TextBlock
+            {
+                Text = MbTrack(label),
+                FontSize = 7.5,
+                FontWeight = FontWeights.Bold,
+                Foreground = lab,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 1, 5, 0)
+            };
+            var vl = new Ctl.TextBlock
+            {
+                Text = "--",
+                FontSize = primary ? 13 : 11,
+                FontWeight = FontWeights.Bold,
+                Foreground = txt,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            line.Children.Add(lb);
+            line.Children.Add(vl);
+
+            Ctl.TextBlock un = null;
+            if (!string.IsNullOrEmpty(unit))
+            {
+                un = new Ctl.TextBlock
+                {
+                    Text = unit,
+                    FontSize = 7.5,
+                    FontWeight = FontWeights.Bold,
+                    Foreground = det,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(2, 1, 0, 0)
+                };
+                line.Children.Add(un);
+            }
+            root.Children.Add(line);
+
+            if (!first) root.Children.Add(MatchDivider());
+
+            Ctl.Border accent = null;
+            if (primary)
+            {
+                accent = new Ctl.Border
+                {
+                    Height = 2,
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    Margin = new Thickness(6, 0, 6, 0),
+                    Background = acc
+                };
+                root.Children.Add(accent);
+            }
+
+            _mb.Add(new MbCell { Key = key, Root = root, Label = lb, Value = vl, Unit = un, Accent = accent });
+            return root;
+        }
+
+        private Ctl.Border MatchDivider()
+        {
+            return new Ctl.Border
+            {
+                Width = 1,
+                Height = 11,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                Background = Solid(Color.FromArgb(0x1C, 0xFF, 0xFF, 0xFF))
+            };
+        }
+
+        /// <summary>Sixteen little sticks: the frame time history, so a stutter is visible.</summary>
+        private Ctl.Grid MatchSpark(Brush trk)
+        {
+            var root = new Ctl.Grid { VerticalAlignment = VerticalAlignment.Stretch };
+            root.Children.Add(MatchDivider());
+
+            var strip = new Ctl.StackPanel
+            {
+                Orientation = Ctl.Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(10, 3, 10, 4),
+                Height = 9
+            };
+
+            _mbSpark = new System.Windows.Shapes.Rectangle[MbSparkN];
+            for (int i = 0; i < MbSparkN; i++)
+            {
+                var r = new System.Windows.Shapes.Rectangle
+                {
+                    Width = 1.6,
+                    Height = 2,
+                    RadiusX = 0.5,
+                    RadiusY = 0.5,
+                    Fill = trk,
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    Margin = new Thickness(0, 0, 1.4, 0)
+                };
+                _mbSpark[i] = r;
+                strip.Children.Add(r);
+            }
+            root.Children.Add(strip);
+            return root;
+        }
+
+        /// <summary>Text only, once a second. Nothing here may start a layout animation.</summary>
+        private void MatchRefresh(MetricsSnapshot s)
+        {
+            try
+            {
+                if (!_mbOn || s == null) return;
+
+                foreach (var c in _mb)
+                {
+                    switch (c.Key)
+                    {
+                        case "fps": c.Value.Text = s.Fps >= 0 ? ((int)Math.Round(s.Fps)).ToString() : "--"; break;
+                        case "low": c.Value.Text = s.FpsLow1 >= 0 ? ((int)Math.Round(s.FpsLow1)).ToString() : "--"; break;
+                        case "cpu": c.Value.Text = ((int)Math.Round(s.CpuLoad)).ToString(); break;
+                        case "gpu": c.Value.Text = ((int)Math.Round(s.GpuLoad)).ToString(); break;
+                        case "ram": c.Value.Text = s.RamUsedGb.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture); break;
+                        case "ping": c.Value.Text = s.PingMs >= 0 ? s.PingMs.ToString() : "--"; break;
+                    }
+                }
+
+                // a stutter is the 1% low falling away from the average, not a low average
+                bool warn = (s.Fps > 0 && s.FpsLow1 >= 0 && s.FpsLow1 < s.Fps * 0.5)
+                            || (s.Fps >= 0 && s.Fps < 60);
+                MatchWarn(warn);
+                MatchSparkPush(s);
+            }
+            catch (Exception ex) { AppInfo.Log("MatchRefresh: " + ex.Message); }
+        }
+
+        private void MatchWarn(bool warn)
+        {
+            if (warn == _mbWarn) return;
+            _mbWarn = warn;
+
+            var acc = MbBrush(_settings.Accent, Color.FromRgb(0xDE, 0x9B, 0x35));
+            var danger = MbBrush(_settings.DangerColor, Color.FromRgb(0xE0, 0x52, 0x3C));
+            var txt = MbBrush(_settings.TextColor, Colors.White);
+            var hot = MbBrush(_settings.WarnColor, Color.FromRgb(0xFF, 0xC9, 0x8A));
+
+            foreach (var c in _mb)
+            {
+                if (c.Accent != null) c.Accent.Background = warn ? danger : acc;
+                if (c.Key == "fps") c.Value.Foreground = warn ? hot : txt;
+                if (c.Key == "low") c.Value.Foreground = warn ? danger : txt;
+            }
+        }
+
+        private void MatchSparkPush(MetricsSnapshot s)
+        {
+            if (_mbSpark == null) return;
+
+            double ft = s.FrameTimeMs > 0 ? s.FrameTimeMs : (s.Fps > 0 ? 1000.0 / s.Fps : -1);
+            if (ft <= 0) return;
+
+            for (int i = 0; i < MbSparkN - 1; i++) _mbFt[i] = _mbFt[i + 1];
+            _mbFt[MbSparkN - 1] = ft;
+            if (_mbFtCount < MbSparkN) _mbFtCount++;
+
+            double max = 0.1, sum = 0;
+            int n = 0;
+            for (int i = MbSparkN - _mbFtCount; i < MbSparkN; i++)
+            {
+                if (_mbFt[i] > max) max = _mbFt[i];
+                sum += _mbFt[i];
+                n++;
+            }
+            double avg = n > 0 ? sum / n : ft;
+
+            var trk = MbBrush(_settings.TrackColor, Color.FromRgb(0x39, 0x41, 0x4D));
+            var acc = MbBrush(_settings.Accent, Color.FromRgb(0xDE, 0x9B, 0x35));
+
+            for (int i = 0; i < MbSparkN; i++)
+            {
+                double v = _mbFt[i];
+                if (v <= 0) { _mbSpark[i].Height = 2; _mbSpark[i].Fill = trk; continue; }
+                _mbSpark[i].Height = Math.Max(2, Math.Min(9, 2 + (v / max) * 7));
+                _mbSpark[i].Fill = v > avg * 1.5 ? acc : trk;
+            }
+        }
+
         // ================================================================ dynamic island
 
         // A copy of the pill Apple put at the top of the iPhone.
@@ -773,6 +1136,7 @@ namespace LIKAsys.Ui
             if (_settings.ShowUptime) _rows.Add(NewRow("uptime", "UPTIME", Ico("IconUptime")));
             if (_rows.Count == 0) _rows.Add(NewRow("cpu", "CPU", Ico("IconCpu")));
             StyleRows();
+            if (_mbOn) MatchBuild();
             if (_metrics?.Latest != null) OnMetrics(_metrics.Latest);
             StaggerIn();
         }
@@ -1015,7 +1379,8 @@ namespace LIKAsys.Ui
                 UpdateBlurAndRegion();
                 if (_ready) WidgetPlacement.Apply(this, _settings);
 
-                IslandMode(_settings.Island);
+                MatchMode(_settings.MatchBar);
+                IslandMode(_settings.MatchBar ? false : _settings.Island);
                 ApplyDotPulse();
                 if (!Motion) Settle(); else Kick();
             }
@@ -1504,6 +1869,7 @@ namespace LIKAsys.Ui
                 }
 
                 UpdateMiniLine();
+                if (_mbOn) MatchRefresh(s);
                 if (_isleOn && !_isleOpen && _isleDir == 0) IslandRefresh();
                 if (IsVisible) Kick(); else Settle();
             }

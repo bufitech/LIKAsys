@@ -69,6 +69,12 @@ namespace LIKAsys.Core
         /// </summary>
         public bool Island = false;
 
+        /// <summary>
+        /// A match strip instead of a card: one flat angular line pinned to the top edge,
+        /// small labels, big numbers, nothing else. Built for shooters like Counter-Strike 2.
+        /// </summary>
+        public bool MatchBar = false;
+
         /// <summary>Short Albanian line shown on the theme card. Goes through Lang.T.</summary>
         public string Note = null;
     }
@@ -140,6 +146,20 @@ namespace LIKAsys.Core
             //  LOJËRA - each one borrows the type, the icons and the palette of a world
             //  people already know. They are meant to look nothing like each other.
             // ==========================================================================
+            // the match strip. First in the group because it is the one made for CS2.
+            new ThemePreset { Name="Match Bar", Group=GLoja, Note="shirit i hollë në krye, për CS2",
+                MatchBar=true,
+                Accent="#DE9B35", Accent2="#F0A040",
+                BgTop="#0B0E13", BgBottom="#06080B", Border="#00000000", Opacity=0.97, Radius=0,
+                BorderThickness=0, Text="#FFFFFF", Label="#6E7886", Detail="#5C6674", Track="#39414D",
+                Warn="#E0A23C", Danger="#E0523C", Glow=false, TextShadow=false, Gradient=false,
+                Shadow=true, ShadowAmt=0.7,
+                Font="Bahnschrift Condensed, Bahnschrift, Segoe UI", Icons=IconStyle.None,
+                Bars=false, BarStyle=BarStyle.None, Upper=true,
+                PadH=0, PadV=0, RowSpace=0, ValueOff=0, LabelOff=-4,
+                ValueWeight="Bold", LabelWeight="Bold",
+                BrandDot=false, Pos=WidgetPosition.TopCenter },
+
             new ThemePreset { Name="Night City", Group=GLoja, Note="verdhë neoni, qoshe të prera",
                 Accent="#FCEE0A", Accent2="#00F0FF",
                 BgTop="#101214", BgBottom="#030405", Border="#A0FCEE0A", Opacity=0.9, Radius=0,
@@ -651,6 +671,20 @@ namespace LIKAsys.Core
                 if (t.ShadowAmt >= 0) s.ShadowStrength = t.ShadowAmt;
 
                 s.Island = t.Island;
+                s.MatchBar = t.MatchBar;
+
+                // the strip is a top-edge object and it must never eat a click mid-round
+                if (t.MatchBar)
+                {
+                    s.MarginX = 0;
+                    s.MarginY = 0;
+                    s.ClickThrough = true;
+                    s.ShowFps = true;
+                    s.ShowFpsLow = true;
+                    s.ShowCpu = true;
+                    s.ShowGpu = true;
+                    s.ShowPing = true;
+                }
 
                 // the capsule belongs against the top edge of the screen, the way the
                 // iPhone one sits in the bezel, so it takes the margins down with it

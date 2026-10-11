@@ -86,6 +86,9 @@
     <Grid x:Name="ScaleHost" Margin="14">
         <Border x:Name="Card" CornerRadius="14" BorderThickness="1" Padding="13,10,13,9" MinWidth="150">
             <StackPanel x:Name="CardContent">
+                <!-- match strip (CS2): built in code, one flat row, nothing else showing -->
+                <StackPanel x:Name="MatchHost" Orientation="Horizontal" Visibility="Collapsed" />
+
                 <!-- header -->
                 <Grid x:Name="HeaderRow" Margin="0,0,0,8">
                     <Grid.ColumnDefinitions>
