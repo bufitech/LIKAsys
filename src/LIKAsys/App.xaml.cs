@@ -179,6 +179,7 @@ namespace LIKAsys
                 _widget.MinimizedChanged += (s, a) => { try { _tray?.Rebuild(); } catch { } SaveSoon(); };
                 _widget.SizeSaved += (s, a) => { try { _tray?.Sync(); } catch { } SaveSoon(); };
                 if (_settings.WidgetVisible) { _widget.Show(); _widget.Reveal(); }
+                WatchScreens();
                 AppInfo.Log("ok: widget");
             }
             catch (Exception ex)
@@ -401,6 +402,60 @@ namespace LIKAsys
             catch (Exception ex) { AppInfo.Log("OnSettingChanged: " + ex.Message); }
         }
 
+        /// <summary>
+        /// Monitors come and go: a laptop gets undocked, a TV is switched off, someone
+        /// changes the resolution. When that happens the saved coordinates can land on
+        /// nothing at all, so the card is re-placed and, if it was stranded, rescued.
+        /// </summary>
+        private void WatchScreens()
+        {
+            try
+            {
+                Screens.Watch();
+                Screens.Changed += (s, e) => Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    try
+                    {
+                        if (_widget == null) return;
+
+                        if (WidgetPlacement.IsStranded(_settings))
+                        {
+                            AppInfo.Log("screens: the saved spot is on no monitor, going back to a corner");
+                            _settings.Position = WidgetPosition.TopRight;
+                        }
+
+                        WidgetPlacement.Apply(_widget, _settings);
+                        _settingsWindow?.RefreshScreens();
+                        SaveSoon();
+                    }
+                    catch { }
+                }), System.Windows.Threading.DispatcherPriority.Background);
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Follow the game: the card hops to whichever monitor has the window in front.
+        /// Checked on the slow tick, and only moved when the monitor really changed.
+        /// </summary>
+        private string _lastGameScreen = "";
+
+        private void FollowForeground()
+        {
+            if (_settings.MonitorMode != MonitorMode.Game) { _lastGameScreen = ""; return; }
+            try
+            {
+                var si = Screens.Foreground();
+                if (si == null || si.Id == _lastGameScreen) return;
+                _lastGameScreen = si.Id;
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    try { if (_widget != null) WidgetPlacement.Apply(_widget, _settings); } catch { }
+                }), System.Windows.Threading.DispatcherPriority.Background);
+            }
+            catch { }
+        }
+
         private void SaveSoon()
         {
             try { _saveTimer?.Stop(); _saveTimer?.Start(); } catch { }
@@ -533,6 +588,7 @@ namespace LIKAsys
 
             if ((DateTime.UtcNow - _lastTooltip).TotalSeconds < 2) return;
             _lastTooltip = DateTime.UtcNow;
+            FollowForeground();
             try
             {
                 var text = string.Format(CultureInfo.InvariantCulture,

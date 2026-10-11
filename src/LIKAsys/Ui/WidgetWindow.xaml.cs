@@ -281,6 +281,7 @@ namespace LIKAsys.Ui
                 foreach (var r in _rows)
                 {
                     r.Fill = r.Percent / 100.0;
+                    if (_settings.RowSpark) r.PushHistory(r.Fill);
                     r.RowOpacity = 1;
                     r.RowShift = 0;
                 }
@@ -1528,6 +1529,9 @@ namespace LIKAsys.Ui
             bool horizontal = _settings.Layout != WidgetLayout.Vertical;
             bool compact = _settings.Layout == WidgetLayout.Compact;
 
+            // the pills are a vertical card idea, so the two fixed shapes keep their own look
+            bool caps = _settings.Capsule && !_settings.MatchBar && !_isleOn;
+
             Brush iconStroke;
             if (_settings.AccentGradient)
             {
@@ -1620,7 +1624,79 @@ namespace LIKAsys.Ui
                         r.IconEffect = null;
                         break;
                 }
+
+                StyleCapsule(r, caps, fs);
             }
+        }
+
+        /// <summary>
+        /// The capsule look: every reading gets its own pill, its own colour from the
+        /// palette and its own glow. Called last so it overrides the plain accent above.
+        /// When the look is off every capsule property is cleared, which collapses the
+        /// wrapper back to a plain row with no extra layout cost.
+        /// </summary>
+        private void StyleCapsule(MetricRowVm r, bool caps, double fs)
+        {
+            if (!caps)
+            {
+                r.CapsuleBg = null;
+                r.CapsuleBorder = null;
+                r.CapsuleThickness = new Thickness(0);
+                r.CapsuleRadius = new CornerRadius(0);
+                r.CapsulePad = new Thickness(0);
+                r.CapsuleEffect = null;
+                r.TileBg = null;
+                r.TileRadius = new CornerRadius(0);
+                r.TilePad = new Thickness(0);
+                r.SparkVisibility = Visibility.Collapsed;
+                return;
+            }
+
+            var c = Accent;
+            var hex = Palettes.Color(_settings.Palette, r.Key);
+            if (hex != null) c = ParseHex(hex, c);
+
+            double h = Math.Max(26, fs + _settings.ValueSizeOffset + 20);
+
+            var bg = new LinearGradientBrush { StartPoint = new Point(0, 0), EndPoint = new Point(1, 0) };
+            bg.GradientStops.Add(new GradientStop(Color.FromArgb(0x30, c.R, c.G, c.B), 0));
+            bg.GradientStops.Add(new GradientStop(Color.FromArgb(0x12, c.R, c.G, c.B), 0.45));
+            bg.GradientStops.Add(new GradientStop(Color.FromArgb(0x26, c.R, c.G, c.B), 1));
+            bg.Freeze();
+
+            r.CapsuleBg = bg;
+            r.CapsuleBorder = Solid(Color.FromArgb(0xB0, c.R, c.G, c.B));
+            r.CapsuleThickness = new Thickness(1.3);
+            r.CapsuleRadius = new CornerRadius(h / 2.0);
+            r.CapsulePad = new Thickness(7, 5, 13, 5);
+            r.CapsuleEffect = _settings.GlowEffect ? Glow(c) : null;
+
+            r.TileBg = Solid(Color.FromArgb(0x2E, c.R, c.G, c.B));
+            r.TileRadius = new CornerRadius(Math.Max(5, r.IconBox * 0.34));
+            r.TilePad = new Thickness(Math.Max(3, r.IconBox * 0.22));
+
+            r.LabelBrush = Solid(c);
+            r.BarBrush = Solid(c);
+            r.IconStroke = Solid(c);
+            if (_settings.IconStyle == IconStyle.Solid) { r.IconFill = Solid(c); r.IconStroke = null; }
+            r.IconEffect = _settings.GlowEffect ? Glow(c) : null;
+
+            r.SparkBrush = Solid(Color.FromArgb(0xD8, c.R, c.G, c.B));
+            r.SparkWidth = Math.Max(34, fs * 3.4);
+            r.SparkHeight = Math.Max(12, fs * 1.25);
+            r.SparkVisibility = _settings.RowSpark ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>#RRGGBB or #AARRGGBB into a colour, falling back rather than throwing.</summary>
+        private static Color ParseHex(string hex, Color fallback)
+        {
+            try
+            {
+                var o = ColorConverter.ConvertFromString(hex);
+                if (o is Color c) return c;
+            }
+            catch { }
+            return fallback;
         }
 
         private static Brush SegmentMask()

@@ -80,11 +80,15 @@ namespace LIKAsys.Ui
             BuildLangTab();
             BuildMouseTab();
             BuildProfileTab();
+            BuildScreens();
+            BuildPalettes();
             FillCombos();
             SyncFromSettings();
 
             _settings.PropertyChanged += OnExternalChange;
             Closed += (s, e) => { try { _settings.PropertyChanged -= OnExternalChange; } catch { } };
+
+            PreviewKeyDown += Pro_Keys;
 
             _loading = false;
             ApplyMode();
@@ -771,8 +775,11 @@ namespace LIKAsys.Ui
                 BuildLangTab();
                 BuildMouseTab();
                 BuildProfileTab();
+                BuildScreens();
+                BuildPalettes();
                 FillCombos();
                 if (_simpleBuilt) BuildSimple();
+                _indexed = false;
             }
             catch { }
             finally { _loading = old; }
@@ -812,18 +819,7 @@ namespace LIKAsys.Ui
             ValueWeightCombo.ItemsSource = WeightNames;
             LabelWeightCombo.ItemsSource = WeightNames;
 
-            try
-            {
-                var screens = Forms.Screen.AllScreens;
-                var items = new List<string>();
-                for (int i = 0; i < screens.Length; i++)
-                {
-                    var b = screens[i].Bounds;
-                    items.Add($"{i + 1} - {b.Width}x{b.Height}{(screens[i].Primary ? " " + Lang.T("(kryesor)") : "")}");
-                }
-                MonitorCombo.ItemsSource = items;
-            }
-            catch { }
+
         }
 
         private void SyncCombos()
@@ -855,8 +851,7 @@ namespace LIKAsys.Ui
                     FontCombo.SelectedItem = hit;
                 }
 
-                if (MonitorCombo.Items.Count > 0)
-                    MonitorCombo.SelectedIndex = Math.Max(0, Math.Min(MonitorCombo.Items.Count - 1, _settings.MonitorIndex));
+
 
                 foreach (var rb in PosGrid.Children.OfType<RadioButton>())
                     rb.IsChecked = (string)rb.Tag == _settings.Position.ToString();
@@ -896,7 +891,7 @@ namespace LIKAsys.Ui
             var p = e.PropertyName ?? "";
             if (p.Length == 0 || p == nameof(AppSettings.ThemeName))
             {
-                Dispatcher.BeginInvoke(new Action(() => { SyncThemeSelection(); RefreshColors(); SyncCombos(); SyncProfileSelection(); SyncMouseTab(); SyncMouseTabVisibility(); SyncSimple(); }));
+                Dispatcher.BeginInvoke(new Action(() => { SyncThemeSelection(); RefreshColors(); SyncCombos(); SyncProfileSelection(); SyncMouseTab(); SyncMouseTabVisibility(); SyncSimple(); SyncPalettes(); }));
             }
             else if (p == nameof(AppSettings.Profile) || p == nameof(AppSettings.MouseCursor))
             {
@@ -911,6 +906,7 @@ namespace LIKAsys.Ui
                         rb.IsChecked = (string)rb.Tag == _settings.Position.ToString();
                     _loading = old;
                     SyncSimple();
+                    SyncScreens();
                 }));
             }
             else if (p == nameof(AppSettings.Scale) || p.StartsWith("Show") ||
@@ -1139,6 +1135,7 @@ namespace LIKAsys.Ui
                 if (FindName(name) is UIElement el)
                     el.Visibility = name == want ? Visibility.Visible : Visibility.Collapsed;
             }
+            SetPageHead(want);
             try { Scroller.ScrollToTop(); } catch { }
             if (want == "PanelMetrics") RefreshStatus();
             if (want == "PanelMouse") SyncMouseTab();
@@ -1344,12 +1341,6 @@ namespace LIKAsys.Ui
             _settings.TempUnit = TempCombo.SelectedIndex == 1 ? "F" : "C";
         }
 
-        private void MonitorCombo_Changed(object sender, SelectionChangedEventArgs e)
-        {
-            if (_loading || MonitorCombo.SelectedIndex < 0) return;
-            _settings.MonitorIndex = MonitorCombo.SelectedIndex;
-            if (_settings.Position == WidgetPosition.Custom) _settings.Position = WidgetPosition.TopRight;
-        }
 
         private void Check_Click(object sender, RoutedEventArgs e) => CheckUpdatesRequested?.Invoke(this, EventArgs.Empty);
 

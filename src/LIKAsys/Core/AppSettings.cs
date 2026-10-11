@@ -24,6 +24,17 @@ namespace LIKAsys.Core
     /// </summary>
     public enum IconSet { Auto, Gaming, Tech, Apple, Badge, Ring }
 
+    /// <summary>Which monitor the widget lives on.</summary>
+    public enum MonitorMode
+    {
+        /// <summary>Whatever Windows calls the main screen.</summary>
+        Primary,
+        /// <summary>Follow the window in front, so it lands on the screen the game is on.</summary>
+        Game,
+        /// <summary>One chosen monitor, remembered by its device path.</summary>
+        Fixed
+    }
+
     public enum BarStyle { Rounded, Square, Segmented, None }
 
     public enum ValueStyle { Right, Inline }
@@ -77,6 +88,11 @@ namespace LIKAsys.Core
         private bool _matchBar;
         private IconSet _iconSet = IconSet.Auto;
         private bool _advanced;
+        private MonitorMode _monitorMode = MonitorMode.Primary;
+        private bool _capsule;
+        private string _palette = "";
+        private bool _rowSpark;
+        private string _monitorId = "";
         private bool _textShadow = false;
         private IconStyle _iconStyle = IconStyle.ThreeD;
         private double _iconSizeOffset = 6;
@@ -234,6 +250,21 @@ namespace LIKAsys.Core
         public int CustomX { get => _customX; set => Set(ref _customX, value); }
         public int CustomY { get => _customY; set => Set(ref _customY, value); }
         public int MonitorIndex { get => _monitorIndex; set => Set(ref _monitorIndex, value); }
+
+        /// <summary>How the monitor is chosen. Primary by default.</summary>
+        public MonitorMode MonitorMode { get => _monitorMode; set => Set(ref _monitorMode, value); }
+
+        /// <summary>Each reading in its own coloured pill.</summary>
+        public bool Capsule { get => _capsule; set => Set(ref _capsule, value); }
+
+        /// <summary>Which per-reading colour set the pills use.</summary>
+        public string Palette { get => _palette; set => Set(ref _palette, value ?? ""); }
+
+        /// <summary>The small moving graph at the right of each row.</summary>
+        public bool RowSpark { get => _rowSpark; set => Set(ref _rowSpark, value); }
+
+        /// <summary>Device path of the chosen monitor, so replugging does not move the card.</summary>
+        public string MonitorId { get => _monitorId; set => Set(ref _monitorId, value ?? ""); }
         public bool AlwaysOnTop { get => _alwaysOnTop; set => Set(ref _alwaysOnTop, value); }
         public bool ClickThrough { get => _clickThrough; set => Set(ref _clickThrough, value); }
         public bool Locked { get => _locked; set => Set(ref _locked, value); }

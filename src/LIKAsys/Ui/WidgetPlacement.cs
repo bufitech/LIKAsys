@@ -22,15 +22,9 @@ namespace LIKAsys.Ui
                 var helper = new WindowInteropHelper(window);
                 if (helper.Handle == IntPtr.Zero) return;
 
-                var screens = Forms.Screen.AllScreens;
-                var screen = (s.MonitorIndex >= 0 && s.MonitorIndex < screens.Length)
-                    ? screens[s.MonitorIndex]
-                    : Forms.Screen.PrimaryScreen;
-                if (screen == null && screens.Length > 0) screen = screens[0];
-
-                var wa = screen != null
-                    ? screen.WorkingArea
-                    : Forms.SystemInformation.VirtualScreen;   // last-resort fallback
+                var screen = Screens.Pick(s);
+                var wa = new System.Drawing.Rectangle(
+                    screen.WorkLeft, screen.WorkTop, screen.WorkWidth, screen.WorkHeight);
 
                 double scale = Native.GetScaleForPoint(wa.Left + wa.Width / 2, wa.Top + wa.Height / 2);
                 int w = (int)Math.Ceiling(window.ActualWidth * scale);
@@ -75,6 +69,20 @@ namespace LIKAsys.Ui
             catch (Exception ex) { AppInfo.Log("Placement failed: " + ex.Message); }
         }
 
+        /// <summary>
+        /// True when the saved spot is on no monitor at all, which is what happens after
+        /// a screen is unplugged or the resolution drops.
+        /// </summary>
+        public static bool IsStranded(AppSettings s)
+        {
+            try
+            {
+                if (s.Position != WidgetPosition.Custom) return false;
+                return Screens.OffScreen(s.CustomX + 20, s.CustomY + 20);
+            }
+            catch { return false; }
+        }
+
         /// <summary>After a manual drag: remember the exact spot, optionally snapping to the nearest corner.</summary>
         public static void StoreCurrent(Window window, AppSettings s)
         {
@@ -85,11 +93,12 @@ namespace LIKAsys.Ui
                 if (!Native.GetWindowRect(helper.Handle, out var r)) return;
 
                 int w = r.Right - r.Left, h = r.Bottom - r.Top;
-                var screen = Forms.Screen.FromHandle(helper.Handle);
-                var wa = screen.WorkingArea;
-                var all = Forms.Screen.AllScreens;
-                for (int i = 0; i < all.Length; i++)
-                    if (all[i].DeviceName == screen.DeviceName) { s.MonitorIndex = i; break; }
+                // Drag the card to another monitor and that becomes the chosen one,
+                // stored by device path so unplugging and replugging keeps it right.
+                var si = Screens.FromPoint(r.Left + w / 2, r.Top + h / 2);
+                var wa = new System.Drawing.Rectangle(si.WorkLeft, si.WorkTop, si.WorkWidth, si.WorkHeight);
+                s.MonitorIndex = si.Index;
+                if (s.MonitorMode == MonitorMode.Fixed) s.MonitorId = si.Id;
 
                 if (s.SnapToCorners)
                 {

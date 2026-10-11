@@ -74,28 +74,76 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel x:Name="SideBar" Grid.Column="0" Margin="14,0,8,14">
-                        <RadioButton x:Name="TabThemes" Style="{StaticResource SideTab}" Content="Temat" IsChecked="True"
-                                     Tag="PanelThemes" Checked="Tab_Checked" GroupName="tabs" />
-                        <RadioButton Style="{StaticResource SideTab}" Content="Ngjyrat" Tag="PanelColors" Checked="Tab_Checked" GroupName="tabs" />
-                        <RadioButton Style="{StaticResource SideTab}" Content="Pamja e kartelës" Tag="PanelLook" Checked="Tab_Checked" GroupName="tabs" />
-                        <RadioButton Style="{StaticResource SideTab}" Content="Fonti dhe teksti" Tag="PanelFont" Checked="Tab_Checked" GroupName="tabs" />
-                        <RadioButton x:Name="TabMouse" Style="{StaticResource SideTab}" Content="Mouse" Tag="PanelMouse" Checked="Tab_Checked" GroupName="tabs" />
-                        <RadioButton Style="{StaticResource SideTab}" Content="Pozicioni" Tag="PanelPos" Checked="Tab_Checked" GroupName="tabs" />
-                        <RadioButton Style="{StaticResource SideTab}" Content="Metrikat" Tag="PanelMetrics" Checked="Tab_Checked" GroupName="tabs" />
-                        <RadioButton Style="{StaticResource SideTab}" Content="Sistemi dhe update" Tag="PanelSystem" Checked="Tab_Checked" GroupName="tabs" />
-                        <RadioButton Style="{StaticResource SideTab}" Content="Gjuha" Tag="PanelLang" Checked="Tab_Checked" GroupName="tabs" />
-                        <RadioButton Style="{StaticResource SideTab}" Content="Rreth" Tag="PanelAbout" Checked="Tab_Checked" GroupName="tabs" />
+                    <Grid x:Name="SideBar" Grid.Column="0" Margin="14,0,8,14">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
-                        <Border Height="1" Background="#14FFFFFF" Margin="10,14,10,12" />
-                        <Button Style="{StaticResource GhostButton}" Content="Rikthe cilesimet" Click="Reset_Click" Margin="10,0" />
-                        <TextBlock Style="{StaticResource Caption}" Margin="12,12,10,0" TextWrapping="Wrap"
-                                   Text="Çdo ndryshim ruhet vetvetiu dhe shfaqet menjëherë në widget." />
-                    </StackPanel>
+                        <!-- find a setting by name -->
+                        <Border Grid.Row="0" CornerRadius="8" Background="#FF121925" BorderBrush="#1AFFFFFF"
+                                BorderThickness="1" Padding="9,0" Margin="2,0,2,10" Height="32">
+                            <Grid>
+                                <Path Data="{StaticResource IconSearch}" Stroke="#FF5D6E85" StrokeThickness="1.7"
+                                      Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Left"
+                                      VerticalAlignment="Center" />
+                                <TextBlock x:Name="SearchHint" Text="Kërko një cilësim" FontSize="12" Margin="22,0,0,0"
+                                           Foreground="#FF4C5B70" VerticalAlignment="Center" IsHitTestVisible="False" />
+                                <TextBox x:Name="SearchBox" Style="{StaticResource SearchInput}" Margin="22,0,0,0"
+                                         TextChanged="Search_Changed" />
+                            </Grid>
+                        </Border>
+
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
+                            <StackPanel>
+                                <StackPanel x:Name="NavList">
+                                    <TextBlock Style="{StaticResource NavHead}" Text="PAMJA" />
+                                    <RadioButton x:Name="TabThemes" Style="{StaticResource SideTab}" Content="Temat" IsChecked="True"
+                                                 Tag="PanelThemes" Checked="Tab_Checked" GroupName="tabs" />
+                                    <RadioButton Style="{StaticResource SideTab}" Content="Ngjyrat" Tag="PanelColors" Checked="Tab_Checked" GroupName="tabs" />
+                                    <RadioButton Style="{StaticResource SideTab}" Content="Pamja e kartelës" Tag="PanelLook" Checked="Tab_Checked" GroupName="tabs" />
+                                    <RadioButton Style="{StaticResource SideTab}" Content="Fonti dhe teksti" Tag="PanelFont" Checked="Tab_Checked" GroupName="tabs" />
+
+                                    <TextBlock Style="{StaticResource NavHead}" Text="SJELLJA" />
+                                    <RadioButton Style="{StaticResource SideTab}" Content="Pozicioni" Tag="PanelPos" Checked="Tab_Checked" GroupName="tabs" />
+                                    <RadioButton Style="{StaticResource SideTab}" Content="Metrikat" Tag="PanelMetrics" Checked="Tab_Checked" GroupName="tabs" />
+                                    <RadioButton x:Name="TabMouse" Style="{StaticResource SideTab}" Content="Mouse" Tag="PanelMouse" Checked="Tab_Checked" GroupName="tabs" />
+
+                                    <TextBlock Style="{StaticResource NavHead}" Text="PROGRAMI" />
+                                    <RadioButton Style="{StaticResource SideTab}" Content="Sistemi dhe update" Tag="PanelSystem" Checked="Tab_Checked" GroupName="tabs" />
+                                    <RadioButton Style="{StaticResource SideTab}" Content="Gjuha" Tag="PanelLang" Checked="Tab_Checked" GroupName="tabs" />
+                                    <RadioButton Style="{StaticResource SideTab}" Content="Rreth" Tag="PanelAbout" Checked="Tab_Checked" GroupName="tabs" />
+                                </StackPanel>
+
+                                <!-- what the search found -->
+                                <StackPanel x:Name="SearchList" Visibility="Collapsed" />
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <StackPanel Grid.Row="2">
+                            <Border Height="1" Background="#14FFFFFF" Margin="10,14,10,12" />
+                            <Button Style="{StaticResource GhostButton}" Content="Rikthe cilesimet" Click="Reset_Click" Margin="10,0" />
+                            <TextBlock Style="{StaticResource Caption}" Margin="12,12,10,0" TextWrapping="Wrap"
+                                       Text="Çdo ndryshim ruhet vetvetiu dhe shfaqet menjëherë në widget." />
+                        </StackPanel>
+                    </Grid>
 
                     <Border Grid.Column="1" Background="#FF0E131D" CornerRadius="12" Margin="0,0,14,14"
                             BorderBrush="#14FFFFFF" BorderThickness="1">
-                        <ScrollViewer x:Name="Scroller" VerticalScrollBarVisibility="Auto" Padding="22,18,16,18">
+                      <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel x:Name="PageHead" Grid.Row="0" Margin="22,16,22,0">
+                            <TextBlock x:Name="PageTitle" FontSize="17" FontWeight="SemiBold" Foreground="#FFEAF2FF" />
+                            <TextBlock x:Name="PageNote" Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,4,0,0" />
+                            <Border Height="1" Background="#12FFFFFF" Margin="0,13,0,0" />
+                        </StackPanel>
+
+                        <ScrollViewer x:Name="Scroller" Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="22,16,16,18">
                             <Grid>
 
                                 <!-- ======================= THJESHT ======================= -->
@@ -132,7 +180,7 @@
                                 <!-- ======================= PAMJA ======================= -->
                                 <StackPanel x:Name="PanelLook" Visibility="Collapsed">
                                     <TextBlock Style="{StaticResource H2}" Text="QELQ DHE SFOND" />
-                                    <CheckBox Style="{StaticResource Switch}" Content="Blur në sfond (akrilik - sfondi pas widget-it turbullohet)"
+                                    <CheckBox Style="{StaticResource Switch}" Content="Blur në sfond (akrilik, sfondi pas widget-it turbullohet)"
                                               IsChecked="{Binding Blur, Mode=TwoWay}" />
                                     <Grid Margin="0,6">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
@@ -223,6 +271,17 @@
                                         <TextBlock Grid.Column="2" Style="{StaticResource FieldLabel}" HorizontalAlignment="Right"
                                                    Text="{Binding IconSizeOffset, StringFormat={}{0:+0;-0;0}}" />
                                     </Grid>
+                                    <TextBlock Style="{StaticResource H2}" Text="KAPSULAT" Margin="0,18,0,6" />
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,0,0,8" TextWrapping="Wrap"
+                                               Text="Secila matje merr kapsulën dhe ngjyrën e vet. Punon me çdo temë, jo vetëm me ato të grupit Kapsula." />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Kapsula për secilën matje" IsChecked="{Binding Capsule, Mode=TwoWay}" />
+                                    <CheckBox Style="{StaticResource Switch}" Content="Grafik i vogël me matjet e fundit" IsChecked="{Binding RowSpark, Mode=TwoWay}" />
+                                    <Grid Margin="0,8,0,2">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Grupi i ngjyrave" />
+                                        <WrapPanel x:Name="PaletteHost" Grid.Column="1" />
+                                    </Grid>
+
                                     <CheckBox Style="{StaticResource Switch}" Content="Efekt ndriçimi (glow)" IsChecked="{Binding GlowEffect, Mode=TwoWay}" />
                                     <CheckBox Style="{StaticResource Switch}" Content="Animacione (shiritat rrëshqasin, rreshtat vijnë me radhë)" IsChecked="{Binding Animations, Mode=TwoWay}" />
                                     <CheckBox Style="{StaticResource Switch}" Content="Hije pas shkrimit (lexohet mbi çdo sfond)" IsChecked="{Binding TextShadow, Mode=TwoWay}" />
@@ -257,7 +316,7 @@
                                             <Path Data="{StaticResource IconHeart}" Fill="#FFFF4D6A" Width="12" Height="12"
                                                   Stretch="Uniform" Margin="0,0,9,0" VerticalAlignment="Center" />
                                             <TextBlock Style="{StaticResource Caption}" VerticalAlignment="Center" TextWrapping="Wrap"
-                                                       Text="Emri LIKAsys dhe 'Made in Kosovo' rrinë gjithmonë të ndezura — janë pjesë e identitetit, jo cilësim." />
+                                                       Text="Emri LIKAsys dhe 'Made in Kosovo' rrinë gjithmonë të ndezura. Janë pjesë e identitetit, jo cilësim." />
                                         </StackPanel>
                                     </Border>
                                 </StackPanel>
@@ -349,12 +408,8 @@
                                         <RadioButton Style="{StaticResource PosButton}" GroupName="pos" Tag="BottomRight" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Checked="Pos_Checked" />
                                     </UniformGrid>
 
-                                    <Grid Margin="0,2,0,6">
-                                        <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Monitori" />
-                                        <ComboBox x:Name="MonitorCombo" Grid.Column="1" Style="{StaticResource Combo}"
-                                                  SelectionChanged="MonitorCombo_Changed" Width="320" HorizontalAlignment="Left" />
-                                    </Grid>
+                                    <TextBlock Style="{StaticResource H2}" Text="EKRANET" Margin="0,16,0,8" />
+                                    <StackPanel x:Name="ScreenHost" Margin="0,0,0,6" />
                                     <Grid Margin="0,6">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /><ColumnDefinition Width="66" /></Grid.ColumnDefinitions>
                                         <TextBlock Style="{StaticResource FieldLabel}" Text="Largësia horizontale" />
@@ -470,7 +525,7 @@
                                                   SelectionChanged="StartView_Changed" Width="320" HorizontalAlignment="Left" />
                                     </Grid>
                                     <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0" TextWrapping="Wrap"
-                                               Text="I minimizuar do të thotë një shirit i vetëm me numrat kryesorë - mbetet sipër, por nuk zë vend." />
+                                               Text="I minimizuar do të thotë një shirit i vetëm me numrat kryesorë. Mbetet sipër, por nuk zë vend." />
 
                                     <Grid Margin="0,10,0,2">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
@@ -489,7 +544,7 @@
                                                   SelectionChanged="TrayIcon_Changed" Width="320" HorizontalAlignment="Left" />
                                     </Grid>
                                     <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0" TextWrapping="Wrap"
-                                               Text="Numri vizatohet direkt mbi ikonën afër orës - lexohet edhe me widget-in e fshehur, pa zënë asnjë piksel." />
+                                               Text="Numri vizatohet direkt mbi ikonën afër orës. Lexohet edhe me widget-in e fshehur, pa zënë asnjë piksel." />
 
                                     <TextBlock Style="{StaticResource H2}" Text="PËRDITËSIMET" Margin="0,18,0,8" />
                                     <CheckBox Style="{StaticResource Switch}" Content="Kontrollo automatikisht për versione të reja"
@@ -520,7 +575,7 @@
                                 <StackPanel x:Name="PanelLang" Visibility="Collapsed">
                                     <TextBlock Style="{StaticResource H2}" Text="GJUHA E PROGRAMIT" />
                                     <TextBlock Style="{StaticResource Caption}" Margin="0,0,0,14" TextWrapping="Wrap"
-                                               Text="Ndryshimi zbatohet menjëherë - nuk duhet rinisur programi. CPU, GPU, RAM dhe FPS mbeten njësoj në të dyja gjuhët." />
+                                               Text="Ndryshimi zbatohet menjëherë, pa e rinisur programin. CPU, GPU, RAM dhe FPS mbeten njësoj në të dyja gjuhët." />
                                     <StackPanel x:Name="LangHost" />
                                 </StackPanel>
 
@@ -555,6 +610,7 @@
 
                             </Grid>
                         </ScrollViewer>
+                      </Grid>
                     </Border>
                 </Grid>
             </Grid>

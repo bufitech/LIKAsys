@@ -68,6 +68,7 @@ namespace LIKAsys.Ui
                     if (FindName(n) is UIElement el)
                         el.Visibility = adv && n == CurrentTabPanel() ? Visibility.Visible : Visibility.Collapsed;
 
+                SetPageHead(adv ? CurrentTabPanel() : null);
                 ModeSimple.IsChecked = !adv;
                 ModeAdvanced.IsChecked = adv;
 
@@ -158,7 +159,7 @@ namespace LIKAsys.Ui
             var more = new Button
             {
                 Style = (Style)FindResource("GhostButton"),
-                Content = Lang.T("Të gjitha temat, 63 sosh"),
+                Content = Lang.T("Të gjitha temat") + ", " + ThemeLibrary.All.Length + " sosh",
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Margin = new Thickness(0, 2, 0, 0)
             };

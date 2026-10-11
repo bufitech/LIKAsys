@@ -14,7 +14,11 @@
         <ui:StarConverter x:Key="Star" />
 
         <DataTemplate x:Key="RowTemplate">
-            <Grid Margin="{Binding RowMargin}" Opacity="{Binding RowOpacity}">
+          <Border Background="{Binding CapsuleBg}" BorderBrush="{Binding CapsuleBorder}"
+                  BorderThickness="{Binding CapsuleThickness}" CornerRadius="{Binding CapsuleRadius}"
+                  Padding="{Binding CapsulePad}" Effect="{Binding CapsuleEffect}"
+                  Margin="{Binding RowMargin}" Opacity="{Binding RowOpacity}">
+            <Grid>
                 <Grid.RenderTransform>
                     <TranslateTransform X="{Binding RowShift}" />
                 </Grid.RenderTransform>
@@ -22,11 +26,14 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!-- icon -->
-                <Viewbox Grid.Column="0" Width="{Binding IconBox}" Height="{Binding IconBox}"
-                         Margin="0,0,9,0" VerticalAlignment="Center" Visibility="{Binding IconVisibility}">
+                <!-- icon, optionally inside its own tile -->
+                <Border Grid.Column="0" Background="{Binding TileBg}" CornerRadius="{Binding TileRadius}"
+                        Padding="{Binding TilePad}" Margin="0,0,9,0" VerticalAlignment="Center"
+                        Visibility="{Binding IconVisibility}">
+                <Viewbox Width="{Binding IconBox}" Height="{Binding IconBox}">
                     <Grid Width="24" Height="24">
                         <Path Data="{Binding Icon}" Stroke="{Binding IconShadowBrush}"
                               StrokeThickness="{Binding IconThickness}" Visibility="{Binding ShadowVisibility}"
@@ -40,6 +47,7 @@
                               StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
                     </Grid>
                 </Viewbox>
+                </Border>
 
                 <!-- label + bar -->
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
@@ -73,7 +81,15 @@
                     <TextBlock Text="{Binding Unit}" FontSize="{Binding UnitSize}" Foreground="{Binding UnitBrush}"
                                Visibility="{Binding UnitVisibility}" Margin="3,0,0,1" VerticalAlignment="Bottom" />
                 </StackPanel>
+
+                <!-- the last readings, drawn small -->
+                <Path Grid.Column="3" Data="{Binding Spark}" Stroke="{Binding SparkBrush}" StrokeThickness="1.4"
+                      Width="{Binding SparkWidth}" Height="{Binding SparkHeight}" Margin="10,0,0,0"
+                      Visibility="{Binding SparkVisibility}" VerticalAlignment="Center"
+                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                      SnapsToDevicePixels="True" />
             </Grid>
+          </Border>
         </DataTemplate>
 
         <ItemsPanelTemplate x:Key="VerticalPanel">

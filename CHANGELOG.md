@@ -1,3 +1,29 @@
+## 2.8
+
+### Kapsulat, një ngjyrë për secilën matje
+- Secila matje mund të rrijë në kapsulën e vet, me ngjyrën, ikonën dhe shiritin e vet.
+- U shtua grupi i ri i temave `Kapsula` me dhjetë tema: Neon Pills, Neon Pills Dark, Ice Pills, Fire Pills, Pastel Pills, Mono Pills, Pills Compact, Pills Bar, Kosova Pills, Pills Glass.
+- Gjashtë grupe ngjyrash: Neon, Akull, Zjarr, Pastel, Një ngjyrë, Kosova. Zgjidhen te Pamja e kartelës, me kampionët e vërtetë të ngjyrave.
+- Kapsulat ndizen mbi çdo temë, jo vetëm mbi ato të grupit Kapsula.
+- U shtua një grafik i vogël në fund të rreshtit, me matjet e fundit.
+- Gjithsej 73 tema në 7 grupe.
+
+### Ekranet
+- U shtua zgjedhja e monitorit me një vizatim të vogël të tavolinës, ku secili ekran ka emrin, përmasat dhe shenjën nëse është kryesori.
+- Tri mënyra: ekrani kryesor, një ekran i caktuar, ose ndjek lojën. E fundit e lëviz kartelën në ekranin ku je duke luajtur.
+- Kur heq ose shton një monitor, kartela e vëren vetë dhe rivendoset.
+- Nëse kartela mbetet jashtë çdo ekrani, kthehet në qoshen e sipërme të djathtë. Më parë mbetej e padukshme.
+
+### Cilësimet e avancuara
+- U shtua kutia e kërkimit lart majtas. Shkruaj dy shkronja, kliko rezultatin, hapet skeda e duhur dhe çelësi ndez e fik dy herë që ta gjesh me sy.
+- Skedat u ndanë në tri grupe: Pamja, Sjellja, Programi.
+- Secila faqe tani ka titullin dhe një rresht shpjegimi lart.
+- `Ctrl + F` e çon kursorin te kërkimi, `Esc` e mbyll dritaren.
+
+### Rregullime
+- Numri i temave te faqja e thjeshtë merret nga vetë lista, nuk mbetet më i vjetruar.
+- U pastruan vizat në tekstet e cilësimeve, fjalitë u ndanë me pika.
+
 ## 2.7
 
 ### Cilësimet hapen thjeshtë

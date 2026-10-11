@@ -75,6 +75,21 @@ namespace LIKAsys.Core
         /// </summary>
         public bool MatchBar = false;
 
+        /// <summary>
+        /// Every reading gets its own pill with its own colour and its own glow, the way
+        /// an RGB build looks. Changes the shape of the card, not just its colours.
+        /// </summary>
+        public bool Capsule = false;
+
+        /// <summary>
+        /// Name of the colour set used when Capsule is on, so two capsule themes do not
+        /// end up looking like the same widget. Empty means the plain accent for all rows.
+        /// </summary>
+        public string Palette = "";
+
+        /// <summary>A small moving graph of the last readings, drawn at the right of each row.</summary>
+        public bool Spark = false;
+
         /// <summary>Short Albanian line shown on the theme card. Goes through Lang.T.</summary>
         public string Note = null;
     }
@@ -91,8 +106,14 @@ namespace LIKAsys.Core
         public const string GLight = "Dritë";
         public const string GKosova = "Kosova";
 
+        /// <summary>
+        /// Every reading in its own coloured pill. These do not look like the other
+        /// groups at all, which is the reason the group exists.
+        /// </summary>
+        public const string GCapsule = "Kapsula";
+
         public static readonly string[] GroupOrder =
-        { GLoja, GPune, GMinimal, GClassic, GLight, GKosova };
+        { GCapsule, GLoja, GPune, GMinimal, GClassic, GLight, GKosova };
 
         public static readonly ThemePreset[] All =
         {
@@ -603,6 +624,121 @@ namespace LIKAsys.Core
                 BgTop="#17264A", BgBottom="#0B1226", Border="#66D4A747", Opacity=0.88,
                 Text="#FFFFFF", Label="#AEBCDB", Detail="#73819E", Track="#1E2E58", Warn="#F0C040", Danger="#E04444" },
 
+            // ==========================================================================
+            //  KAPSULA - one pill per reading, one colour per reading. Nothing in the
+            //  other groups is built like this, so they never blend together.
+            // ==========================================================================
+            new ThemePreset { Name="Neon Pills", Group=GCapsule, Note="secila matje me ngjyrën e vet",
+                Capsule=true, Palette="neon", Spark=true,
+                Accent="#2E9BFF", Accent2="#B14BFF",
+                BgTop="#00000000", BgBottom="#00000000", Border="#00000000",
+                Opacity=0.0, Radius=0, BorderThickness=0, Glow=true, Shadow=false, Gradient=false,
+                Text="#FFFFFF", Label="#93A6BE", Detail="#7E8FA6", Track="#1A2230",
+                Warn="#FFB020", Danger="#FF4D5E",
+                Font="Bahnschrift, Segoe UI", Icons=IconStyle.Outline, IconOff=6,
+                BarStyle=BarStyle.Rounded, BarH=3, Upper=true,
+                ValueOff=4, LabelOff=-3, RowSpace=7, PadH=0, PadV=0,
+                ValueWeight="Bold", LabelWeight="Bold", BrandDot=false },
+
+            new ThemePreset { Name="Neon Pills Dark", Group=GCapsule, Note="kapsula mbi kartelë të zezë",
+                Capsule=true, Palette="neon", Spark=true,
+                Accent="#2E9BFF", Accent2="#FF49C3",
+                BgTop="#0C1018", BgBottom="#05070B", Border="#22FFFFFF",
+                Opacity=0.92, Radius=18, BorderThickness=1, Glow=true, Shadow=true, Gradient=false,
+                Text="#FFFFFF", Label="#93A6BE", Detail="#7E8FA6", Track="#161D29",
+                Font="Bahnschrift, Segoe UI", Icons=IconStyle.Outline, IconOff=6,
+                BarStyle=BarStyle.Rounded, BarH=3, Upper=true,
+                ValueOff=4, LabelOff=-3, RowSpace=6, PadH=11, PadV=10,
+                ValueWeight="Bold", LabelWeight="Bold" },
+
+            new ThemePreset { Name="Ice Pills", Group=GCapsule, Note="vetëm të ftohta, pa ylber",
+                Capsule=true, Palette="ice", Spark=true,
+                Accent="#5AC8FF", Accent2="#7E9BFF",
+                BgTop="#00000000", BgBottom="#00000000", Border="#00000000",
+                Opacity=0.0, Radius=0, BorderThickness=0, Glow=true, Shadow=false, Gradient=false,
+                Text="#EAF6FF", Label="#9FBDD6", Detail="#7E99B4", Track="#17222E",
+                Font="Segoe UI Variable, Segoe UI", Icons=IconStyle.Hairline, IconOff=5,
+                BarStyle=BarStyle.Rounded, BarH=3, Upper=false,
+                ValueOff=3.5, LabelOff=-3, RowSpace=7, PadH=0, PadV=0,
+                ValueWeight="SemiBold", LabelWeight="Medium", BrandDot=false },
+
+            new ThemePreset { Name="Fire Pills", Group=GCapsule, Note="bakër dhe ambër, pa gjelbër",
+                Capsule=true, Palette="fire", Spark=true,
+                Accent="#FF8A3D", Accent2="#FFC247",
+                BgTop="#00000000", BgBottom="#00000000", Border="#00000000",
+                Opacity=0.0, Radius=0, BorderThickness=0, Glow=true, Shadow=false, Gradient=false,
+                Text="#FFF3E6", Label="#C9A88E", Detail="#A8886E", Track="#241A12",
+                Font="Bahnschrift, Segoe UI", Icons=IconStyle.Solid, IconOff=6,
+                BarStyle=BarStyle.Segmented, BarH=5, Upper=true,
+                ValueOff=4, LabelOff=-3, RowSpace=7, PadH=0, PadV=0,
+                ValueWeight="Black", LabelWeight="Bold", BrandDot=false },
+
+            new ThemePreset { Name="Pastel Pills", Group=GCapsule, Note="ngjyra të buta, pa shkëlqim",
+                Capsule=true, Palette="pastel", Spark=false,
+                Accent="#7FB6F2", Accent2="#C0A4F0",
+                BgTop="#00000000", BgBottom="#00000000", Border="#00000000",
+                Opacity=0.0, Radius=0, BorderThickness=0, Glow=false, Shadow=false, Gradient=false,
+                Text="#F2F6FB", Label="#A9BACD", Detail="#8C9DB2", Track="#1C2330",
+                Font="Segoe UI Variable, Segoe UI", Icons=IconStyle.Hairline, IconOff=5,
+                BarStyle=BarStyle.Rounded, BarH=3, Upper=false,
+                ValueOff=3, LabelOff=-3, RowSpace=6, PadH=0, PadV=0,
+                ValueWeight="SemiBold", LabelWeight="Normal", BrandDot=false },
+
+            new ThemePreset { Name="Mono Pills", Group=GCapsule, Note="një ngjyrë, pa zhurmë",
+                Capsule=true, Palette="mono", Spark=false,
+                Accent="#E8F1FF", Accent2="#A9C0E0",
+                BgTop="#00000000", BgBottom="#00000000", Border="#00000000",
+                Opacity=0.0, Radius=0, BorderThickness=0, Glow=false, Shadow=false, Gradient=false,
+                Text="#FFFFFF", Label="#AFC1D6", Detail="#8DA0B6", Track="#1B2330",
+                Font="Cascadia Mono, Consolas", Icons=IconStyle.Hairline, IconOff=4,
+                Bars=false, BarStyle=BarStyle.None, Upper=true,
+                ValueOff=2.5, LabelOff=-3, RowSpace=6, PadH=0, PadV=0,
+                ValueWeight="SemiBold", LabelWeight="Medium", BrandDot=false },
+
+            new ThemePreset { Name="Pills Compact", Group=GCapsule, Note="kapsula pa shirita, vetëm numra",
+                Capsule=true, Palette="neon", Spark=false,
+                Accent="#2BE07A", Accent2="#2E9BFF",
+                BgTop="#00000000", BgBottom="#00000000", Border="#00000000",
+                Opacity=0.0, Radius=0, BorderThickness=0, Glow=true, Shadow=false, Gradient=false,
+                Text="#FFFFFF", Label="#93A6BE", Detail="#7E8FA6", Track="#1A2230",
+                Font="Bahnschrift Condensed, Bahnschrift, Segoe UI", Icons=IconStyle.Outline, IconOff=3,
+                Layout=WidgetLayout.Compact, Bars=false, BarStyle=BarStyle.None, Upper=true,
+                ValueOff=3, LabelOff=-3.5, RowSpace=5, PadH=0, PadV=0,
+                ValueWeight="Bold", LabelWeight="Bold", BrandDot=false },
+
+            new ThemePreset { Name="Pills Bar", Group=GCapsule, Note="kapsula në një rresht, lart në ekran",
+                Capsule=true, Palette="neon", Spark=false, Pos=WidgetPosition.TopCenter,
+                Accent="#19E8FF", Accent2="#B14BFF",
+                BgTop="#00000000", BgBottom="#00000000", Border="#00000000",
+                Opacity=0.0, Radius=0, BorderThickness=0, Glow=true, Shadow=false, Gradient=false,
+                Text="#FFFFFF", Label="#93A6BE", Detail="#7E8FA6", Track="#1A2230",
+                Font="Bahnschrift, Segoe UI", Icons=IconStyle.Outline, IconOff=4,
+                Layout=WidgetLayout.Horizontal, Bars=false, BarStyle=BarStyle.None, Upper=true,
+                ValueOff=3, LabelOff=-3.5, RowSpace=5, PadH=0, PadV=0,
+                ValueWeight="Bold", LabelWeight="Bold", BrandDot=false },
+
+            new ThemePreset { Name="Kosova Pills", Group=GCapsule, Note="blu dhe ar, kapsula",
+                Capsule=true, Palette="kosova", Spark=true,
+                Accent="#2456A6", Accent2="#D4A017",
+                BgTop="#0B1220", BgBottom="#05080F", Border="#2A2456A6",
+                Opacity=0.9, Radius=16, BorderThickness=1, Glow=true, Shadow=true, Gradient=false,
+                Text="#F4F8FF", Label="#9FB2CC", Detail="#7E91AC", Track="#162032",
+                Font="Segoe UI Variable, Segoe UI", Icons=IconStyle.Outline, IconOff=6,
+                BarStyle=BarStyle.Rounded, BarH=3, Upper=true,
+                ValueOff=4, LabelOff=-3, RowSpace=6, PadH=11, PadV=10,
+                ValueWeight="Bold", LabelWeight="Bold" },
+
+            new ThemePreset { Name="Pills Glass", Group=GCapsule, Note="kapsula mbi xham të turbullt",
+                Capsule=true, Palette="ice", Spark=true, Blur=true,
+                Accent="#49E0E8", Accent2="#7E9BFF",
+                BgTop="#141C2A", BgBottom="#0A0F18", Border="#24FFFFFF",
+                Opacity=0.55, Radius=20, BorderThickness=1, Glow=true, Shadow=true, Gradient=false,
+                Text="#F2F8FF", Label="#A6BCD2", Detail="#8599B0", Track="#1A2432",
+                Font="Segoe UI Variable, Segoe UI", Icons=IconStyle.Outline, IconOff=6,
+                BarStyle=BarStyle.Rounded, BarH=3, Upper=false,
+                ValueOff=3.5, LabelOff=-3, RowSpace=6, PadH=12, PadV=11,
+                ValueWeight="SemiBold", LabelWeight="Medium" },
+
             new ThemePreset { Name="Dardania", Group=GKosova, Accent="#E63946", Accent2="#1D3557",
                 BgTop="#1B2437", BgBottom="#0B0F1A", Border="#66E63946", Opacity=0.9,
                 Text="#F1FAEE", Label="#A8B6C8", Detail="#6E7C90", Track="#232F45" },
@@ -675,6 +811,10 @@ namespace LIKAsys.Core
                 s.PaddingH = t.PadH;
                 s.PaddingV = t.PadV;
                 s.RowSpacing = t.RowSpace;
+
+                s.Capsule = t.Capsule;
+                s.Palette = t.Palette ?? "";
+                s.RowSpark = t.Spark;
 
                 s.Layout = t.Layout;
                 s.IconStyle = t.Icons;

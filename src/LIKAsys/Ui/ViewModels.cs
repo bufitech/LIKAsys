@@ -112,6 +112,67 @@ namespace LIKAsys.Ui
         public Visibility UnitVisibility { get => _unitVisibility; set => Set(ref _unitVisibility, value); }
         public Effect IconEffect { get => _iconEffect; set => Set(ref _iconEffect, value); }
         public Thickness RowMargin { get => _rowMargin; set => Set(ref _rowMargin, value); }
+
+        // ---- capsule mode: every reading sits in its own coloured pill
+        public Brush CapsuleBg { get => _capsuleBg; set => Set(ref _capsuleBg, value); }
+        public Brush CapsuleBorder { get => _capsuleBorder; set => Set(ref _capsuleBorder, value); }
+        public Thickness CapsuleThickness { get => _capsuleThickness; set => Set(ref _capsuleThickness, value); }
+        public CornerRadius CapsuleRadius { get => _capsuleRadius; set => Set(ref _capsuleRadius, value); }
+        public Thickness CapsulePad { get => _capsulePad; set => Set(ref _capsulePad, value); }
+        public Effect CapsuleEffect { get => _capsuleEffect; set => Set(ref _capsuleEffect, value); }
+
+        public Brush TileBg { get => _tileBg; set => Set(ref _tileBg, value); }
+        public CornerRadius TileRadius { get => _tileRadius; set => Set(ref _tileRadius, value); }
+        public Thickness TilePad { get => _tilePad; set => Set(ref _tilePad, value); }
+
+        // ---- the little graph of recent readings
+        public Geometry Spark { get => _spark; set => Set(ref _spark, value); }
+        public Brush SparkBrush { get => _sparkBrush; set => Set(ref _sparkBrush, value); }
+        public Visibility SparkVisibility { get => _sparkVisibility; set => Set(ref _sparkVisibility, value); }
+        public double SparkWidth { get => _sparkWidth; set => Set(ref _sparkWidth, value); }
+        public double SparkHeight { get => _sparkHeight; set => Set(ref _sparkHeight, value); }
+
+        private Brush _capsuleBg, _capsuleBorder, _tileBg, _sparkBrush;
+        private Thickness _capsuleThickness, _capsulePad, _tilePad;
+        private CornerRadius _capsuleRadius, _tileRadius;
+        private Effect _capsuleEffect;
+        private Geometry _spark;
+        private Visibility _sparkVisibility = Visibility.Collapsed;
+        private double _sparkWidth = 54, _sparkHeight = 18;
+
+        /// <summary>Last readings, 0..1, oldest first. Only used when the graph is on.</summary>
+        public readonly double[] History = new double[24];
+        private int _hist;
+
+        /// <summary>Pushes one reading and rebuilds the graph. Cheap enough for every tick.</summary>
+        public void PushHistory(double v)
+        {
+            if (double.IsNaN(v) || double.IsInfinity(v)) v = 0;
+            v = v < 0 ? 0 : (v > 1 ? 1 : v);
+
+            for (int i = 0; i < History.Length - 1; i++) History[i] = History[i + 1];
+            History[History.Length - 1] = v;
+            if (_hist < History.Length) _hist++;
+
+            if (_sparkVisibility != Visibility.Visible) return;
+
+            double w = _sparkWidth, h = _sparkHeight;
+            if (w <= 1 || h <= 1) return;
+
+            var fig = new PathFigure { IsClosed = false, IsFilled = false };
+            int n = History.Length;
+            double step = w / (n - 1);
+            for (int i = 0; i < n; i++)
+            {
+                var pt = new Point(i * step, h - 1 - History[i] * (h - 2));
+                if (i == 0) fig.StartPoint = pt;
+                else fig.Segments.Add(new LineSegment(pt, true));
+            }
+            var g = new PathGeometry();
+            g.Figures.Add(fig);
+            g.Freeze();
+            Spark = g;
+        }
     }
 
     /// <summary>double -> GridLength(star) : lets a bar fill a percentage without code-behind math.</summary>

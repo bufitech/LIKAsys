@@ -176,6 +176,72 @@ def main():
     if "ApplyMode();" not in read(os.path.join(SRC, "Ui", "SettingsWindow.xaml.cs")):
         errors.append("the mode is never applied when the window opens")
 
+    # 11. THE SCREENS. Monitors get unplugged. If the lookup or the watcher goes, the
+    #     card ends up at coordinates that no longer belong to any screen.
+    scr = read(os.path.join(SRC, "Core", "Screens.cs"))
+    for need, msg in (
+        ("public static ScreenInfo Pick", "the monitor lookup"),
+        ("public static void Watch", "the watcher for monitors coming and going"),
+        ("public static ScreenInfo Foreground", "follow the game"),
+        ("public static bool OffScreen", "the off screen test"),
+        ("DisplaySettingsChanged", "the Windows notification"),
+    ):
+        if need not in scr:
+            errors.append("screen detection lost " + msg)
+
+    plc = read(os.path.join(SRC, "Ui", "WidgetPlacement.cs"))
+    if "Screens.Pick(s)" not in plc:
+        errors.append("placement no longer asks which monitor to use")
+    if "public static bool IsStranded" not in plc:
+        errors.append("placement lost the stranded card test")
+
+    app = read(os.path.join(SRC, "App.xaml.cs"))
+    for need, msg in (
+        ("WatchScreens();", "the call that starts watching the monitors"),
+        ("IsStranded", "the rescue when a monitor disappears"),
+        ("private void FollowForeground()", "the follow the game move"),
+        ("            FollowForeground();", "the call that follows the game"),
+    ):
+        if need not in app:
+            errors.append("the app lost " + msg)
+
+    # 12. THE CAPSULES. Eleven colours per set, or a reading silently falls back to the
+    #     accent and the theme stops looking like itself.
+    pal = read(os.path.join(SRC, "Core", "Palettes.cs"))
+    sets = re.findall(r'\["(\w+)"\] = new\[\]\s*\{(.*?)\}', pal, re.S)
+    if len(sets) < 6:
+        errors.append("only %d colour sets, there should be at least 6" % len(sets))
+    for name, body in sets:
+        n = len(re.findall(r'"#[0-9A-Fa-f]{6}"', body))
+        if n != 11:
+            errors.append("colour set %s has %d colours, it needs 11" % (name, n))
+
+    if "private void StyleCapsule" not in code:
+        errors.append("the capsule styling is gone")
+    if "r.PushHistory" not in code:
+        errors.append("nothing feeds the small graph any more")
+    if 'CornerRadius="{Binding CapsuleRadius}"' not in xaml:
+        errors.append("the row markup lost the capsule wrapper")
+    if 'Data="{Binding Spark}"' not in xaml:
+        errors.append("the row markup lost the small graph")
+
+    # 13. THE ADVANCED WINDOW. The search is the whole reason it stopped being a wall
+    #     of tabs, so it is worth a guard.
+    pro = read(os.path.join(SRC, "Ui", "SettingsWindow.Pro.cs"))
+    for need, msg in (
+        ("private void Search_Changed", "the search"),
+        ("private void BuildIndex", "the index the search reads"),
+        ("private void JumpTo", "jumping to a found setting"),
+        ("private void SetPageHead", "the page header"),
+        ("private void BuildPalettes", "the colour set picker"),
+    ):
+        if need not in pro:
+            errors.append("the advanced window lost " + msg)
+    if 'x:Name="SearchBox"' not in sx:
+        errors.append("the search box is not in the markup")
+    if 'x:Name="PageTitle"' not in sx:
+        errors.append("the page header is not in the markup")
+
     if errors:
         print("pamja e widget-it ka probleme:")
         for e in errors:
