@@ -85,63 +85,20 @@ namespace LIKAsys.Core
 
         // group keys, in the order the filter chips appear
         public const string GLoja = "Lojëra";
-        public const string GIt = "IT";
-        public const string GGaming = "Gaming";
-        public const string GClassic = "Classic";
-        public const string GGlass = "Qelq";
+        public const string GPune = "Punë";
         public const string GMinimal = "Minimal";
-        public const string GDev = "Dev";
-        public const string GKosova = "Kosova";
+        public const string GClassic = "Klasike";
         public const string GLight = "Dritë";
-        public const string GBare = "Pa sfond";
+        public const string GKosova = "Kosova";
 
         public static readonly string[] GroupOrder =
-        { GLoja, GIt, GBare, GGaming, GClassic, GGlass, GMinimal, GDev, GKosova, GLight };
+        { GLoja, GPune, GMinimal, GClassic, GLight, GKosova };
 
         public static readonly ThemePreset[] All =
         {
             // ==========================================================================
-            //  PA SFOND - no card at all, the numbers float straight on the desktop.
-            //  Every glyph carries its own shadow so it stays readable on any wallpaper.
+            //  LOJËRA - the strip first, then the worlds people know, then the loud ones.
             // ==========================================================================
-            new ThemePreset { Name="Overlay", Group=GBare, Accent="#FFFFFF", Accent2="#D7DEE8",
-                BgTop="#000000", BgBottom="#000000", Border="#00000000", Opacity=0, Radius=0,
-                BorderThickness=0, Shadow=false, Glow=false, Gradient=false, TextShadow=true,
-                Text="#FFFFFF", Label="#D2DAE4", Detail="#A8B2BE", Track="#00000000",
-                Warn="#FFC861", Danger="#FF7A7A",
-                Icons=IconStyle.None, Bars=false, BarStyle=BarStyle.None,
-                PadH=3, PadV=2, RowSpace=1.5, ValueOff=2.5, LabelOff=-2,
-                ValueWeight="Bold", LabelWeight="Medium", Pos=WidgetPosition.TopLeft },
-
-            new ThemePreset { Name="Overlay Neon", Group=GBare, Accent="#00E5FF", Accent2="#7C4DFF",
-                BgTop="#000000", BgBottom="#000000", Border="#00000000", Opacity=0, Radius=0,
-                BorderThickness=0, Shadow=false, Glow=false, Gradient=false, TextShadow=true,
-                Text="#FFFFFF", Label="#9FD9EA", Detail="#7FB2C4", Track="#00000000",
-                Warn="#FFC861", Danger="#FF6B7A",
-                Icons=IconStyle.None, Bars=false, BarStyle=BarStyle.None,
-                PadH=3, PadV=2, RowSpace=1.5, ValueOff=2.5, LabelOff=-2,
-                ValueWeight="Bold", LabelWeight="Medium", Pos=WidgetPosition.TopLeft },
-
-            new ThemePreset { Name="Overlay Amber", Group=GBare, Accent="#FFC247", Accent2="#FF9A3C",
-                BgTop="#000000", BgBottom="#000000", Border="#00000000", Opacity=0, Radius=0,
-                BorderThickness=0, Shadow=false, Glow=false, Gradient=false, TextShadow=true,
-                Text="#FFE8B8", Label="#D8B377", Detail="#AE8C55", Track="#00000000",
-                Warn="#FF9A3C", Danger="#FF6B5B",
-                Icons=IconStyle.None, Bars=false, BarStyle=BarStyle.None,
-                PadH=3, PadV=2, RowSpace=1.5, ValueOff=2.5, LabelOff=-2,
-                ValueWeight="Bold", LabelWeight="Medium", Pos=WidgetPosition.TopLeft },
-
-            new ThemePreset { Name="Overlay Strip", Group=GBare, Accent="#FFFFFF", Accent2="#D7DEE8",
-                BgTop="#000000", BgBottom="#000000", Border="#00000000", Opacity=0, Radius=0,
-                BorderThickness=0, Shadow=false, Glow=false, Gradient=false, TextShadow=true,
-                Text="#FFFFFF", Label="#D2DAE4", Detail="#A8B2BE", Track="#00000000",
-                Warn="#FFC861", Danger="#FF7A7A",
-                Layout=WidgetLayout.Horizontal,
-                Icons=IconStyle.None, Bars=false, BarStyle=BarStyle.None,
-                PadH=3, PadV=2, RowSpace=0, ValueOff=2, LabelOff=-2,
-                ValueWeight="Bold", LabelWeight="Medium", Pos=WidgetPosition.TopLeft },
-
-
             // ==========================================================================
             //  LOJËRA - each one borrows the type, the icons and the palette of a world
             //  people already know. They are meant to look nothing like each other.
@@ -170,15 +127,25 @@ namespace LIKAsys.Core
                 ValueOff=5, LabelOff=-3, RowSpace=4, PadH=15, PadV=11,
                 ValueWeight="Black", LabelWeight="Bold" },
 
-            new ThemePreset { Name="Corpo", Group=GLoja, Note="e kuqe korporate, pa shkëlqim",
-                Accent="#FF2B4E", Accent2="#7A0E20",
-                BgTop="#0C0C0E", BgBottom="#000000", Border="#8CFF2B4E", Opacity=0.93, Radius=0,
-                BorderThickness=2, Text="#F2F3F5", Label="#8E9298", Detail="#5C6066", Track="#1A1B1E",
-                Warn="#FF7A1A", Danger="#FF2B4E", Glow=false, Gradient=false, ShadowAmt=0.75,
-                Font="Bahnschrift SemiBold Condensed, Bahnschrift Condensed, Bahnschrift, Segoe UI",
-                Icons=IconStyle.Outline, IconOff=4, BarStyle=BarStyle.Square, BarH=4, Upper=true,
-                ValueOff=4, LabelOff=-3, RowSpace=3.5, PadH=14, PadV=10,
+            new ThemePreset { Name="Dust", Group=GLoja, Note="rërë dhe blu, rreshta të ngjeshur",
+                Accent="#E8A33C", Accent2="#4B9CD3",
+                BgTop="#1A1C20", BgBottom="#0D0F12", Border="#66E8A33C", Opacity=0.94, Radius=2,
+                BorderThickness=1.2, Text="#EDE7DB", Label="#A49C8E", Detail="#726B5F", Track="#262A30",
+                Warn="#E0B050", Danger="#D4452F", Glow=false, Gradient=false, ShadowAmt=0.55,
+                Font="Bahnschrift SemiCondensed, Bahnschrift, Segoe UI",
+                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Square, BarH=3, Upper=true,
+                ValueOff=2.5, LabelOff=-2.5, RowSpace=2.5, PadH=12, PadV=9,
                 ValueWeight="Bold", LabelWeight="SemiBold" },
+
+            new ThemePreset { Name="Raid", Group=GLoja, Note="ushtarake, shkronja makine shkrimi",
+                Accent="#C8A85A", Accent2="#6E7A4F",
+                BgTop="#1B1D17", BgBottom="#0C0D09", Border="#45C8A85A", Opacity=0.95, Radius=1,
+                BorderThickness=1.2, Text="#DED9C5", Label="#8E8A74", Detail="#62604E", Track="#2A2C20",
+                Warn="#D8A531", Danger="#C0392B", Glow=false, Gradient=false, ShadowAmt=0.6,
+                Font="Consolas, Lucida Console, Courier New",
+                Icons=IconStyle.Outline, IconOff=1, BarStyle=BarStyle.Square, BarH=3, Upper=true,
+                ValueOff=1.5, LabelOff=-2.5, RowSpace=2, PadH=11, PadV=8,
+                ValueWeight="SemiBold", LabelWeight="Medium" },
 
             new ThemePreset { Name="Los Santos", Group=GLoja, Note="jeshile dhe perëndim dielli",
                 Accent="#59B847", Accent2="#F2A33C",
@@ -200,26 +167,6 @@ namespace LIKAsys.Core
                 ValueOff=4.5, LabelOff=-3, RowSpace=4.5, PadH=15, PadV=12,
                 ValueWeight="Black", LabelWeight="Medium" },
 
-            new ThemePreset { Name="Dust", Group=GLoja, Note="rërë dhe blu, rreshta të ngjeshur",
-                Accent="#E8A33C", Accent2="#4B9CD3",
-                BgTop="#1A1C20", BgBottom="#0D0F12", Border="#66E8A33C", Opacity=0.94, Radius=2,
-                BorderThickness=1.2, Text="#EDE7DB", Label="#A49C8E", Detail="#726B5F", Track="#262A30",
-                Warn="#E0B050", Danger="#D4452F", Glow=false, Gradient=false, ShadowAmt=0.55,
-                Font="Bahnschrift SemiCondensed, Bahnschrift, Segoe UI",
-                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Square, BarH=3, Upper=true,
-                ValueOff=2.5, LabelOff=-2.5, RowSpace=2.5, PadH=12, PadV=9,
-                ValueWeight="Bold", LabelWeight="SemiBold" },
-
-            new ThemePreset { Name="Raid", Group=GLoja, Note="ushtarake, shkronja makine shkrimi",
-                Accent="#C8A85A", Accent2="#6E7A4F",
-                BgTop="#1B1D17", BgBottom="#0C0D09", Border="#45C8A85A", Opacity=0.95, Radius=1,
-                BorderThickness=1.2, Text="#DED9C5", Label="#8E8A74", Detail="#62604E", Track="#2A2C20",
-                Warn="#D8A531", Danger="#C0392B", Glow=false, Gradient=false, ShadowAmt=0.6,
-                Font="Consolas, Lucida Console, Courier New",
-                Icons=IconStyle.Outline, IconOff=1, BarStyle=BarStyle.Square, BarH=3, Upper=true,
-                ValueOff=1.5, LabelOff=-2.5, RowSpace=2, PadH=11, PadV=8,
-                ValueWeight="SemiBold", LabelWeight="Medium" },
-
             new ThemePreset { Name="Overworld", Group=GLoja, Note="blloqe dhe ngjyra pikseli",
                 Accent="#5FBF4A", Accent2="#8C6239",
                 BgTop="#303030", BgBottom="#1B1B1B", Border="#705FBF4A", Opacity=0.92, Radius=0,
@@ -240,13 +187,93 @@ namespace LIKAsys.Core
                 ValueOff=2.5, LabelOff=-2, RowSpace=5, PadH=15, PadV=12,
                 ValueWeight="SemiBold", LabelWeight="Normal" },
 
+            new ThemePreset { Name="Corpo", Group=GLoja, Note="e kuqe korporate, pa shkëlqim",
+                Accent="#FF2B4E", Accent2="#7A0E20",
+                BgTop="#0C0C0E", BgBottom="#000000", Border="#8CFF2B4E", Opacity=0.93, Radius=0,
+                BorderThickness=2, Text="#F2F3F5", Label="#8E9298", Detail="#5C6066", Track="#1A1B1E",
+                Warn="#FF7A1A", Danger="#FF2B4E", Glow=false, Gradient=false, ShadowAmt=0.75,
+                Font="Bahnschrift SemiBold Condensed, Bahnschrift Condensed, Bahnschrift, Segoe UI",
+                Icons=IconStyle.Outline, IconOff=4, BarStyle=BarStyle.Square, BarH=4, Upper=true,
+                ValueOff=4, LabelOff=-3, RowSpace=3.5, PadH=14, PadV=10,
+                ValueWeight="Bold", LabelWeight="SemiBold" },
+
+            // ==========================================================================
+            //  GAMING - loud, segmented bars, uppercase labels, oversized numbers
+            // ==========================================================================
+            new ThemePreset { Name="Apex", Group=GLoja, Accent="#00E5FF", Accent2="#2563EB",
+                BgTop="#0B1524", BgBottom="#04070D", Border="#7000E5FF", Opacity=0.88, Radius=8,
+                BorderThickness=1.4, Text="#EAF8FF", Label="#7FA6C4", Detail="#4E6E8A", Track="#122235",
+                Upper=true, BarStyle=BarStyle.Segmented, BarH=5, ValueOff=4.5, LabelOff=-3.5,
+                IconOff=8, RowSpace=4, PadH=14, PadV=11, ValueWeight="Black" },
+
+            new ThemePreset { Name="Overdrive", Group=GLoja, Accent="#FF3B1F", Accent2="#FFA319",
+                BgTop="#1F0A06", BgBottom="#0B0302", Border="#70FF3B1F", Opacity=0.89, Radius=6,
+                BorderThickness=1.5, Text="#FFEDE6", Label="#C2887A", Detail="#8A5A4C", Track="#301009",
+                Warn="#FFA319", Danger="#FF1744",
+                Upper=true, BarStyle=BarStyle.Segmented, BarH=5.5, ValueOff=5, LabelOff=-3.5,
+                IconOff=8, RowSpace=4, PadH=14, PadV=11, ValueWeight="Black" },
+
+            new ThemePreset { Name="Reactor", Group=GLoja, Accent="#FFC400", Accent2="#FF6B00",
+                BgTop="#1C1403", BgBottom="#090600", Border="#70FFC400", Opacity=0.9, Radius=3,
+                BorderThickness=1.6, Text="#FFF4D6", Label="#C0A855", Detail="#8A7536", Track="#2B2007",
+                Warn="#FF6B00", Danger="#FF2D2D",
+                Upper=true, BarStyle=BarStyle.Segmented, BarH=6, ValueOff=5, LabelOff=-3.5,
+                IconOff=8, RowSpace=4.5, PadH=15, PadV=11, ValueWeight="Black" },
+
+            new ThemePreset { Name="Venom", Group=GLoja, Accent="#39FF14", Accent2="#07A317",
+                BgTop="#09180B", BgBottom="#020602", Border="#7039FF14", Opacity=0.9, Radius=5,
+                BorderThickness=1.4, Text="#DFFFD6", Label="#6FB265", Detail="#487A42", Track="#0F2A12",
+                Warn="#D4FF00", Danger="#FF2D2D", Icons=IconStyle.Solid,
+                Upper=true, BarStyle=BarStyle.Segmented, BarH=5, ValueOff=4.5, LabelOff=-3.5,
+                IconOff=8, RowSpace=4, PadH=14, PadV=11, ValueWeight="Black" },
+
+            new ThemePreset { Name="Phantom", Group=GLoja, Accent="#B14AFF", Accent2="#FF3DCB",
+                BgTop="#150B26", BgBottom="#06030E", Border="#70B14AFF", Opacity=0.87, Radius=10,
+                BorderThickness=1.4, Text="#F4E8FF", Label="#A68BC4", Detail="#715C8A", Track="#221339",
+                Upper=true, BarStyle=BarStyle.Segmented, BarH=5, ValueOff=4.5, LabelOff=-3.5,
+                IconOff=8, RowSpace=4, PadH=14, PadV=11, ValueWeight="Black" },
+
+            new ThemePreset { Name="Cyberdeck", Group=GLoja, Accent="#FCEE0A", Accent2="#FF003C",
+                BgTop="#1A0B2E", BgBottom="#0A0119", Border="#70FCEE0A", Opacity=0.88, Radius=4,
+                BorderThickness=1.5, Text="#FBFFE3", Label="#A896CF", Detail="#6F5F96", Track="#281049",
+                Warn="#FF9F1C", Danger="#FF003C",
+                Upper=true, BarStyle=BarStyle.Segmented, BarH=5.5, ValueOff=5, LabelOff=-3.5,
+                IconOff=8, RowSpace=4, PadH=14, PadV=11, ValueWeight="Black" },
+
+            new ThemePreset { Name="Frostbite", Group=GLoja, Accent="#4FD6FF", Accent2="#7C83FF",
+                BgTop="#08192B", BgBottom="#02070D", Border="#704FD6FF", Opacity=0.86, Radius=10,
+                BorderThickness=1.3, Text="#E6F7FF", Label="#84ADC8", Detail="#55788F", Track="#0F2638",
+                Upper=true, BarStyle=BarStyle.Segmented, BarH=5, ValueOff=4.5, LabelOff=-3.5,
+                IconOff=8, RowSpace=4, PadH=14, PadV=11, ValueWeight="Black" },
+
+            new ThemePreset { Name="Bloodline", Group=GLoja, Accent="#FF2740", Accent2="#FF7A8A",
+                BgTop="#1E050B", BgBottom="#0A0103", Border="#70FF2740", Opacity=0.89, Radius=7,
+                BorderThickness=1.4, Text="#FFE6EA", Label="#C07E88", Detail="#8A525B", Track="#2E0A12",
+                Upper=true, BarStyle=BarStyle.Segmented, BarH=5, ValueOff=4.5, LabelOff=-3.5,
+                IconOff=8, RowSpace=4, PadH=14, PadV=11, ValueWeight="Black" },
+
+
+            // ==========================================================================
+            //  PUNË - a desk, a rack, an editor. Terminal first because the IT profile uses it.
+            // ==========================================================================
+            // ==========================================================================
+            //  DEV - editor palettes
+            // ==========================================================================
+            new ThemePreset { Name="Terminal", Group=GPune, Accent="#3DDC97", Accent2="#37B6FF",
+                BgTop="#080C10", BgBottom="#060A0D", Border="#263DDC97", Opacity=0.95, Radius=6,
+                Glow=false, Gradient=false, Text="#DFF5E9", Label="#7E9A8E", Detail="#4F6B60",
+                Track="#16FFFFFF", Warn="#E3B341", Danger="#F85149",
+                Icons=IconStyle.Outline, IconOff=1, BarStyle=BarStyle.Square, BarH=3,
+                PadH=11, PadV=8, RowSpace=2, Font="Cascadia Mono, Consolas, Segoe UI",
+                Upper=true, ValueOff=0, LabelOff=-2, ValueWeight="SemiBold", LabelWeight="Medium",
+                ShadowAmt=0.6 },
 
             // ==========================================================================
             //  IT - the other half of the split. Eight work looks, and none of them
             //  is another palette on the same card: the type, the icons, the bars and
             //  the corners all move.
             // ==========================================================================
-            new ThemePreset { Name="Server Room", Group=GIt, Note="LED-at e rackut mbi çelik të ftohtë",
+            new ThemePreset { Name="Server Room", Group=GPune, Note="LED-at e rackut mbi çelik të ftohtë",
                 Accent="#F5A524", Accent2="#38BDF8",
                 BgTop="#121820", BgBottom="#080B0F", Border="#55F5A524", Opacity=0.94, Radius=2,
                 BorderThickness=1.2, Text="#DCE6F0", Label="#8296AC", Detail="#5A6E82", Track="#1C2530",
@@ -256,7 +283,7 @@ namespace LIKAsys.Core
                 ValueOff=2, LabelOff=-2.5, RowSpace=3, PadH=12, PadV=9,
                 ValueWeight="Bold", LabelWeight="SemiBold" },
 
-            new ThemePreset { Name="Blueprint", Group=GIt, Note="vizatim teknik, vetëm vija të holla",
+            new ThemePreset { Name="Blueprint", Group=GPune, Note="vizatim teknik, vetëm vija të holla",
                 Accent="#7DD3FC", Accent2="#BAE6FD",
                 BgTop="#0B2545", BgBottom="#061A33", Border="#667DD3FC", Opacity=0.93, Radius=0,
                 BorderThickness=1.2, Text="#E8F4FF", Label="#8FB6D9", Detail="#5F87AC", Track="#143158",
@@ -266,62 +293,7 @@ namespace LIKAsys.Core
                 ValueOff=2, LabelOff=-2.5, RowSpace=4, PadH=14, PadV=11,
                 ValueWeight="SemiBold", LabelWeight="Normal" },
 
-            new ThemePreset { Name="Ledger", Group=GIt, Note="fletë e bardhë zyre, jeshile tabele",
-                Accent="#217346", Accent2="#2B579A",
-                BgTop="#FFFFFF", BgBottom="#F3F4F6", Border="#1A000000", Opacity=0.96, Radius=3,
-                BorderThickness=1, Glow=false, Gradient=false, Shadow=true, ShadowAmt=0.3,
-                Text="#1F2328", Label="#5B6470", Detail="#8A929D", Track="#1A000000",
-                Warn="#B45309", Danger="#B91C1C", Colorize=false, BrandDot=false,
-                Font="Calibri, Carlito, Segoe UI",
-                Icons=IconStyle.Outline, IconOff=2, BarStyle=BarStyle.Square, BarH=3, Upper=false,
-                ValueOff=1.5, LabelOff=-2, RowSpace=5, PadH=14, PadV=11,
-                ValueWeight="Bold", LabelWeight="Normal" },
-
-            new ThemePreset { Name="Helpdesk", Group=GIt, Note="e lehtë dhe e qetë, për tavolinë pune",
-                Accent="#2563EB", Accent2="#06B6D4",
-                BgTop="#F8FAFC", BgBottom="#E9EFF7", Border="#14000000", Opacity=0.95, Radius=14,
-                BorderThickness=0, Blur=true, Glow=false, Gradient=true, Shadow=true, ShadowAmt=0.3,
-                Text="#0F172A", Label="#64748B", Detail="#94A3B8", Track="#16000000",
-                Warn="#D97706", Danger="#DC2626", Colorize=false,
-                Font="Trebuchet MS, Tahoma, Segoe UI",
-                Icons=IconStyle.ThreeD, IconOff=5, BarStyle=BarStyle.Rounded, BarH=4, Upper=false,
-                ValueOff=2, LabelOff=-2, RowSpace=6, PadH=15, PadV=12,
-                ValueWeight="Bold", LabelWeight="Medium" },
-
-            new ThemePreset { Name="Memo", Group=GIt, Note="letër e shtypur, bojë e zezë, vijë e kuqe",
-                Accent="#B91C1C", Accent2="#78716C",
-                BgTop="#FAF7F0", BgBottom="#F0EBE0", Border="#22000000", Opacity=0.96, Radius=1,
-                BorderThickness=1, Glow=false, Gradient=false, Shadow=true, ShadowAmt=0.28,
-                Text="#1A1A1A", Label="#57534E", Detail="#8C837A", Track="#1F000000",
-                Warn="#A16207", Danger="#B91C1C", Colorize=false, BrandDot=false,
-                Font="Georgia, Constantia, Cambria",
-                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Square, BarH=2, Upper=false,
-                ValueOff=1.5, LabelOff=-2, RowSpace=5, PadH=15, PadV=12,
-                ValueWeight="SemiBold", LabelWeight="Normal" },
-
-            new ThemePreset { Name="E-Ink", Group=GIt, Note="vetëm bardhë e zi, si lexuesi i librave",
-                Accent="#111111", Accent2="#57534E",
-                BgTop="#F5F5F4", BgBottom="#E7E5E4", Border="#33000000", Opacity=1, Radius=0,
-                BorderThickness=1.6, Glow=false, Gradient=false, Shadow=false,
-                Text="#111111", Label="#44403C", Detail="#78716C", Track="#26000000",
-                Warn="#44403C", Danger="#111111", Colorize=false, BrandDot=false,
-                Font="Verdana, Tahoma, Segoe UI",
-                Icons=IconStyle.Outline, IconOff=2, BarStyle=BarStyle.Square, BarH=3, Upper=false,
-                ValueOff=1, LabelOff=-2, RowSpace=5, PadH=13, PadV=10,
-                ValueWeight="Bold", LabelWeight="Normal" },
-
-            new ThemePreset { Name="Phosphor", Group=GIt, Note="ekran i vjetër me fosfor qelibar",
-                Accent="#FFB000", Accent2="#FF7A00",
-                BgTop="#0C0A06", BgBottom="#040302", Border="#55FFB000", Opacity=0.95, Radius=0,
-                BorderThickness=1.2, Glow=true, Gradient=false, TextShadow=true,
-                Text="#FFCC66", Label="#C79036", Detail="#8A6424", Track="#241A08",
-                Warn="#FFB000", Danger="#FF4D2D",
-                Font="Lucida Console, Consolas, Courier New",
-                Icons=IconStyle.Solid, IconOff=3, BarStyle=BarStyle.Segmented, BarH=4, Upper=true,
-                ValueOff=2.5, LabelOff=-2.5, RowSpace=3, PadH=12, PadV=9,
-                ValueWeight="Bold", LabelWeight="Bold" },
-
-            new ThemePreset { Name="Dynamic Island", Group=GIt, Island=true,
+            new ThemePreset { Name="Dynamic Island", Group=GPune, Island=true,
                 Note="pilulë e zezë që rrotullon matjet dhe hapet kur i afrohesh",
                 Accent="#30D158", Accent2="#0A84FF",
                 BgTop="#060607", BgBottom="#000000", Border="#00000000", Opacity=1, Radius=26,
@@ -334,7 +306,18 @@ namespace LIKAsys.Core
                 ValueWeight="SemiBold", LabelWeight="Medium",
                 Pos=WidgetPosition.TopCenter, BrandDot=true },
 
-            new ThemePreset { Name="Night Shift", Group=GIt, Note="vjollcë e butë, për natën vonë",
+            new ThemePreset { Name="Phosphor", Group=GPune, Note="ekran i vjetër me fosfor qelibar",
+                Accent="#FFB000", Accent2="#FF7A00",
+                BgTop="#0C0A06", BgBottom="#040302", Border="#55FFB000", Opacity=0.95, Radius=0,
+                BorderThickness=1.2, Glow=true, Gradient=false, TextShadow=true,
+                Text="#FFCC66", Label="#C79036", Detail="#8A6424", Track="#241A08",
+                Warn="#FFB000", Danger="#FF4D2D",
+                Font="Lucida Console, Consolas, Courier New",
+                Icons=IconStyle.Solid, IconOff=3, BarStyle=BarStyle.Segmented, BarH=4, Upper=true,
+                ValueOff=2.5, LabelOff=-2.5, RowSpace=3, PadH=12, PadV=9,
+                ValueWeight="Bold", LabelWeight="Bold" },
+
+            new ThemePreset { Name="Night Shift", Group=GPune, Note="vjollcë e butë, për natën vonë",
                 Accent="#818CF8", Accent2="#38BDF8",
                 BgTop="#1E1B33", BgBottom="#120F22", Border="#40818CF8", Opacity=0.9, Radius=10,
                 BorderThickness=1, Glow=false, Gradient=true, Shadow=true, ShadowAmt=0.5,
@@ -345,61 +328,187 @@ namespace LIKAsys.Core
                 ValueOff=2, LabelOff=-2, RowSpace=5, PadH=14, PadV=11,
                 ValueWeight="SemiBold", LabelWeight="Normal" },
 
+            new ThemePreset { Name="Nord", Group=GPune, Accent="#88C0D0", Accent2="#81A1C1",
+                BgTop="#3B4252", BgBottom="#2E3440", Border="#4088C0D0", Opacity=0.93,
+                Text="#ECEFF4", Label="#AEB7C8", Detail="#7A869B", Track="#434C5E", Warn="#EBCB8B", Danger="#BF616A" },
+
+            new ThemePreset { Name="Dracula", Group=GPune, Accent="#BD93F9", Accent2="#FF79C6",
+                BgTop="#343746", BgBottom="#282A36", Border="#40BD93F9", Opacity=0.93,
+                Text="#F8F8F2", Label="#A9B1C9", Detail="#6272A4", Track="#44475A", Warn="#F1FA8C", Danger="#FF5555" },
+
+            new ThemePreset { Name="Tokyo Night", Group=GPune, Accent="#7AA2F7", Accent2="#BB9AF7",
+                BgTop="#24283B", BgBottom="#1A1B26", Border="#407AA2F7", Opacity=0.93,
+                Text="#C0CAF5", Label="#9AA5CE", Detail="#565F89", Track="#2F334D", Warn="#E0AF68", Danger="#F7768E" },
+
+            new ThemePreset { Name="One Dark", Group=GPune, Accent="#61AFEF", Accent2="#C678DD",
+                BgTop="#2C313A", BgBottom="#21252B", Border="#4061AFEF", Opacity=0.93,
+                Text="#ABB2BF", Label="#8A94A6", Detail="#5C6370", Track="#353B45", Warn="#E5C07B", Danger="#E06C75" },
+
+            new ThemePreset { Name="Catppuccin", Group=GPune, Accent="#CBA6F7", Accent2="#89B4FA",
+                BgTop="#2B2B40", BgBottom="#1E1E2E", Border="#40CBA6F7", Opacity=0.93,
+                Text="#CDD6F4", Label="#A6ADC8", Detail="#6C7086", Track="#313244", Warn="#F9E2AF", Danger="#F38BA8" },
+
+            new ThemePreset { Name="Gruvbox", Group=GPune, Accent="#FABD2F", Accent2="#FE8019",
+                BgTop="#3C3836", BgBottom="#282828", Border="#40FABD2F", Opacity=0.94,
+                Text="#EBDBB2", Label="#BDAE93", Detail="#928374", Track="#504945", Warn="#FE8019", Danger="#FB4934" },
+
+            new ThemePreset { Name="Monokai", Group=GPune, Accent="#A6E22E", Accent2="#F92672",
+                BgTop="#3E3D32", BgBottom="#272822", Border="#40A6E22E", Opacity=0.94,
+                Text="#F8F8F2", Label="#BCBCB0", Detail="#75715E", Track="#49483E", Warn="#E6DB74", Danger="#F92672" },
+
+            new ThemePreset { Name="Everforest", Group=GPune, Accent="#A7C080", Accent2="#7FBBB3",
+                BgTop="#374145", BgBottom="#2B3339", Border="#40A7C080", Opacity=0.94,
+                Text="#D3C6AA", Label="#A6B0A0", Detail="#859289", Track="#404C51", Warn="#DBBC7F", Danger="#E67E80" },
+
+            new ThemePreset { Name="Solarized", Group=GPune, Accent="#2AA198", Accent2="#B58900",
+                BgTop="#073642", BgBottom="#002B36", Border="#402AA198", Opacity=0.94,
+                Text="#EEE8D5", Label="#93A1A1", Detail="#657B83", Track="#0C4A58", Warn="#B58900", Danger="#DC322F" },
+
+            new ThemePreset { Name="Ledger", Group=GPune, Note="fletë e bardhë zyre, jeshile tabele",
+                Accent="#217346", Accent2="#2B579A",
+                BgTop="#FFFFFF", BgBottom="#F3F4F6", Border="#1A000000", Opacity=0.96, Radius=3,
+                BorderThickness=1, Glow=false, Gradient=false, Shadow=true, ShadowAmt=0.3,
+                Text="#1F2328", Label="#5B6470", Detail="#8A929D", Track="#1A000000",
+                Warn="#B45309", Danger="#B91C1C", Colorize=false, BrandDot=false,
+                Font="Calibri, Carlito, Segoe UI",
+                Icons=IconStyle.Outline, IconOff=2, BarStyle=BarStyle.Square, BarH=3, Upper=false,
+                ValueOff=1.5, LabelOff=-2, RowSpace=5, PadH=14, PadV=11,
+                ValueWeight="Bold", LabelWeight="Normal" },
+
+            new ThemePreset { Name="Helpdesk", Group=GPune, Note="e lehtë dhe e qetë, për tavolinë pune",
+                Accent="#2563EB", Accent2="#06B6D4",
+                BgTop="#F8FAFC", BgBottom="#E9EFF7", Border="#14000000", Opacity=0.95, Radius=14,
+                BorderThickness=0, Blur=true, Glow=false, Gradient=true, Shadow=true, ShadowAmt=0.3,
+                Text="#0F172A", Label="#64748B", Detail="#94A3B8", Track="#16000000",
+                Warn="#D97706", Danger="#DC2626", Colorize=false,
+                Font="Trebuchet MS, Tahoma, Segoe UI",
+                Icons=IconStyle.ThreeD, IconOff=5, BarStyle=BarStyle.Rounded, BarH=4, Upper=false,
+                ValueOff=2, LabelOff=-2, RowSpace=6, PadH=15, PadV=12,
+                ValueWeight="Bold", LabelWeight="Medium" },
+
+            new ThemePreset { Name="Memo", Group=GPune, Note="letër e shtypur, bojë e zezë, vijë e kuqe",
+                Accent="#B91C1C", Accent2="#78716C",
+                BgTop="#FAF7F0", BgBottom="#F0EBE0", Border="#22000000", Opacity=0.96, Radius=1,
+                BorderThickness=1, Glow=false, Gradient=false, Shadow=true, ShadowAmt=0.28,
+                Text="#1A1A1A", Label="#57534E", Detail="#8C837A", Track="#1F000000",
+                Warn="#A16207", Danger="#B91C1C", Colorize=false, BrandDot=false,
+                Font="Georgia, Constantia, Cambria",
+                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Square, BarH=2, Upper=false,
+                ValueOff=1.5, LabelOff=-2, RowSpace=5, PadH=15, PadV=12,
+                ValueWeight="SemiBold", LabelWeight="Normal" },
+
+            new ThemePreset { Name="E-Ink", Group=GPune, Note="vetëm bardhë e zi, si lexuesi i librave",
+                Accent="#111111", Accent2="#57534E",
+                BgTop="#F5F5F4", BgBottom="#E7E5E4", Border="#33000000", Opacity=1, Radius=0,
+                BorderThickness=1.6, Glow=false, Gradient=false, Shadow=false,
+                Text="#111111", Label="#44403C", Detail="#78716C", Track="#26000000",
+                Warn="#44403C", Danger="#111111", Colorize=false, BrandDot=false,
+                Font="Verdana, Tahoma, Segoe UI",
+                Icons=IconStyle.Outline, IconOff=2, BarStyle=BarStyle.Square, BarH=3, Upper=false,
+                ValueOff=1, LabelOff=-2, RowSpace=5, PadH=13, PadV=10,
+                ValueWeight="Bold", LabelWeight="Normal" },
+
+
             // ==========================================================================
-            //  GAMING - loud, segmented bars, uppercase labels, oversized numbers
+            //  MINIMAL - quiet looks: flat, glass, or no card at all.
             // ==========================================================================
-            new ThemePreset { Name="Apex", Group=GGaming, Accent="#00E5FF", Accent2="#2563EB",
-                BgTop="#0B1524", BgBottom="#04070D", Border="#7000E5FF", Opacity=0.88, Radius=8,
-                BorderThickness=1.4, Text="#EAF8FF", Label="#7FA6C4", Detail="#4E6E8A", Track="#122235",
-                Upper=true, BarStyle=BarStyle.Segmented, BarH=5, ValueOff=4.5, LabelOff=-3.5,
-                IconOff=8, RowSpace=4, PadH=14, PadV=11, ValueWeight="Black" },
+            // ==========================================================================
+            //  QELQ / GLASS
+            // ==========================================================================
+            new ThemePreset { Name="Midnight Glass", Group=GMinimal, Accent="#00E5FF", Accent2="#7C4DFF",
+                BgTop="#151C2B", BgBottom="#0A0D14", Border="#4D00E5FF", Blur=true, Opacity=0.72 },
 
-            new ThemePreset { Name="Overdrive", Group=GGaming, Accent="#FF3B1F", Accent2="#FFA319",
-                BgTop="#1F0A06", BgBottom="#0B0302", Border="#70FF3B1F", Opacity=0.89, Radius=6,
-                BorderThickness=1.5, Text="#FFEDE6", Label="#C2887A", Detail="#8A5A4C", Track="#301009",
-                Warn="#FFA319", Danger="#FF1744",
-                Upper=true, BarStyle=BarStyle.Segmented, BarH=5.5, ValueOff=5, LabelOff=-3.5,
-                IconOff=8, RowSpace=4, PadH=14, PadV=11, ValueWeight="Black" },
+            // ==========================================================================
+            //  MINIMAL
+            // ==========================================================================
+            new ThemePreset { Name="Obsidian", Group=GMinimal, Accent="#9CA3AF", Accent2="#6B7280",
+                BgTop="#121214", BgBottom="#0A0A0C", Border="#1FFFFFFF", Opacity=0.94,
+                Glow=false, Icons=IconStyle.Outline, Label="#8A8F99", Detail="#5A6068", Track="#1E1F23" },
 
-            new ThemePreset { Name="Venom", Group=GGaming, Accent="#39FF14", Accent2="#07A317",
-                BgTop="#09180B", BgBottom="#020602", Border="#7039FF14", Opacity=0.9, Radius=5,
-                BorderThickness=1.4, Text="#DFFFD6", Label="#6FB265", Detail="#487A42", Track="#0F2A12",
-                Warn="#D4FF00", Danger="#FF2D2D", Icons=IconStyle.Solid,
-                Upper=true, BarStyle=BarStyle.Segmented, BarH=5, ValueOff=4.5, LabelOff=-3.5,
-                IconOff=8, RowSpace=4, PadH=14, PadV=11, ValueWeight="Black" },
+            new ThemePreset { Name="Pure Black", Group=GMinimal, Accent="#FFFFFF", Accent2="#A3A3A3",
+                BgTop="#000000", BgBottom="#000000", Border="#1AFFFFFF", Opacity=1.0, Radius=10,
+                Glow=false, Shadow=false, Icons=IconStyle.Outline,
+                Text="#FFFFFF", Label="#8E8E93", Detail="#5A5A5F", Track="#1C1C1E" },
 
-            new ThemePreset { Name="Phantom", Group=GGaming, Accent="#B14AFF", Accent2="#FF3DCB",
-                BgTop="#150B26", BgBottom="#06030E", Border="#70B14AFF", Opacity=0.87, Radius=10,
-                BorderThickness=1.4, Text="#F4E8FF", Label="#A68BC4", Detail="#715C8A", Track="#221339",
-                Upper=true, BarStyle=BarStyle.Segmented, BarH=5, ValueOff=4.5, LabelOff=-3.5,
-                IconOff=8, RowSpace=4, PadH=14, PadV=11, ValueWeight="Black" },
+            new ThemePreset { Name="Carbon", Group=GMinimal, Accent="#8B95A5", Accent2="#5B6472",
+                BgTop="#17191E", BgBottom="#0E1013", Border="#1AFFFFFF", Opacity=0.92,
+                Glow=false, Bars=false, BarStyle=BarStyle.None, Icons=IconStyle.Outline,
+                Label="#7D8796", Track="#22252B" },
 
-            new ThemePreset { Name="Reactor", Group=GGaming, Accent="#FFC400", Accent2="#FF6B00",
-                BgTop="#1C1403", BgBottom="#090600", Border="#70FFC400", Opacity=0.9, Radius=3,
-                BorderThickness=1.6, Text="#FFF4D6", Label="#C0A855", Detail="#8A7536", Track="#2B2007",
-                Warn="#FF6B00", Danger="#FF2D2D",
-                Upper=true, BarStyle=BarStyle.Segmented, BarH=6, ValueOff=5, LabelOff=-3.5,
-                IconOff=8, RowSpace=4.5, PadH=15, PadV=11, ValueWeight="Black" },
+            new ThemePreset { Name="Slate", Group=GMinimal, Accent="#94A3B8", Accent2="#64748B",
+                BgTop="#1E293B", BgBottom="#0F172A", Border="#2694A3B8", Opacity=0.9,
+                Glow=false, Label="#94A3B8", Detail="#64748B", Track="#293548" },
 
-            new ThemePreset { Name="Cyberdeck", Group=GGaming, Accent="#FCEE0A", Accent2="#FF003C",
-                BgTop="#1A0B2E", BgBottom="#0A0119", Border="#70FCEE0A", Opacity=0.88, Radius=4,
-                BorderThickness=1.5, Text="#FBFFE3", Label="#A896CF", Detail="#6F5F96", Track="#281049",
-                Warn="#FF9F1C", Danger="#FF003C",
-                Upper=true, BarStyle=BarStyle.Segmented, BarH=5.5, ValueOff=5, LabelOff=-3.5,
-                IconOff=8, RowSpace=4, PadH=14, PadV=11, ValueWeight="Black" },
+            new ThemePreset { Name="Graphite", Group=GMinimal, Accent="#60A5FA", Accent2="#3B82F6",
+                BgTop="#1C1F26", BgBottom="#121419", Border="#2660A5FA", Opacity=0.93, Glow=false,
+                Label="#8C97A8", Detail="#5C6675", Track="#242830" },
 
-            new ThemePreset { Name="Frostbite", Group=GGaming, Accent="#4FD6FF", Accent2="#7C83FF",
-                BgTop="#08192B", BgBottom="#02070D", Border="#704FD6FF", Opacity=0.86, Radius=10,
-                BorderThickness=1.3, Text="#E6F7FF", Label="#84ADC8", Detail="#55788F", Track="#0F2638",
-                Upper=true, BarStyle=BarStyle.Segmented, BarH=5, ValueOff=4.5, LabelOff=-3.5,
-                IconOff=8, RowSpace=4, PadH=14, PadV=11, ValueWeight="Black" },
+            new ThemePreset { Name="Mono", Group=GMinimal, Accent="#E5E7EB", Accent2="#9CA3AF",
+                BgTop="#0C0C0E", BgBottom="#060607", Border="#14FFFFFF", Opacity=0.90, Radius=8,
+                Glow=false, Bars=false, BarStyle=BarStyle.None, Icons=IconStyle.None,
+                Label="#7A7F88", Detail="#4E535B" },
 
-            new ThemePreset { Name="Bloodline", Group=GGaming, Accent="#FF2740", Accent2="#FF7A8A",
-                BgTop="#1E050B", BgBottom="#0A0103", Border="#70FF2740", Opacity=0.89, Radius=7,
-                BorderThickness=1.4, Text="#FFE6EA", Label="#C07E88", Detail="#8A525B", Track="#2E0A12",
-                Upper=true, BarStyle=BarStyle.Segmented, BarH=5, ValueOff=4.5, LabelOff=-3.5,
-                IconOff=8, RowSpace=4, PadH=14, PadV=11, ValueWeight="Black" },
+            new ThemePreset { Name="Clear", Group=GMinimal, Accent="#9FE8FF", Accent2="#FFFFFF",
+                BgTop="#1A2434", BgBottom="#0E141F", Border="#1FFFFFFF", Blur=true, Opacity=0.38,
+                Radius=16, Glow=false, Icons=IconStyle.Outline },
 
+            new ThemePreset { Name="Frost", Group=GMinimal, Accent="#BFEAFF", Accent2="#7DD3FC",
+                BgTop="#142433", BgBottom="#0A131C", Border="#55BFEAFF", Blur=true, Opacity=0.62,
+                Label="#A7C0D6", Detail="#6B8299", Track="#1E2E3E" },
+
+            new ThemePreset { Name="Smoke", Group=GMinimal, Accent="#CBD5E1", Accent2="#94A3B8",
+                BgTop="#1E222A", BgBottom="#101318", Border="#26FFFFFF", Blur=true, Opacity=0.58,
+                Glow=false, Icons=IconStyle.Outline, Label="#9AA6B5", Track="#262C36" },
+
+            new ThemePreset { Name="Aurora", Group=GMinimal, Accent="#5EEAD4", Accent2="#A78BFA",
+                BgTop="#10243A", BgBottom="#140E26", Border="#555EEAD4", Blur=true, Opacity=0.70,
+                Label="#9FB8C8", Track="#1C2C3C" },
+
+            // ==========================================================================
+            //  PA SFOND - no card at all, the numbers float straight on the desktop.
+            //  Every glyph carries its own shadow so it stays readable on any wallpaper.
+            // ==========================================================================
+            new ThemePreset { Name="Overlay", Group=GMinimal, Accent="#FFFFFF", Accent2="#D7DEE8",
+                BgTop="#000000", BgBottom="#000000", Border="#00000000", Opacity=0, Radius=0,
+                BorderThickness=0, Shadow=false, Glow=false, Gradient=false, TextShadow=true,
+                Text="#FFFFFF", Label="#D2DAE4", Detail="#A8B2BE", Track="#00000000",
+                Warn="#FFC861", Danger="#FF7A7A",
+                Icons=IconStyle.None, Bars=false, BarStyle=BarStyle.None,
+                PadH=3, PadV=2, RowSpace=1.5, ValueOff=2.5, LabelOff=-2,
+                ValueWeight="Bold", LabelWeight="Medium", Pos=WidgetPosition.TopLeft },
+
+            new ThemePreset { Name="Overlay Neon", Group=GMinimal, Accent="#00E5FF", Accent2="#7C4DFF",
+                BgTop="#000000", BgBottom="#000000", Border="#00000000", Opacity=0, Radius=0,
+                BorderThickness=0, Shadow=false, Glow=false, Gradient=false, TextShadow=true,
+                Text="#FFFFFF", Label="#9FD9EA", Detail="#7FB2C4", Track="#00000000",
+                Warn="#FFC861", Danger="#FF6B7A",
+                Icons=IconStyle.None, Bars=false, BarStyle=BarStyle.None,
+                PadH=3, PadV=2, RowSpace=1.5, ValueOff=2.5, LabelOff=-2,
+                ValueWeight="Bold", LabelWeight="Medium", Pos=WidgetPosition.TopLeft },
+
+            new ThemePreset { Name="Overlay Amber", Group=GMinimal, Accent="#FFC247", Accent2="#FF9A3C",
+                BgTop="#000000", BgBottom="#000000", Border="#00000000", Opacity=0, Radius=0,
+                BorderThickness=0, Shadow=false, Glow=false, Gradient=false, TextShadow=true,
+                Text="#FFE8B8", Label="#D8B377", Detail="#AE8C55", Track="#00000000",
+                Warn="#FF9A3C", Danger="#FF6B5B",
+                Icons=IconStyle.None, Bars=false, BarStyle=BarStyle.None,
+                PadH=3, PadV=2, RowSpace=1.5, ValueOff=2.5, LabelOff=-2,
+                ValueWeight="Bold", LabelWeight="Medium", Pos=WidgetPosition.TopLeft },
+
+            new ThemePreset { Name="Overlay Strip", Group=GMinimal, Accent="#FFFFFF", Accent2="#D7DEE8",
+                BgTop="#000000", BgBottom="#000000", Border="#00000000", Opacity=0, Radius=0,
+                BorderThickness=0, Shadow=false, Glow=false, Gradient=false, TextShadow=true,
+                Text="#FFFFFF", Label="#D2DAE4", Detail="#A8B2BE", Track="#00000000",
+                Warn="#FFC861", Danger="#FF7A7A",
+                Layout=WidgetLayout.Horizontal,
+                Icons=IconStyle.None, Bars=false, BarStyle=BarStyle.None,
+                PadH=3, PadV=2, RowSpace=0, ValueOff=2, LabelOff=-2,
+                ValueWeight="Bold", LabelWeight="Medium", Pos=WidgetPosition.TopLeft },
+
+
+            // ==========================================================================
+            //  KLASIKE - the first LIKAsys look and its variants.
+            // ==========================================================================
             // ==========================================================================
             //  CLASSIC - nothing but the words and the numbers
             // ==========================================================================
@@ -449,116 +558,21 @@ namespace LIKAsys.Core
                 Gradient=false, ValueOff=1.5, LabelOff=-2, RowSpace=0, PadH=12, PadV=7,
                 ValueWeight="SemiBold", LabelWeight="Normal" },
 
-            // ==========================================================================
-            //  QELQ / GLASS
-            // ==========================================================================
-            new ThemePreset { Name="Midnight Glass", Group=GGlass, Accent="#00E5FF", Accent2="#7C4DFF",
-                BgTop="#151C2B", BgBottom="#0A0D14", Border="#4D00E5FF", Blur=true, Opacity=0.72 },
-
-            new ThemePreset { Name="Clear", Group=GGlass, Accent="#9FE8FF", Accent2="#FFFFFF",
-                BgTop="#1A2434", BgBottom="#0E141F", Border="#1FFFFFFF", Blur=true, Opacity=0.38,
-                Radius=16, Glow=false, Icons=IconStyle.Outline },
-
-            new ThemePreset { Name="Frost", Group=GGlass, Accent="#BFEAFF", Accent2="#7DD3FC",
-                BgTop="#142433", BgBottom="#0A131C", Border="#55BFEAFF", Blur=true, Opacity=0.62,
-                Label="#A7C0D6", Detail="#6B8299", Track="#1E2E3E" },
-
-            new ThemePreset { Name="Aurora", Group=GGlass, Accent="#5EEAD4", Accent2="#A78BFA",
-                BgTop="#10243A", BgBottom="#140E26", Border="#555EEAD4", Blur=true, Opacity=0.70,
-                Label="#9FB8C8", Track="#1C2C3C" },
-
-            new ThemePreset { Name="Smoke", Group=GGlass, Accent="#CBD5E1", Accent2="#94A3B8",
-                BgTop="#1E222A", BgBottom="#101318", Border="#26FFFFFF", Blur=true, Opacity=0.58,
-                Glow=false, Icons=IconStyle.Outline, Label="#9AA6B5", Track="#262C36" },
 
             // ==========================================================================
-            //  MINIMAL
+            //  DRITË - for a bright desktop.
             // ==========================================================================
-            new ThemePreset { Name="Obsidian", Group=GMinimal, Accent="#9CA3AF", Accent2="#6B7280",
-                BgTop="#121214", BgBottom="#0A0A0C", Border="#1FFFFFFF", Opacity=0.94,
-                Glow=false, Icons=IconStyle.Outline, Label="#8A8F99", Detail="#5A6068", Track="#1E1F23" },
-
-            new ThemePreset { Name="Pure Black", Group=GMinimal, Accent="#FFFFFF", Accent2="#A3A3A3",
-                BgTop="#000000", BgBottom="#000000", Border="#1AFFFFFF", Opacity=1.0, Radius=10,
-                Glow=false, Shadow=false, Icons=IconStyle.Outline,
-                Text="#FFFFFF", Label="#8E8E93", Detail="#5A5A5F", Track="#1C1C1E" },
-
-            new ThemePreset { Name="Carbon", Group=GMinimal, Accent="#8B95A5", Accent2="#5B6472",
-                BgTop="#17191E", BgBottom="#0E1013", Border="#1AFFFFFF", Opacity=0.92,
-                Glow=false, Bars=false, BarStyle=BarStyle.None, Icons=IconStyle.Outline,
-                Label="#7D8796", Track="#22252B" },
-
-            new ThemePreset { Name="Mono", Group=GMinimal, Accent="#E5E7EB", Accent2="#9CA3AF",
-                BgTop="#0C0C0E", BgBottom="#060607", Border="#14FFFFFF", Opacity=0.90, Radius=8,
-                Glow=false, Bars=false, BarStyle=BarStyle.None, Icons=IconStyle.None,
-                Label="#7A7F88", Detail="#4E535B" },
-
-            new ThemePreset { Name="Slate", Group=GMinimal, Accent="#94A3B8", Accent2="#64748B",
-                BgTop="#1E293B", BgBottom="#0F172A", Border="#2694A3B8", Opacity=0.9,
-                Glow=false, Label="#94A3B8", Detail="#64748B", Track="#293548" },
-
-            new ThemePreset { Name="Graphite", Group=GMinimal, Accent="#60A5FA", Accent2="#3B82F6",
-                BgTop="#1C1F26", BgBottom="#121419", Border="#2660A5FA", Opacity=0.93, Glow=false,
-                Label="#8C97A8", Detail="#5C6675", Track="#242830" },
-
-            // ==========================================================================
-            //  DEV - editor palettes
-            // ==========================================================================
-            new ThemePreset { Name="Terminal", Group=GDev, Accent="#3DDC97", Accent2="#37B6FF",
-                BgTop="#080C10", BgBottom="#060A0D", Border="#263DDC97", Opacity=0.95, Radius=6,
-                Glow=false, Gradient=false, Text="#DFF5E9", Label="#7E9A8E", Detail="#4F6B60",
-                Track="#16FFFFFF", Warn="#E3B341", Danger="#F85149",
-                Icons=IconStyle.Outline, IconOff=1, BarStyle=BarStyle.Square, BarH=3,
-                PadH=11, PadV=8, RowSpace=2, Font="Cascadia Mono, Consolas, Segoe UI",
-                Upper=true, ValueOff=0, LabelOff=-2, ValueWeight="SemiBold", LabelWeight="Medium",
-                ShadowAmt=0.6 },
-
-            new ThemePreset { Name="Nord", Group=GDev, Accent="#88C0D0", Accent2="#81A1C1",
-                BgTop="#3B4252", BgBottom="#2E3440", Border="#4088C0D0", Opacity=0.93,
-                Text="#ECEFF4", Label="#AEB7C8", Detail="#7A869B", Track="#434C5E", Warn="#EBCB8B", Danger="#BF616A" },
-
-            new ThemePreset { Name="Dracula", Group=GDev, Accent="#BD93F9", Accent2="#FF79C6",
-                BgTop="#343746", BgBottom="#282A36", Border="#40BD93F9", Opacity=0.93,
-                Text="#F8F8F2", Label="#A9B1C9", Detail="#6272A4", Track="#44475A", Warn="#F1FA8C", Danger="#FF5555" },
-
-            new ThemePreset { Name="Tokyo Night", Group=GDev, Accent="#7AA2F7", Accent2="#BB9AF7",
-                BgTop="#24283B", BgBottom="#1A1B26", Border="#407AA2F7", Opacity=0.93,
-                Text="#C0CAF5", Label="#9AA5CE", Detail="#565F89", Track="#2F334D", Warn="#E0AF68", Danger="#F7768E" },
-
-            new ThemePreset { Name="Catppuccin", Group=GDev, Accent="#CBA6F7", Accent2="#89B4FA",
-                BgTop="#2B2B40", BgBottom="#1E1E2E", Border="#40CBA6F7", Opacity=0.93,
-                Text="#CDD6F4", Label="#A6ADC8", Detail="#6C7086", Track="#313244", Warn="#F9E2AF", Danger="#F38BA8" },
-
-            new ThemePreset { Name="Gruvbox", Group=GDev, Accent="#FABD2F", Accent2="#FE8019",
-                BgTop="#3C3836", BgBottom="#282828", Border="#40FABD2F", Opacity=0.94,
-                Text="#EBDBB2", Label="#BDAE93", Detail="#928374", Track="#504945", Warn="#FE8019", Danger="#FB4934" },
-
-            new ThemePreset { Name="Solarized", Group=GDev, Accent="#2AA198", Accent2="#B58900",
-                BgTop="#073642", BgBottom="#002B36", Border="#402AA198", Opacity=0.94,
-                Text="#EEE8D5", Label="#93A1A1", Detail="#657B83", Track="#0C4A58", Warn="#B58900", Danger="#DC322F" },
-
-            new ThemePreset { Name="One Dark", Group=GDev, Accent="#61AFEF", Accent2="#C678DD",
-                BgTop="#2C313A", BgBottom="#21252B", Border="#4061AFEF", Opacity=0.93,
-                Text="#ABB2BF", Label="#8A94A6", Detail="#5C6370", Track="#353B45", Warn="#E5C07B", Danger="#E06C75" },
-
-            new ThemePreset { Name="Monokai", Group=GDev, Accent="#A6E22E", Accent2="#F92672",
-                BgTop="#3E3D32", BgBottom="#272822", Border="#40A6E22E", Opacity=0.94,
-                Text="#F8F8F2", Label="#BCBCB0", Detail="#75715E", Track="#49483E", Warn="#E6DB74", Danger="#F92672" },
-
-            new ThemePreset { Name="Everforest", Group=GDev, Accent="#A7C080", Accent2="#7FBBB3",
-                BgTop="#374145", BgBottom="#2B3339", Border="#40A7C080", Opacity=0.94,
-                Text="#D3C6AA", Label="#A6B0A0", Detail="#859289", Track="#404C51", Warn="#DBBC7F", Danger="#E67E80" },
-
-            // ==========================================================================
-            //  KOSOVA
-            // ==========================================================================
-            new ThemePreset { Name="Kosova", Group=GKosova, Accent="#D4A747", Accent2="#2449A4",
-                BgTop="#17264A", BgBottom="#0B1226", Border="#66D4A747", Opacity=0.88,
-                Text="#FFFFFF", Label="#AEBCDB", Detail="#73819E", Track="#1E2E58", Warn="#F0C040", Danger="#E04444" },
-
-            new ThemePreset { Name="Dardania", Group=GKosova, Accent="#E63946", Accent2="#1D3557",
-                BgTop="#1B2437", BgBottom="#0B0F1A", Border="#66E63946", Opacity=0.9,
-                Text="#F1FAEE", Label="#A8B6C8", Detail="#6E7C90", Track="#232F45" },
+            // The quiet one. White frosted glass, no border at all, no glow, hairline icons
+            // and sentence-case labels - an IT widget that behaves like a macOS one.
+            new ThemePreset { Name="Apple Clean", Group=GLight, Accent="#0A84FF", Accent2="#5AC8FA",
+                BgTop="#FFFFFF", BgBottom="#F2F4F8", Border="#14000000", Opacity=0.95, Radius=18,
+                BorderThickness=0, Blur=true, Glow=false, Gradient=false, Shadow=true, ShadowAmt=0.35,
+                Text="#1D1D1F", Label="#6E6E73", Detail="#9A9AA0", Track="#14000000",
+                Warn="#FF9F0A", Danger="#FF3B30", Colorize=false, BrandDot=false,
+                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Rounded, BarH=3,
+                PadH=16, PadV=13, RowSpace=6,
+                Font="Segoe UI Variable Display, Segoe UI Variable, Segoe UI",
+                Upper=false, ValueOff=1, LabelOff=-2, ValueWeight="Medium", LabelWeight="Normal" },
 
             // ==========================================================================
             //  DRITË / LIGHT
@@ -573,22 +587,26 @@ namespace LIKAsys.Core
                 Icons=IconStyle.Outline, Text="#1C1917", Label="#57534E", Detail="#A8A29E",
                 Track="#E3DBCB", Warn="#CA8A04", Danger="#B91C1C" },
 
-            // The quiet one. White frosted glass, no border at all, no glow, hairline icons
-            // and sentence-case labels - an IT widget that behaves like a macOS one.
-            new ThemePreset { Name="Apple Clean", Group=GLight, Accent="#0A84FF", Accent2="#5AC8FA",
-                BgTop="#FFFFFF", BgBottom="#F2F4F8", Border="#14000000", Opacity=0.95, Radius=18,
-                BorderThickness=0, Blur=true, Glow=false, Gradient=false, Shadow=true, ShadowAmt=0.35,
-                Text="#1D1D1F", Label="#6E6E73", Detail="#9A9AA0", Track="#14000000",
-                Warn="#FF9F0A", Danger="#FF3B30", Colorize=false, BrandDot=false,
-                Icons=IconStyle.Hairline, IconOff=2, BarStyle=BarStyle.Rounded, BarH=3,
-                PadH=16, PadV=13, RowSpace=6,
-                Font="Segoe UI Variable Display, Segoe UI Variable, Segoe UI",
-                Upper=false, ValueOff=1, LabelOff=-2, ValueWeight="Medium", LabelWeight="Normal" },
-
             new ThemePreset { Name="Light Glass", Group=GLight, Accent="#2563EB", Accent2="#7C3AED",
                 BgTop="#FFFFFF", BgBottom="#DDE6F2", Border="#330F172A", Blur=true, Opacity=0.55,
                 Glow=false, Icons=IconStyle.Outline, Text="#0F172A", Label="#475569", Detail="#8494A8",
                 Track="#CBD5E1", Warn="#D97706", Danger="#DC2626" },
+
+
+            // ==========================================================================
+            //  KOSOVA.
+            // ==========================================================================
+            // ==========================================================================
+            //  KOSOVA
+            // ==========================================================================
+            new ThemePreset { Name="Kosova", Group=GKosova, Accent="#D4A747", Accent2="#2449A4",
+                BgTop="#17264A", BgBottom="#0B1226", Border="#66D4A747", Opacity=0.88,
+                Text="#FFFFFF", Label="#AEBCDB", Detail="#73819E", Track="#1E2E58", Warn="#F0C040", Danger="#E04444" },
+
+            new ThemePreset { Name="Dardania", Group=GKosova, Accent="#E63946", Accent2="#1D3557",
+                BgTop="#1B2437", BgBottom="#0B0F1A", Border="#66E63946", Opacity=0.9,
+                Text="#F1FAEE", Label="#A8B6C8", Detail="#6E7C90", Track="#232F45" },
+
         };
 
         public static ThemePreset Find(string name)

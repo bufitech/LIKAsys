@@ -20,7 +20,10 @@ namespace LIKAsys.Ui
         private readonly MetricsService _metrics;
         private bool _loading = true;
 
-        private string _group = "*";
+        // Opening the list on "all" means 63 cards at once and nobody finds anything.
+        // Start on the group that holds the theme already in use.
+        private string _group = ThemeLibrary.GLoja;
+        private bool _groupPicked;
         private readonly List<Border> _cards = new List<Border>();
         private readonly List<Action> _colorRefresh = new List<Action>();
 
@@ -139,6 +142,9 @@ namespace LIKAsys.Ui
 
         private void BuildThemeTab()
         {
+            if (!_groupPicked)
+                _group = ThemeLibrary.Find(_settings.ThemeName).Group;
+
             GroupFilter.Children.Clear();
             AddChip(Lang.T("Të gjitha"), "*", _group == "*");
             foreach (var g in ThemeLibrary.Groups) AddChip(Lang.T(g), g, _group == g);
@@ -181,6 +187,7 @@ namespace LIKAsys.Ui
             rb.Checked += (s, e) =>
             {
                 _group = key;
+                _groupPicked = true;
                 RenderThemes();
                 try { Scroller.ScrollToTop(); } catch { }
             };

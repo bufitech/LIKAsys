@@ -1,3 +1,17 @@
+## 2.5.1
+
+**Temat u rirenditën. Nga 10 grupe në 6.** Më parë kishte dy grupe që thoshin të njëjtën gjë, Lojëra dhe Gaming, plus grupe të vogla si Qelq, Dev dhe Pa sfond që të detyronin të kërkoje në disa vende.
+
+- **Lojëra**, 17 tema. Match Bar i pari, pastaj botët e njohura, pastaj temat e forta me ngjyra.
+- **Punë**, 19 tema. Terminal i pari, pastaj racku dhe vizatimet teknike, pastaj paletat e editorëve si Nord dhe Dracula, pastaj pamjet e qeta të tavolinës.
+- **Minimal**, 15 tema. Të sheshta, qelq, dhe ato fare pa sfond.
+- **Klasike**, 6 tema. **Dritë**, 4 tema. **Kosova**, 2 tema.
+
+Brenda çdo grupi tema më e dobishme është e para, jo rastësisht siç ishte.
+
+- Lista e temave te Cilësimet nuk hapet më me të 63 kartelat përnjëherë. Hapet te grupi i temës që ke në përdorim, pra kartela jote është aty ku e sheh. Chip-i `Të gjitha` është prapë aty nëse e do.
+- Menyja afër orës e ka `Tema e punës` në vend të `Tema e IT-së`, me të njëjtin ndryshim grupesh.
+
 ## 2.5
 
 **Match Bar, një mënyrë e re për Counter-Strike 2.** Widget-i nuk është më kartelë, bëhet një shirit i sheshtë rreth 24 piksel i lartë që rri ngjitur me buzën e sipërme të ekranit, në mes.

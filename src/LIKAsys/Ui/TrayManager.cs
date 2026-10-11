@@ -109,8 +109,8 @@ namespace LIKAsys.Ui
                 AddTheme(games, t.Name);
             if (games.DropDownItems.Count > 0) _menu.Items.Add(games);
 
-            var work = new ToolStripMenuItem(Lang.T("Tema e IT-së"));
-            foreach (var t in ThemeLibrary.All.Where(x => x.Group == ThemeLibrary.GIt))
+            var work = new ToolStripMenuItem(Lang.T("Tema e punës"));
+            foreach (var t in ThemeLibrary.All.Where(x => x.Group == ThemeLibrary.GPune))
                 AddTheme(work, t.Name);
             if (work.DropDownItems.Count > 0) _menu.Items.Add(work);
 
